@@ -1,0 +1,23 @@
+Please make these four fixes:
+1. Random creature button accessible from creature detail page
+Add a "🎲 Random Creature" button directly on the individual creature detail page so users don't have to navigate back to the home screen to use it. Place it somewhere natural on the page — either at the top next to the back button or at the bottom after all the creature info. Clicking it should immediately load a random creature's detail page replacing the current one.
+2. Remove emojis from creature pages and use Wikipedia image fade instead
+On individual creature detail pages remove the large emoji that currently sits above the creature's name. Replace it with the Wikipedia hero image styled as a full width banner at the top of the page that fades smoothly downward into the page background — like the image dissolves into the content below rather than having a hard edge. The creature name and genus should sit overlaid at the bottom of this fading image on top of a subtle dark gradient so the text is always readable. If no Wikipedia image is available use the category colour as the background for that banner area instead of showing an emoji.
+3. Fix the world map continent highlighting
+The current map is drawing rectangular bounding boxes around continents instead of highlighting the actual continent shapes. Fix this properly — the map must highlight the real geographic shape of each continent not a rectangle around it. Use one of these approaches, whichever works best:
+
+Use a proper SVG world map with accurate continent path data — Natural Earth simplified paths are freely available and accurate
+Or use the GeoJSON world data with a canvas or D3 renderer to draw proper continent shapes
+Or embed a TopoJSON world map using D3.js which is available via CDN at https://cdn.jsdelivr.net/npm/d3@7 and https://cdn.jsdelivr.net/npm/topojson@3
+
+The highlighted regions should show the actual shape of the continent filled with the app accent colour at 50% opacity. The unhighlighted continents should be a muted dark colour. The ocean should be darker still. It must look like a real world map not a diagram with boxes.
+The regions array from Claude should map to continents like this:
+
+"North America" → highlight North America shape
+"South America" → highlight South America shape
+"Europe" → highlight Europe shape
+"Africa" → highlight Africa shape
+"Asia" → highlight Asia shape
+"Australia" → highlight Australia and Oceania shape
+"Antarctica" → highlight Antarctica shape
+"Worldwide" or "All oceans" → highlight everything or show a worldwide indicator

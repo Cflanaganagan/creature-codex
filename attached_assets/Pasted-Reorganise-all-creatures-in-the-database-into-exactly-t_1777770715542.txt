@@ -1,0 +1,16 @@
+Reorganise all creatures in the database into exactly these 6 categories. Do not delete any creatures — every single one must be reassigned to one of these categories:
+Mammals — any warm-blooded furry creature, prehistoric or living. Includes: woolly mammoth, smilodon, dire wolf, paraceratherium, andrewsarchus, entelodon, basilosaurus, titanoboa, megatherium, doedicurus, megaloceros, woolly rhino, terror bird, ambulocetus, hyaenodon, thylacine, passenger pigeon, stellers sea cow, aurochs, lion, tiger, elephant, gorilla, orca, sperm whale, polar bear, hippo, grey wolf, house cat, and all other prehistoric and living mammals.
+Reptiles — dinosaurs of all kinds, pterosaurs, prehistoric and living reptiles, synapsids. Includes: all theropods, all sauropods, all ceratopsians, all armoured dinosaurs, triceratops, ankylosaurus, stegosaurus, pteranodon, quetzalcoatlus, mosasaurus, sarcosuchus, deinosuchus, saltwater crocodile, komodo dragon, dimetrodon, gorgonops, lystrosaurus, green anaconda, and all other dinosaurs and reptiles prehistoric or living.
+Birds — all birds prehistoric and living, including recently extinct birds. Includes: dodo, great auk, passenger pigeon, terror bird, archaeopteryx, peregrine falcon, and any other avian creatures. Note: passenger pigeon and dodo should move here from Recently Extinct if they were there before.
+Aquatic — anything that lived primarily in water regardless of what type of animal it was. Includes: megalodon, dunkleosteus, mosasaurus, elasmosaurus, ichthyosaurus, plesiosaurus, kronosaurus, liopleurodon, leedsichthys, helicoprion, coelacanth, great white shark, orca, sperm whale, green anaconda, pistol shrimp, mantis shrimp, mimic octopus, archerfish, and any other water-dwelling creature.
+Invertebrates — insects, arthropods, worms, molluscs, and all spineless creatures prehistoric or living. Includes: meganeura, arthropleura, pulmonoscorpius, jaekelopterus, anomalocaris, hallucigenia, opabinia, dickinsonia, tully monster, tardigrade, mantis shrimp, pistol shrimp, mimic octopus, and all other invertebrates.
+Mystery Creatures — creatures with very little fossil evidence, creatures whose classification is debated, and creatures so bizarre they defy easy categorisation. Keep mysteryLevel field intact. Includes: tully monster, hallucigenia, opabinia, dickinsonia, and any AI-generated creatures that come back with mysteryLevel 2 or 3.
+Important rules:
+
+Every creature must belong to exactly one category — no duplicates
+For creatures that could fit multiple categories (like orca which is a mammal and aquatic, or mosasaurus which is a reptile and aquatic) use this priority: if it lived primarily in water put it in Aquatic, otherwise use its biological classification
+Update the category field on every single creature in the database
+Update the home screen category tiles to show exactly these 6 categories with creature counts
+Update all filters throughout the app to use these 6 categories
+Make sure the AI generation prompt also uses these 6 category names so new creatures get assigned correctly
+Do not lose any creatures during this reorganisation — if unsure where something goes use your best judgement

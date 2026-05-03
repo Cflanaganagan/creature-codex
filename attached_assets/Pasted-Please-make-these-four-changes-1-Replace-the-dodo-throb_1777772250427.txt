@@ -1,0 +1,29 @@
+Please make these four changes:
+1. Replace the dodo throbber
+Remove the dodo walking animation entirely. Replace it with a clean professional loading animation that fits a natural history museum app. Use a simple CSS animated fossil/bone spinner — a circle made of dashed strokes that rotates slowly, in the app's accent colour. Below it show the same rotating flavour text cycling every 2 seconds:
+
+"Consulting the fossil record..."
+"Excavating the archives..."
+"Disturbing a very old skeleton..."
+"Asking the palaeontologists..."
+"Rummaging through the Cretaceous..."
+
+2. Stop fake creatures being saved
+When Claude generates a creature, validate the response before saving it. If any of these conditions are true, do NOT save it and instead show a friendly "This creature couldn't be found in the fossil record" message:
+
+The name field matches the user's search term but the description contains phrases like "fictional", "not a real", "no evidence", "does not exist", "made up", or "fantasy"
+The mysteryLevel is 3 AND the description says it is unknown or fictional rather than genuinely mysterious
+The genus field is empty or says "Unknown"
+The fun facts are generic or fewer than 3
+Also add a check at the start — before calling Claude at all, if the search term contains obviously fictional words or character names from movies and games, skip the API call entirely and show the not found message immediately.
+
+3. Replace the timeline with plain text
+Remove the visual timeline bar entirely from the creature detail page. Replace it with a single clean line of text in this format:
+
+For extinct creatures: "Lived approximately 299 to 305 million years ago" using the mya field data
+For living creatures: "Living today"
+For recently extinct: "Extinct — last seen approximately [year]"
+Parse the mya field to extract the numbers and display them in plain English. Style it as a subtle secondary text line, no bar, no visual element, just clean readable text.
+
+4. Add a fossil/habitat world map
+In the space freed up by removing the timeline add a world map showing where this creature lived or where its fossils have been found. Use a simple flat SVG world map outline. Highlight the relevant regions in the app's accent colour based on the creature's habitat field. Claude should also return a regions array when generating creatures — a list of continent or region names like "North America", "Europe", "Asia", "Africa", "South America", "Australia", "Antarctica", "Worldwide oceans". Highlight those regions on the map. Keep the map clean and minimal — just continent outlines in a muted colour with the relevant regions lit up in the accent colour. Add a small label below saying "Known range" or "Fossil sites".

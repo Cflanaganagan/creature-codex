@@ -1,0 +1,132 @@
+openapi: 3.1.0
+info:
+  # Do not change the title, if the title changes, the import paths will be broken
+  title: Api
+  version: 0.1.0
+  description: API specification
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+    description: Health operations
+  - name: creatures
+    description: Creature operations
+paths:
+  /creatures/ai-lookup:
+    post:
+      operationId: aiCreatureLookup
+      tags: [creatures]
+      summary: AI creature lookup
+      description: Looks up a creature by name using AI if not found in local database
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AICreatureLookupRequest"
+      responses:
+        "200":
+          description: Creature profile generated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AICreatureLookupResponse"
+        "400":
+          description: Bad request
+        "500":
+          description: Server error
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      description: Returns server health status
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+components:
+  schemas:
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+      required:
+        - status
+    AICreatureLookupRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+      required:
+        - name
+    AIFamilyMember:
+      type: object
+      properties:
+        name:
+          type: string
+        living:
+          type: boolean
+      required:
+        - name
+        - living
+    AICreatureLookupResponse:
+      type: object
+      properties:
+        name:
+          type: string
+        genus:
+          type: string
+        category:
+          type: string
+        era:
+          type: string
+        mya:
+          type: string
+        diet:
+          type: string
+        size:
+          type: string
+        habitat:
+          type: string
+        description:
+          type: string
+        funFacts:
+          type: array
+          items:
+            type: string
+        family:
+          type: array
+          items:
+            $ref: "#/components/schemas/AIFamilyMember"
+        mysteryLevel:
+          type: integer
+          minimum: 0
+          maximum: 3
+        isUnknown:
+          type: boolean
+        regions:
+          type: array
+          items:
+            type: string
+          description: List of continents or regions where this creature lived or where fossils were found
+      required:
+        - name
+        - genus
+        - category
+        - era
+        - mya
+        - diet
+        - size
+        - habitat
+        - description
+        - funFacts
+        - family
+        - mysteryLevel
+

@@ -1,0 +1,475 @@
+[
+  {
+    "name": "Tyrannosaurus Rex",
+    "genus": "Tyrannosaurus",
+    "category": "Theropods",
+    "era": "Late Cretaceous",
+    "mya": "68-66 Ma",
+    "diet": "Carnivore",
+    "size": "12m long / 8 tonnes",
+    "habitat": "Forests and floodplains of North America",
+    "description": "The most iconic predator to ever walk the Earth. T. Rex had a bite force of 12,800 lbs — the strongest of any land animal ever. Its skull was nearly 1.5m long and packed with banana-sized teeth. Recent studies suggest it may have had lips covering its teeth like a modern lizard, and juveniles were likely covered in feathers.",
+    "funFacts": [
+      "Had the strongest bite force of any land animal ever recorded",
+      "Its arms, though tiny, could curl 200kg — stronger than any human",
+      "Recent evidence suggests it had lips, not exposed teeth like a crocodile",
+      "Could eat 230kg of meat in a single bite",
+      "Juveniles were likely covered in downy feathers"
+    ],
+    "family": [
+      { "name": "All modern birds", "living": true },
+      { "name": "Crocodilians (distant)", "living": true },
+      { "name": "Albertosaurus", "living": false },
+      { "name": "Tarbosaurus", "living": false }
+    ],
+    "mysteryLevel": 0
+  },
+  {
+    "name": "Spinosaurus",
+    "genus": "Spinosaurus",
+    "category": "Theropods",
+    "era": "Mid Cretaceous",
+    "mya": "99-93 Ma",
+    "diet": "Piscivore",
+    "size": "15m long / 20 tonnes",
+    "habitat": "River deltas and coastal swamps of North Africa",
+    "description": "The longest carnivorous dinosaur ever discovered, surpassing even T. Rex. Spinosaurus was semi-aquatic with dense bones for buoyancy control, a crocodile-like skull perfect for catching fish, and a massive 1.6m sail along its back. It spent most of its life in and around vast river systems hunting enormous fish.",
+    "funFacts": [
+      "Longer than T. Rex at up to 15 metres",
+      "Dense bones helped it stay submerged underwater like a diving bird",
+      "Its sail could reach 1.6 metres tall",
+      "Hunted fish larger than a modern great white shark",
+      "Originally discovered in Egypt but the fossils were destroyed in WWII bombing"
+    ],
+    "family": [
+      { "name": "All modern birds", "living": true },
+      { "name": "Baryonyx", "living": false },
+      { "name": "Irritator", "living": false }
+    ],
+    "mysteryLevel": 0
+  },
+  {
+    "name": "Velociraptor",
+    "genus": "Velociraptor",
+    "category": "Theropods",
+    "era": "Late Cretaceous",
+    "mya": "75-71 Ma",
+    "diet": "Carnivore",
+    "size": "2m long / 15kg",
+    "habitat": "Desert scrublands of Central Asia",
+    "description": "Far smaller and far more bird-like than its movie depiction. Velociraptor was roughly the size of a turkey, fully feathered, and hunted small prey in the arid deserts of what is now Mongolia. Its famous sickle claw was used to pin struggling prey rather than slash. One of the most bird-like dinosaurs ever found.",
+    "funFacts": [
+      "Was actually the size of a turkey — not human-sized like in Jurassic Park",
+      "Fully feathered like a bird",
+      "A famous fossil shows one locked in combat with a Protoceratops — both died together",
+      "Its sickle claw pinned prey rather than slashed",
+      "More closely related to modern birds than to T. Rex"
+    ],
+    "family": [
+      { "name": "All modern birds", "living": true },
+      { "name": "Deinonychus", "living": false },
+      { "name": "Dromaeosaurus", "living": false }
+    ],
+    "mysteryLevel": 0
+  },
+  {
+    "name": "Giganotosaurus",
+    "genus": "Giganotosaurus",
+    "category": "Theropods",
+    "era": "Late Cretaceous",
+    "mya": "99-97 Ma",
+    "diet": "Carnivore",
+    "size": "13m long / 8 tonnes",
+    "habitat": "Floodplains of Patagonia, South America",
+    "description": "One of the largest carnivorous dinosaurs ever, rivalling T. Rex in size but with a longer, slimmer skull and blade-like teeth better suited for slicing than crushing. It was the apex predator of South America, hunting massive titanosaur sauropods many times its own size across vast Patagonian floodplains.",
+    "funFacts": [
+      "Its brain was shaped like a banana — long and narrow",
+      "Lived on a different continent to T. Rex and never encountered it",
+      "Hunted sauropods up to 10 times its own body weight",
+      "Had blade-like teeth for slicing rather than bone-crushing",
+      "Discovered in Argentina in 1993"
+    ],
+    "family": [
+      { "name": "All modern birds", "living": true },
+      { "name": "Carcharodontosaurus", "living": false },
+      { "name": "Mapusaurus", "living": false }
+    ],
+    "mysteryLevel": 0
+  },
+  {
+    "name": "Carnotaurus",
+    "genus": "Carnotaurus",
+    "category": "Theropods",
+    "era": "Late Cretaceous",
+    "mya": "72-69 Ma",
+    "diet": "Carnivore",
+    "size": "8m long / 2 tonnes",
+    "habitat": "Scrublands of Patagonia, South America",
+    "description": "The bull-horned dinosaur — the only large theropod known to have two horns above its eyes. It had the most vestigial arms of any large dinosaur, even more useless than T. Rex's. Studies of its leg muscles suggest it may have been one of the fastest large predators ever, capable of sustained speeds up to 56 km/h.",
+    "funFacts": [
+      "Only large theropod known to have horns above its eyes",
+      "Had the most useless arms of any large dinosaur",
+      "Could sustain speeds of up to 56 km/h",
+      "Skin impressions show a pebbly, bumpy texture across its whole body",
+      "Name means 'meat-eating bull' in Latin"
+    ],
+    "family": [
+      { "name": "All modern birds", "living": true },
+      { "name": "Abelisaurus", "living": false },
+      { "name": "Majungasaurus", "living": false }
+    ],
+    "mysteryLevel": 0
+  },
+  {
+    "name": "Allosaurus",
+    "genus": "Allosaurus",
+    "category": "Theropods",
+    "era": "Late Jurassic",
+    "mya": "155-145 Ma",
+    "diet": "Carnivore",
+    "size": "9m long / 2.3 tonnes",
+    "habitat": "Floodplains and forests of North America",
+    "description": "The apex predator of the Late Jurassic, ruling North America 80 million years before T. Rex. Allosaurus had a unique hatchet-like skull it slammed into prey with its upper jaw, raking flesh rather than crushing bone. Evidence from bone beds suggests some degree of social feeding behaviour when tackling giant sauropods.",
+    "funFacts": [
+      "Ruled North America 80 million years before T. Rex",
+      "Used its skull like a hatchet, slamming its upper jaw into prey",
+      "One of the most commonly found large theropod fossils",
+      "Evidence suggests it may have fed in groups on large sauropods",
+      "Had three-fingered hands with large curved claws"
+    ],
+    "family": [
+      { "name": "All modern birds", "living": true },
+      { "name": "Ceratosaurus", "living": false },
+      { "name": "Torvosaurus", "living": false }
+    ],
+    "mysteryLevel": 0
+  },
+  {
+    "name": "Utahraptor",
+    "genus": "Utahraptor",
+    "category": "Theropods",
+    "era": "Early Cretaceous",
+    "mya": "126 Ma",
+    "diet": "Carnivore",
+    "size": "7m long / 500kg",
+    "habitat": "Forests of North America",
+    "description": "The largest raptor ever discovered — the size of a polar bear with a 38cm sickle claw on each foot. Almost certainly fully feathered. Utahraptor is what Jurassic Park's raptors should actually have looked like. Ironically it was discovered just weeks after the film went into production, too late to change the design.",
+    "funFacts": [
+      "The largest raptor ever — the size of a polar bear",
+      "Had a 38cm sickle claw — longer than a human hand",
+      "Discovered just after Jurassic Park went into production",
+      "Almost certainly fully feathered like a giant bird of prey",
+      "Could kick with enough force to disembowel a large dinosaur"
+    ],
+    "family": [
+      { "name": "All modern birds", "living": true },
+      { "name": "Velociraptor", "living": false },
+      { "name": "Deinonychus", "living": false }
+    ],
+    "mysteryLevel": 0
+  },
+  {
+    "name": "Therizinosaurus",
+    "genus": "Therizinosaurus",
+    "category": "Theropods",
+    "era": "Late Cretaceous",
+    "mya": "70 Ma",
+    "diet": "Herbivore",
+    "size": "9m long / 5 tonnes",
+    "habitat": "Forests of Central Asia",
+    "description": "One of the most bizarre dinosaurs ever — a theropod that became an herbivore. Therizinosaurus had the longest claws of any known animal at up to 1 metre, used for pulling down branches rather than attacking prey. Despite its fearsome appearance it was a gentle giant with a pot belly full of plant matter.",
+    "funFacts": [
+      "Had the longest claws of any known animal — up to 1 metre long",
+      "Was a theropod — related to T. Rex — but became a herbivore",
+      "Originally thought to be a giant turtle when first discovered",
+      "Its huge gut was needed to digest tough plant material",
+      "Name means 'scythe lizard' due to its enormous claws"
+    ],
+    "family": [
+      { "name": "All modern birds", "living": true },
+      { "name": "Beipiaosaurus", "living": false }
+    ],
+    "mysteryLevel": 0
+  },
+  {
+    "name": "Dilophosaurus",
+    "genus": "Dilophosaurus",
+    "category": "Theropods",
+    "era": "Early Jurassic",
+    "mya": "193 Ma",
+    "diet": "Carnivore",
+    "size": "6m long / 450kg",
+    "habitat": "Floodplains of North America",
+    "description": "One of the largest predators of the Early Jurassic, distinguished by two thin parallel crests on its skull used for display. Contrary to its Jurassic Park depiction it had no frill and absolutely no evidence of venom. It was a genuine and capable apex predator of its time.",
+    "funFacts": [
+      "Had two thin crests on its skull used purely for display",
+      "Had NO frill and NO venom despite what Jurassic Park shows",
+      "One of the earliest large predatory dinosaurs",
+      "Its hands had four fingers, one of which was vestigial",
+      "Name means 'two-crested lizard'"
+    ],
+    "family": [
+      { "name": "All modern birds", "living": true },
+      { "name": "Coelophysis", "living": false }
+    ],
+    "mysteryLevel": 0
+  },
+  {
+    "name": "Coelophysis",
+    "genus": "Coelophysis",
+    "category": "Theropods",
+    "era": "Late Triassic",
+    "mya": "228-201 Ma",
+    "diet": "Carnivore",
+    "size": "3m long / 25kg",
+    "habitat": "Desert scrublands of North America",
+    "description": "One of the earliest true dinosaurs — light, fast, and agile at the very dawn of the dinosaur age. Hundreds of Coelophysis fossils were found together at Ghost Ranch, New Mexico in a mass death assemblage. Evidence of cannibalism was found in some specimens, with smaller individuals inside the body cavities of larger ones.",
+    "funFacts": [
+      "One of the earliest true dinosaurs ever found",
+      "Hundreds of fossils found together at Ghost Ranch, New Mexico",
+      "Evidence of cannibalism found in some specimens",
+      "Hollow bones made it incredibly light and fast",
+      "A Coelophysis skull was taken to the Mir space station in 1998"
+    ],
+    "family": [
+      { "name": "All modern birds", "living": true },
+      { "name": "Dilophosaurus", "living": false }
+    ],
+    "mysteryLevel": 0
+  },
+  {
+    "name": "Carcharodontosaurus",
+    "genus": "Carcharodontosaurus",
+    "category": "Theropods",
+    "era": "Late Cretaceous",
+    "mya": "99-94 Ma",
+    "diet": "Carnivore",
+    "size": "13m long / 7 tonnes",
+    "habitat": "Forests and floodplains of North Africa",
+    "description": "One of the largest carnivorous dinosaurs ever, rivalling T. Rex and Giganotosaurus. Its name means shark-toothed lizard — its serrated teeth were perfectly designed for slicing through flesh. It was the apex predator of North Africa, living alongside the equally massive Spinosaurus in a land of giant predators.",
+    "funFacts": [
+      "Name means 'shark-toothed lizard' — its teeth were serrated like a shark's",
+      "Lived alongside Spinosaurus in North Africa",
+      "Original fossils were destroyed in WWII — like Spinosaurus",
+      "Had a larger skull than T. Rex",
+      "Hunted massive sauropods in what is now the Sahara Desert"
+    ],
+    "family": [
+      { "name": "All modern birds", "living": true },
+      { "name": "Giganotosaurus", "living": false }
+    ],
+    "mysteryLevel": 0
+  },
+  {
+    "name": "Baryonyx",
+    "genus": "Baryonyx",
+    "category": "Theropods",
+    "era": "Early Cretaceous",
+    "mya": "130-125 Ma",
+    "diet": "Piscivore",
+    "size": "10m long / 2 tonnes",
+    "habitat": "River systems of Europe",
+    "description": "A large fish-eating theropod closely related to Spinosaurus, discovered in a clay pit in Surrey, England in 1983. Fish scales and bones were found in its stomach region along with the remains of a young Iguanodon, showing it was an opportunistic predator. Its huge thumb claw measured 31cm.",
+    "funFacts": [
+      "Discovered in a clay pit in Surrey, England in 1983",
+      "Fish scales were found preserved in its stomach",
+      "Had a massive 31cm thumb claw for hooking fish",
+      "Also scavenged dinosaur carcasses when fish weren't available",
+      "Name means 'heavy claw'"
+    ],
+    "family": [
+      { "name": "All modern birds", "living": true },
+      { "name": "Spinosaurus", "living": false },
+      { "name": "Suchomimus", "living": false }
+    ],
+    "mysteryLevel": 0
+  },
+  {
+    "name": "Majungasaurus",
+    "genus": "Majungasaurus",
+    "category": "Theropods",
+    "era": "Late Cretaceous",
+    "mya": "70-66 Ma",
+    "diet": "Carnivore",
+    "size": "8m long / 1.1 tonnes",
+    "habitat": "Semi-arid floodplains of Madagascar",
+    "description": "An abelisaurid theropod from Madagascar with a single blunt horn on its snout and a remarkably short, wide skull. Majungasaurus is one of the few dinosaurs with definitive evidence of cannibalism — its own tooth marks have been found on its own bones. It was the apex predator of Cretaceous Madagascar.",
+    "funFacts": [
+      "One of the few dinosaurs with definitive proof of cannibalism",
+      "Had a single blunt horn on its snout",
+      "Eyes faced slightly forward giving it some binocular vision",
+      "Madagascar was an island in the Cretaceous — it evolved in isolation",
+      "Had extremely vestigial arms even smaller than T. Rex's"
+    ],
+    "family": [
+      { "name": "All modern birds", "living": true },
+      { "name": "Carnotaurus", "living": false },
+      { "name": "Abelisaurus", "living": false }
+    ],
+    "mysteryLevel": 0
+  },
+  {
+    "name": "Pachycephalosaurus",
+    "genus": "Pachycephalosaurus",
+    "category": "Theropods",
+    "era": "Late Cretaceous",
+    "mya": "70-66 Ma",
+    "diet": "Omnivore",
+    "size": "4.5m long / 450kg",
+    "habitat": "Upland forests of North America",
+    "description": "The dome-headed dinosaur — its skull roof was up to 25cm thick and likely used for head-butting rivals like modern bighorn sheep. Recent evidence suggests the domes were highly variable depending on age and sex, and younger individuals had flatter heads that grew into domes as they matured.",
+    "funFacts": [
+      "Skull roof was up to 25cm thick — like a natural crash helmet",
+      "Likely head-butted rivals like modern bighorn sheep",
+      "Younger individuals had flat heads that domed as they grew",
+      "Had small leaf-shaped teeth suggesting an omnivorous diet",
+      "Name means 'thick-headed lizard'"
+    ],
+    "family": [
+      { "name": "All modern birds (distantly)", "living": true },
+      { "name": "Stygimoloch", "living": false },
+      { "name": "Dracorex", "living": false }
+    ],
+    "mysteryLevel": 0
+  },
+  {
+    "name": "Iguanodon",
+    "genus": "Iguanodon",
+    "category": "Theropods",
+    "era": "Early Cretaceous",
+    "mya": "126-122 Ma",
+    "diet": "Herbivore",
+    "size": "10m long / 3.4 tonnes",
+    "habitat": "Forests and floodplains of Europe",
+    "description": "One of the first dinosaurs ever named, discovered in England in 1822. Iguanodon had a distinctive spiked thumb that was originally mistaken for a nose horn when the first fossils were assembled. It could walk on two or four legs depending on speed, and had a sophisticated chewing ability rare among dinosaurs.",
+    "funFacts": [
+      "One of the first three dinosaurs ever formally named in 1825",
+      "Its thumb spike was originally thought to be a nose horn",
+      "Could walk on two or four legs depending on speed",
+      "Had sophisticated grinding teeth unlike most dinosaurs",
+      "Hundreds of specimens found together in a Belgian coal mine"
+    ],
+    "family": [
+      { "name": "All modern birds (distantly)", "living": true },
+      { "name": "Mantellisaurus", "living": false }
+    ],
+    "mysteryLevel": 0
+  },
+  {
+    "name": "Parasaurolophus",
+    "genus": "Parasaurolophus",
+    "category": "Theropods",
+    "era": "Late Cretaceous",
+    "mya": "76-73 Ma",
+    "diet": "Herbivore",
+    "size": "9.5m long / 2.5 tonnes",
+    "habitat": "Forests of North America",
+    "description": "Famous for its spectacular hollow crest which acted as a resonating chamber, allowing Parasaurolophus to produce a deep foghorn-like call audible for kilometres. Different species had distinct crest shapes that produced unique sounds — essentially different voices. It was a highly social animal living in large herds.",
+    "funFacts": [
+      "Its hollow crest worked like a trombone to produce deep calls",
+      "Different species had differently shaped crests — different voices",
+      "Lived in large herds for protection against predators",
+      "Could run on two legs when fleeing predators",
+      "Scientists have digitally recreated what its call sounded like"
+    ],
+    "family": [
+      { "name": "All modern birds (distantly)", "living": true },
+      { "name": "Corythosaurus", "living": false },
+      { "name": "Lambeosaurus", "living": false }
+    ],
+    "mysteryLevel": 0
+  },
+  {
+    "name": "Oviraptor",
+    "genus": "Oviraptor",
+    "category": "Theropods",
+    "era": "Late Cretaceous",
+    "mya": "75-71 Ma",
+    "diet": "Omnivore",
+    "size": "2m long / 25kg",
+    "habitat": "Desert environments of Central Asia",
+    "description": "One of paleontology's great injustices — Oviraptor was named 'egg thief' after being found near a nest of eggs assumed to belong to Protoceratops. Decades later it was discovered the eggs were actually its OWN, and it died brooding them like a modern bird. It was a devoted parent, not a thief.",
+    "funFacts": [
+      "Named 'egg thief' but was actually brooding its own eggs when it died",
+      "One of the greatest name injustices in paleontology",
+      "Brooded its eggs exactly like a modern bird",
+      "Had a parrot-like beak with no teeth",
+      "Fully feathered with a crest on its head like a cassowary"
+    ],
+    "family": [
+      { "name": "All modern birds", "living": true },
+      { "name": "Citipati", "living": false }
+    ],
+    "mysteryLevel": 0
+  },
+  {
+    "name": "Troodon",
+    "genus": "Troodon",
+    "category": "Theropods",
+    "era": "Late Cretaceous",
+    "mya": "77-66 Ma",
+    "diet": "Omnivore",
+    "size": "2.4m long / 50kg",
+    "habitat": "Forests and plains of North America",
+    "description": "Possibly the most intelligent dinosaur ever — Troodon had the largest brain relative to its body size of any known dinosaur. It had large forward-facing eyes giving it binocular vision and excellent depth perception, suggesting it may have hunted at night. Some scientists have speculated what it might have evolved into had the asteroid not hit.",
+    "funFacts": [
+      "Had the largest brain-to-body ratio of any known dinosaur",
+      "Large forward-facing eyes suggest it hunted at night",
+      "Some scientists call it the smartest dinosaur ever",
+      "Had sickle claws like Velociraptor but was more lightly built",
+      "Scientists have imagined what it would look like if it evolved further"
+    ],
+    "family": [
+      { "name": "All modern birds", "living": true },
+      { "name": "Velociraptor (distant)", "living": false }
+    ],
+    "mysteryLevel": 0
+  },
+  {
+    "name": "Megalosaurus",
+    "genus": "Megalosaurus",
+    "category": "Theropods",
+    "era": "Middle Jurassic",
+    "mya": "166 Ma",
+    "diet": "Carnivore",
+    "size": "9m long / 700kg",
+    "habitat": "Forests of Europe",
+    "description": "The very first dinosaur ever formally named and described in science, in 1824. When the first Megalosaurus bone was discovered in the 1600s it was thought to be the thigh bone of a giant human. It was the apex predator of Middle Jurassic Europe and a genuinely massive animal for its time.",
+    "funFacts": [
+      "The very first dinosaur ever formally named in science — in 1824",
+      "A leg bone was originally described as belonging to a giant human",
+      "Gave dinosaurs their name indirectly — one of the original three",
+      "Was the apex predator of Middle Jurassic Europe",
+      "Charles Dickens mentioned it in the opening of Bleak House"
+    ],
+    "family": [
+      { "name": "All modern birds", "living": true },
+      { "name": "Torvosaurus", "living": false }
+    ],
+    "mysteryLevel": 0
+  },
+  {
+    "name": "Deinonychus",
+    "genus": "Deinonychus",
+    "category": "Theropods",
+    "era": "Early Cretaceous",
+    "mya": "115-108 Ma",
+    "diet": "Carnivore",
+    "size": "3.4m long / 73kg",
+    "habitat": "Floodplains of North America",
+    "description": "The dinosaur that changed everything. When Deinonychus was described in 1969 it proved dinosaurs were active, warm-blooded, and bird-like — overturning decades of thinking that they were slow, cold-blooded lizards. It was the main inspiration for Jurassic Park's Velociraptor. Fossils found near Tenontosaurus suggest pack hunting.",
+    "funFacts": [
+      "The discovery that proved dinosaurs were active and warm-blooded",
+      "Was the real inspiration for Jurassic Park's raptors",
+      "Multiple fossils found near Tenontosaurus suggest pack hunting",
+      "Had a 12cm sickle claw on each foot",
+      "Changed the entire way we think about dinosaurs when described in 1969"
+    ],
+    "family": [
+      { "name": "All modern birds", "living": true },
+      { "name": "Velociraptor", "living": false },
+      { "name": "Utahraptor", "living": false }
+    ],
+    "mysteryLevel": 0
+  }
+]

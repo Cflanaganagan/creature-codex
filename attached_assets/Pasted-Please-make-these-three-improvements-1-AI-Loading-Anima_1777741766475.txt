@@ -1,0 +1,44 @@
+Please make these three improvements:
+1. AI Loading Animation
+When the AI naturalist is searching for a creature, replace the plain loading state with an animated dodo bird walking across the screen. Build it as a pure CSS animation — a simple side-profile dodo silhouette in a warm off-white colour against the dark background, taking slow waddling steps across the screen with a subtle bobbing motion. Below it show rotating flavour text that cycles through phrases like:
+
+"Consulting the fossil record..."
+"Excavating the archives..."
+"Disturbing a very old skeleton..."
+"Asking the palaeontologists..."
+"Rummaging through the Cretaceous..."
+Each phrase should fade in and out every 2 seconds while the dodo walks.
+
+2. Era Timeline Bar
+Replace the current "When it lived" bar with a proper geological timeline. The timeline should show these major eras as labelled segments from left to right:
+
+Precambrian (4500-541 Ma)
+Cambrian-Devonian (541-359 Ma)
+Carboniferous-Permian (359-252 Ma)
+Triassic (252-201 Ma)
+Jurassic (201-145 Ma)
+Cretaceous (145-66 Ma)
+Paleogene-Neogene (66-2.6 Ma)
+Quaternary-Present (2.6 Ma-Present)
+
+Each segment should be a different earthy colour. A marker dot should sit on the timeline showing approximately when that creature lived based on its mya field. Below the timeline show the text in full like "66 million years ago" not "66 Ma". If a creature is living show the marker at the far right on Present.
+3. Category Hero Images in Diamond Split Style
+Replace the basic emoji category tiles on the home screen and category badges with stylised diamond-shaped category portraits in the style of theHunter: Call of the Wild — a rotated square frame with the representative animal's face split diagonally, one half slightly lighter and one half slightly darker, giving a dramatic trophy/field-guide feel.
+Use one representative creature face for each category rendered as a detailed SVG illustration — not a photo or emoji. Here are the representatives:
+
+Theropods → T. Rex face
+Sauropods → Brachiosaurus face
+Ceratopsians → Triceratops face
+Armoured Dinosaurs → Ankylosaurus face
+Pterosaurs → Quetzalcoatlus face
+Marine Reptiles → Mosasaurus face
+Prehistoric Fish → Megalodon face
+Giant Prehistoric Insects → Meganeura face
+Synapsids → Dimetrodon face
+Ice Age Megafauna → Woolly Mammoth face
+Prehistoric Mammals → Smilodon face
+Living Animals → Lion face
+Recently Extinct → Dodo face
+Mystery Creatures → question mark silhouette in the same style
+
+Each diamond should use the category accent colour as the background with the SVG illustration in a slightly lighter/darker split. Keep them clean and bold — this is the first thing users see so it needs to look impressive
