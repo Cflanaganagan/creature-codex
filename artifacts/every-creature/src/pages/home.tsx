@@ -11,34 +11,6 @@ import { CategoryPortrait } from "@/components/category-portrait";
 import { categoryBadges } from "@/data/category-badges";
 import { CategoryBadge } from "@/components/category-badge";
 
-function AmphibianBadge() {
-  return (
-    <div className="relative w-full h-full flex items-center justify-center">
-      <div className="absolute inset-[8%] rotate-45 rounded-[22%] border border-white/30 bg-black/10 shadow-[inset_0_0_25px_rgba(0,0,0,.12)]" />
-      <svg
-        viewBox="0 0 160 160"
-        className="relative z-10 w-[88%] h-[88%] text-white drop-shadow-[0_3px_3px_rgba(0,0,0,.25)]"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="3.2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        aria-label="Amphibians"
-      >
-        <path d="M80 25v110" opacity=".55"/>
-        <path d="M80 43c-8-10-17-14-27-11-10 3-16 12-14 21 2 8 10 13 20 12-11 5-18 14-18 25 0 8 4 14 11 18"/>
-        <path d="M80 43c8-10 17-14 27-11 10 3 16 12 14 21-2 8-10 13-20 12 11 5 18 14 18 25 0 8-4 14-11 18"/>
-        <path d="M60 64c3 8 8 13 20 14 12-1 17-6 20-14"/>
-        <path d="M80 78c-12 1-20 8-22 20-2 11 4 22 22 31 18-9 24-20 22-31-2-12-10-19-22-20z"/>
-        <circle cx="57" cy="49" r="3.2" fill="currentColor" stroke="none"/>
-        <circle cx="103" cy="49" r="3.2" fill="currentColor" stroke="none"/>
-        <path d="M58 94 39 107 28 105M102 94l19 13 11-2M61 111l-16 17-13 2M99 111l16 17 13 2"/>
-        <path d="M28 105l-7-6m7 6-8 1m12 24-7 5m7-5-8-2m108-23 7-6m-7 6 8 1m-12 24 7 5m-7-5 8-2"/>
-      </svg>
-    </div>
-  );
-}
-
 export default function Home() {
   const [, setLocation] = useLocation();
   const { creatures } = useCreatures();
@@ -140,9 +112,7 @@ export default function Home() {
 
                   <div className="exhibit-portrait relative w-36 h-36 md:w-40 md:h-40 mb-3">
                     <div className="exhibit-halo absolute inset-[13%] rounded-full blur-xl" />
-                    {category === "Amphibians" ? (
-                      <AmphibianBadge />
-                    ) : categoryBadges[category] ? (
+                    {categoryBadges[category] ? (
                       <CategoryBadge
                         src={categoryBadges[category]}
                         alt={category}
