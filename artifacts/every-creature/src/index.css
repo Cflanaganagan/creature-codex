@@ -247,3 +247,30 @@
   .exhibit-tile:is(:hover, :focus-visible), .exhibit-tile:is(:hover, :focus-visible) .exhibit-portrait { transform: none; }
   .exhibit-tile::after { display: none; }
 }
+
+.random-creature-button {
+  background: linear-gradient(135deg, #fffdf4, #eee1c8);
+  color: #443722;
+  box-shadow: 0 4px 14px #76552a12, inset 0 1px 0 #fff;
+  transition: transform 250ms ease, box-shadow 250ms ease, border-color 250ms ease;
+}
+.random-creature-icon { background: #8f713a12; border: 1px solid #a8884b40; transition: transform 450ms ease; }
+.random-creature-button:hover { background: linear-gradient(135deg, #fffdf6, #eaddbe); transform: translateY(-2px); border-color: #9b7b4599; box-shadow: 0 8px 22px #76552a24, inset 0 1px 0 #fff; }
+.random-creature-button:hover .random-creature-icon { transform: rotate(-14deg); }
+.random-creature-button:focus-visible { outline: 2px solid #9b7b45; outline-offset: 4px; }
+@media (prefers-reduced-motion: reduce) {
+  .random-creature-button, .random-creature-icon { transition: none; }
+  .random-creature-button:hover, .random-creature-button:hover .random-creature-icon { transform: none; }
+}
+.museum-fossil-backdrop {
+  position: absolute; top: 0; bottom: 0; width: 29%; overflow: hidden;
+  opacity: .17; mix-blend-mode: multiply; pointer-events: none;
+}
+.museum-fossil-backdrop img { position: absolute; height: 100%; width: auto; max-width: none; }
+.museum-fossil-left { left: 0; mask-image: linear-gradient(to right, black 45%, transparent); }
+.museum-fossil-left img { left: 0; }
+.museum-fossil-right { right: 0; mask-image: linear-gradient(to left, black 45%, transparent); }
+.museum-fossil-right img { right: 0; }
+@media (max-width: 640px) {
+  .museum-fossil-backdrop { opacity: .09; width: 38%; }
+}

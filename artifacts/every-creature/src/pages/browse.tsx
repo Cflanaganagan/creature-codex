@@ -1,7 +1,7 @@
 import { ImageViewer } from "@/components/image-viewer";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Layout } from "@/components/layout";
-import { Input } from "@/components/ui/input";
+import { CreatureSearch } from "@/components/creature-search";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -57,8 +57,8 @@ function isValidCreatureResponse(data: AIResult, _query: string): boolean {
   return true;
 }
 
-function CardThumbnail({ name, category }: { name: string; category: string }) {
-  const imgState = useWikipediaImage(name);
+function CardThumbnail({ name, category, genus }: { name: string; category: string; genus: string }) {
+  const imgState = useWikipediaImage(name, genus);
   const gradient = categoryBgColors?.[category] ?? "from-slate-800 to-slate-950";
   const emoji = categoryEmojis[category] ?? "🦎";
 
@@ -74,13 +74,13 @@ function CardThumbnail({ name, category }: { name: string; category: string }) {
   }
   return (
     <div className="w-14 h-14 rounded-lg overflow-hidden shrink-0 bg-slate-900">
-      <img src={imgState.url} alt={name} className="w-full h-full object-cover" />
+      <img src={imgState.url} onError={e => { if (imgState.originalUrl && e.currentTarget.src !== imgState.originalUrl) e.currentTarget.src = imgState.originalUrl; }} alt={name} className="w-full h-full object-cover" />
     </div>
   );
 }
 
-function AIHeroImage({ name, category }: { name: string; category: string }) {
-  const imgState = useWikipediaImage(name);
+function AIHeroImage({ name, category, genus }: { name: string; category: string; genus: string }) {
+  const imgState = useWikipediaImage(name, genus);
   const emoji = categoryEmojis[category] ?? "🦎";
   const gradient = categoryBgColors?.[category] ?? "from-slate-800 to-slate-950";
 
@@ -97,7 +97,7 @@ function AIHeroImage({ name, category }: { name: string; category: string }) {
       {imgState.status === "found" && (
         <ImageViewer image={imgState} name={name}>
           <button type="button" className="group/image relative h-full w-full cursor-zoom-in" aria-label={`View full image of ${name}`}>
-            <motion.img src={imgState.url} alt={name} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }} className="w-full h-full object-contain" />
+            <motion.img src={imgState.url} onError={e => { if (imgState.originalUrl && e.currentTarget.src !== imgState.originalUrl) e.currentTarget.src = imgState.originalUrl; }} alt={name} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }} className="w-full h-full object-contain" />
             <span className="absolute left-4 top-4 flex items-center gap-1.5 rounded-full bg-black/55 px-3 py-1.5 text-xs text-white opacity-100 md:opacity-0 md:group-hover/image:opacity-100 md:group-focus-visible/image:opacity-100 transition-opacity">
               <Maximize2 className="h-3.5 w-3.5" /> View full image
             </span>
@@ -127,6 +127,9 @@ export default function Browse() {
   const initialQuery = searchParams.get("q") || "";
 
   const [query, setQuery] = useState(initialQuery);
+  const queryRef = useRef(query);
+  queryRef.current = query;
+  const autoDiscovered = useRef(false);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(initialCategory);
   const [aiResult, setAiResult] = useState<AIResult | null>(null);
   const [savedId, setSavedId] = useState<string | null>(null);
@@ -134,16 +137,18 @@ export default function Browse() {
 
   const { mutate: lookupAI, isPending: isDiscovering, isError } = useAiCreatureLookup({
     mutation: {
-      onSuccess: (data) => {
+      onSuccess: (data, variables) => {
         const result = data as AIResult;
+        const isCurrentSearch = queryRef.current.trim() === variables.data.name;
 
-        if (!isValidCreatureResponse(result, query)) {
+        if (!isValidCreatureResponse(result, variables.data.name)) {
+          if (!isCurrentSearch) return;
           setInvalidResponse(true);
           setAiResult(null);
           return;
         }
 
-        setAiResult(result);
+        if (isCurrentSearch) setAiResult(result);
         const id = toSlug(result.name);
         const creature: Creature = {
           ...result,
@@ -151,7 +156,7 @@ export default function Browse() {
           mysteryLevel: result.mysteryLevel as 0 | 1 | 2 | 3,
         };
         importCreatures([creature], "merge");
-        setSavedId(id);
+        if (isCurrentSearch) setSavedId(id);
       },
       onError: () => {
         setAiResult(null);
@@ -166,7 +171,7 @@ export default function Browse() {
   });
 
   const hasQuery = query.trim().length > 1;
-  const showAISection = filteredCreatures.length === 0 && hasQuery && !selectedCategory;
+  const showAISection = (filteredCreatures.length === 0 || aiResult !== null) && hasQuery && !selectedCategory;
 
   const handleDiscover = () => {
     const term = query.trim();
@@ -180,6 +185,13 @@ export default function Browse() {
     setInvalidResponse(false);
     lookupAI({ data: { name: term } });
   };
+
+  useEffect(() => {
+    if (!autoDiscovered.current && searchParams.get("discover") === "1" && showAISection) {
+      autoDiscovered.current = true;
+      handleDiscover();
+    }
+  }, [showAISection]);
 
   const mysteryLabels: Record<number, string | null> = {
     0: null,
@@ -195,20 +207,11 @@ export default function Browse() {
 
         <div className="flex flex-col gap-6">
           <div className="relative max-w-md">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-            <Input
-              type="text"
-              placeholder="Search by name or genus..."
-              value={query}
-              onChange={(e) => {
-                setQuery(e.target.value);
-                setAiResult(null);
-                setSavedId(null);
-                setInvalidResponse(false);
-              }}
-              className="pl-10 text-lg py-6 rounded-xl border-border bg-card/5 focus-visible:ring-primary"
-              data-testid="input-search"
-            />
+            <CreatureSearch value={query} onChange={(value) => {
+              setQuery(value); setAiResult(null); setSavedId(null); setInvalidResponse(false);
+            }} onSearch={() => { if (showAISection && !isDiscovering) handleDiscover(); }}
+              placeholder="Search by name or genus..." testId="input-search"
+              className="text-lg py-6 rounded-xl border-border bg-card/5 focus-visible:ring-primary" />
           </div>
 
           <div className="flex flex-wrap gap-2">
@@ -250,7 +253,7 @@ export default function Browse() {
               <div className={`h-2 ${categoryColors[creature.category]}`} />
               <div className="p-6">
                 <div className="flex justify-between items-start mb-4">
-                  <CardThumbnail name={creature.name} category={creature.category} />
+                  <CardThumbnail name={creature.name} category={creature.category} genus={creature.genus} />
                   <Badge variant="secondary" className="bg-white/15 text-white/90 hover:bg-white/25 text-xs font-medium border-0">
                     {creature.era}
                   </Badge>
@@ -377,7 +380,7 @@ export default function Browse() {
                     ) : (
                       /* Full creature profile */
                       <>
-                        <AIHeroImage name={aiResult.name} category={aiResult.category} />
+                        <AIHeroImage name={aiResult.name} category={aiResult.category} genus={aiResult.genus} />
 
                         <div className="p-8 md:p-10 -mt-2">
                           <div className={`h-1 rounded-full mb-8 ${categoryColors[aiResult.category]?.split(" ")[0] ?? "bg-purple-700"}`} />

@@ -61,7 +61,7 @@ function CategoryPlaceholder({ category }: { category: string }) {
 /* ─── Hero image with name overlay ──────────────────────────── */
 
 function HeroImage({ creature }: { creature: Creature }) {
-  const imgState = useWikipediaImage(creature.name);
+  const imgState = useWikipediaImage(creature.name, creature.genus);
 
   return (
     <div className="relative w-full h-80 md:h-[26rem] overflow-hidden rounded-t-3xl bg-slate-950">
@@ -79,7 +79,7 @@ function HeroImage({ creature }: { creature: Creature }) {
           className="absolute inset-0 w-full h-full group/image cursor-zoom-in text-left"
           aria-label={`View full image of ${creature.name}`}
         >
-          <img src={imgState.url} alt={creature.name} className="w-full h-full object-cover object-center" />
+          <img src={imgState.url} onError={e => { if (imgState.originalUrl && e.currentTarget.src !== imgState.originalUrl) e.currentTarget.src = imgState.originalUrl; }} alt={creature.name} className="w-full h-full object-cover object-center" />
           <span className="absolute left-4 top-4 z-20 inline-flex items-center gap-1.5 rounded-full bg-black/45 px-3 py-1.5 text-xs font-medium text-white/85 opacity-100 md:opacity-0 md:group-hover/image:opacity-100 md:group-focus-visible/image:opacity-100 transition-opacity backdrop-blur-sm">
             <Maximize2 className="w-3.5 h-3.5" /> View full image
           </span>

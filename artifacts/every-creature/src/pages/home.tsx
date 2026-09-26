@@ -1,3 +1,4 @@
+import museumFossils from "@/assets/museum-fossils.png";
 import type { CSSProperties } from "react";
 import { Link, useLocation } from "wouter";
 import { Layout } from "@/components/layout";
@@ -57,8 +58,8 @@ export default function Home() {
               "radial-gradient(circle at 20% 10%, rgba(92,67,37,.18), transparent 30%), radial-gradient(circle at 80% 80%, rgba(92,67,37,.14), transparent 34%)"
           }}
         />
-        <div className="museum-orbit museum-orbit-left" aria-hidden="true" />
-        <div className="museum-orbit museum-orbit-right" aria-hidden="true" />
+        <div className="museum-fossil-backdrop museum-fossil-left" aria-hidden="true"><img src={museumFossils} alt="" /></div>
+        <div className="museum-fossil-backdrop museum-fossil-right" aria-hidden="true"><img src={museumFossils} alt="" /></div>
         <div className="relative flex flex-col items-center text-center">
           <div className="mb-3 text-[10px] md:text-xs font-semibold uppercase tracking-[0.38em] text-foreground/45">
             A Natural History Collection
@@ -71,7 +72,7 @@ export default function Home() {
             Discover remarkable life from across Earth's history — from living species to creatures known only from the fossil record.
           </p>
 
-          <div className="flex flex-wrap justify-center gap-3">
+          <div className="flex flex-wrap items-center justify-center gap-3">
             <Link
               href="/browse"
               className="inline-flex items-center justify-center rounded-full bg-foreground text-background h-11 px-7 text-sm font-semibold shadow-md transition-all hover:-translate-y-0.5 hover:shadow-lg"
@@ -80,12 +81,12 @@ export default function Home() {
             </Link>
             <Button
               variant="outline"
-              className="rounded-full h-11 px-7 bg-background/45 border-foreground/20 backdrop-blur-sm"
+              className="random-creature-button rounded-full min-h-14 h-auto px-7 py-3 text-base border-[#9b7b45]/40"
               onClick={handleRandom}
               data-testid="button-random-creature"
             >
-              <Dices className="mr-2 h-4 w-4" />
-              Random Creature
+              <span className="random-creature-icon mr-3 inline-flex h-9 w-9 items-center justify-center rounded-full"><Dices className="h-5 w-5" /></span>
+              <span className="text-left"><span className="block font-semibold">Random Creature</span><span className="block text-[9px] uppercase tracking-[.2em] font-normal opacity-60 mt-0.5">Let curiosity lead</span></span>
             </Button>
           </div>
         </div>

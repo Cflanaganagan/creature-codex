@@ -1,6 +1,6 @@
 import { Link } from "wouter";
-import { Search, Clock } from "lucide-react";
-import { Input } from "@/components/ui/input";
+import { Clock } from "lucide-react";
+import { CreatureSearch } from "@/components/creature-search";
 import codexLogo from "@/assets/creature-codex-logo.png";
 
 export function Layout({ children }: { children: React.ReactNode }) {
@@ -18,17 +18,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
           <div className="flex items-center gap-1 w-full sm:w-auto">
             <div className="w-full sm:w-72 relative mr-2">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <form action="/browse">
-                <Input
-                  aria-label="Search creatures"
-                  name="q"
-                  type="search"
-                  placeholder="Search creatures..."
-                  className="pl-10 w-full rounded-full bg-muted/50 border-transparent focus:bg-background transition-colors"
-                  data-testid="input-header-search"
-                />
-              </form>
+              <CreatureSearch />
             </div>
 
             <Link
