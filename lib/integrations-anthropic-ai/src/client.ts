@@ -1,18 +1,14 @@
 import Anthropic from "@anthropic-ai/sdk";
 
-if (!process.env.AI_INTEGRATIONS_ANTHROPIC_BASE_URL) {
-  throw new Error(
-    "AI_INTEGRATIONS_ANTHROPIC_BASE_URL must be set. Did you forget to provision the Anthropic AI integration?",
-  );
-}
+// Retain Replit integration support while allowing a standard key on other hosts.
+const apiKey = process.env.AI_INTEGRATIONS_ANTHROPIC_API_KEY || process.env.ANTHROPIC_API_KEY;
+export const anthropicConfigured = Boolean(apiKey);
 
-if (!process.env.AI_INTEGRATIONS_ANTHROPIC_API_KEY) {
-  throw new Error(
-    "AI_INTEGRATIONS_ANTHROPIC_API_KEY must be set. Did you forget to provision the Anthropic AI integration?",
-  );
-}
-
+// The collection can start without AI credentials; the lookup route explains
+// missing configuration instead of crashing the entire website at startup.
 export const anthropic = new Anthropic({
-  apiKey: process.env.AI_INTEGRATIONS_ANTHROPIC_API_KEY,
-  baseURL: process.env.AI_INTEGRATIONS_ANTHROPIC_BASE_URL,
+  apiKey: apiKey || "not-configured",
+  ...(process.env.AI_INTEGRATIONS_ANTHROPIC_BASE_URL
+    ? { baseURL: process.env.AI_INTEGRATIONS_ANTHROPIC_BASE_URL }
+    : {}),
 });

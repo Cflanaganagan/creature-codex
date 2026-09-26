@@ -14,6 +14,7 @@ const COLORS: Record<string, { bg: string; light: string; dark: string }> = {
   "Prehistoric Mammals":      { bg: "#b45309", light: "rgba(255,220,120,0.18)", dark: "rgba(0,0,0,0.28)" },
   "Living Animals":           { bg: "#15803d", light: "rgba(120,255,140,0.18)", dark: "rgba(0,0,0,0.28)" },
   "Recently Extinct":         { bg: "#9f1239", light: "rgba(255,120,140,0.18)", dark: "rgba(0,0,0,0.28)" },
+  "Amphibians":               { bg: "#047857", light: "rgba(140,255,200,0.18)", dark: "rgba(0,0,0,0.28)" },
   "Mystery Creatures":        { bg: "#581c87", light: "rgba(200,120,255,0.18)", dark: "rgba(0,0,0,0.28)" },
 };
 
@@ -251,6 +252,20 @@ function MysteryFace() {
   </>
 }
 
+function FrogFace() {
+  return <>
+    <ellipse cx="50" cy="58" rx="31" ry="25" fill="rgba(255,255,255,0.18)"/>
+    <circle cx="34" cy="38" r="13" fill="rgba(255,255,255,0.24)"/>
+    <circle cx="66" cy="38" r="13" fill="rgba(255,255,255,0.24)"/>
+    <circle cx="34" cy="38" r="6" fill="rgba(0,0,0,0.7)"/>
+    <circle cx="66" cy="38" r="6" fill="rgba(0,0,0,0.7)"/>
+    <circle cx="36" cy="36" r="2" fill="rgba(255,255,255,0.8)"/>
+    <circle cx="68" cy="36" r="2" fill="rgba(255,255,255,0.8)"/>
+    <path d="M37 63 Q50 72 63 63" stroke="rgba(255,255,255,0.55)" strokeWidth="2.5" fill="none" strokeLinecap="round"/>
+    <path d="M27 70 Q15 80 10 91 M73 70 Q85 80 90 91" stroke="rgba(255,255,255,0.35)" strokeWidth="7" fill="none" strokeLinecap="round"/>
+  </>;
+}
+
 const FACES: Record<string, () => React.ReactElement> = {
   "Theropods":                 TRexFace,
   "Sauropods":                 BrachiosaurusFace,
@@ -265,6 +280,7 @@ const FACES: Record<string, () => React.ReactElement> = {
   "Prehistoric Mammals":       SmiledonFace,
   "Living Animals":            LionFace,
   "Recently Extinct":          DodoFace,
+  "Amphibians":                FrogFace,
   "Mystery Creatures":         MysteryFace,
 };
 

@@ -164,65 +164,86 @@
   }
 }
 
-/* A museum spotlight, raised portrait, and glass-like glint for each exhibit. */
+/* Quiet parchment, brass rules, and softly illuminated museum plaques. */
+.museum-page {
+  background-image: radial-gradient(ellipse at 8% 15%, #bd9d6030, transparent 38%),
+    radial-gradient(ellipse at 95% 55%, #81977c12, transparent 40%);
+}
+.museum-header {
+  background: hsl(var(--background) / .94);
+  backdrop-filter: blur(18px);
+  border-color: #91734926;
+  box-shadow: 0 3px 20px #48351d05;
+}
+.museum-footer { background: #a58a5710; border-color: #91734926; }
+.museum-hero {
+  background-image: linear-gradient(135deg, #fffdf5b3, #efe3cb66);
+}
+.museum-hero::after {
+  content: "";
+  position: absolute;
+  inset: 9px;
+  border: 1px solid #a98c5326;
+  border-radius: 1.55rem;
+  pointer-events: none;
+}
+.museum-orbit {
+  position: absolute;
+  width: 23rem;
+  height: 23rem;
+  border-radius: 50%;
+  opacity: .32;
+  border: 1px solid #99794655;
+  background: repeating-radial-gradient(ellipse at center, transparent 0 27px, #99794626 28px 29px, transparent 30px 38px);
+  pointer-events: none;
+  mask-image: linear-gradient(to right, black, transparent);
+}
+.museum-orbit-left { top: -8rem; left: -13rem; transform: rotate(-25deg); }
+.museum-orbit-right { bottom: -12rem; right: -12rem; transform: rotate(155deg); }
+.skip-link { position: fixed; top: -6rem; left: 1rem; z-index: 100; padding: .75rem 1rem; background: hsl(var(--background)); border: 2px solid currentColor; border-radius: .5rem; }
+.skip-link:focus { top: 1rem; }
 .exhibit-tile {
   position: relative;
   isolation: isolate;
   overflow: hidden;
-  border: 1px solid transparent;
-  transition: transform 350ms ease, box-shadow 350ms ease, border-color 350ms ease;
+  border: 1px solid #22170d45;
+  background-image: radial-gradient(ellipse at 50% 20%, #ffffff12, transparent 70%), linear-gradient(160deg, transparent 30%, #00000038);
+  box-shadow: 0 3px 0 #30231326, 0 7px 18px #30231316, inset 0 1px 0 #ffffff40;
+  transition: transform 400ms ease, box-shadow 400ms ease, border-color 400ms ease;
 }
-
-.exhibit-tile::before,
-.exhibit-tile::after {
+.exhibit-tile::before, .exhibit-tile::after {
   content: "";
   position: absolute;
   inset: 0;
   pointer-events: none;
 }
-
 .exhibit-tile::before {
-  background: radial-gradient(ellipse at 50% 32%, #ffffff30, transparent 70%);
+  background: radial-gradient(ellipse at 50% 35%, #fff3ca30, transparent 70%);
   opacity: 0;
-  transition: opacity 350ms ease;
+  transition: opacity 400ms ease;
 }
-
 .exhibit-tile::after {
-  background: linear-gradient(115deg, transparent 30%, #ffffff24 48%, transparent 65%);
+  background: linear-gradient(115deg, transparent 35%, #fff9dc1f 48%, transparent 61%);
   transform: translateX(-140%);
-  transition: transform 650ms ease;
+  transition: transform 850ms ease;
 }
-
 .exhibit-tile:is(:hover, :focus-visible) {
-  transform: translateY(-6px);
-  border-color: #ffffff80;
-  box-shadow: 0 14px 32px -16px var(--exhibit-glow),
-              0 0 24px -10px var(--exhibit-glow), inset 0 0 0 1px #ffffff20;
+  transform: translateY(-5px);
+  border-color: #eedab2a6;
+  box-shadow: 0 4px 0 #30231326, 0 18px 32px -18px var(--exhibit-glow), 0 0 26px -13px var(--exhibit-glow), inset 0 0 0 1px #fff3d633;
 }
-
-.exhibit-tile:focus-visible {
-  outline: 3px solid var(--exhibit-glow);
-  outline-offset: 4px;
-}
-
+.exhibit-tile:focus-visible { outline: 3px solid var(--exhibit-glow); outline-offset: 4px; }
 .exhibit-tile:is(:hover, :focus-visible)::before { opacity: 1; }
 .exhibit-tile:is(:hover, :focus-visible)::after { transform: translateX(140%); }
-
-.exhibit-portrait {
-  mix-blend-mode: screen;
-  transition: transform 450ms cubic-bezier(.2,.8,.2,1);
-}
-.exhibit-tile:is(:hover, :focus-visible) .exhibit-portrait {
-  transform: translateY(-3px) scale(1.08) rotate(-2deg);
-}
-
+/* Blend the entire transformed portrait, so its black background stays invisible. */
+.exhibit-portrait { mix-blend-mode: screen; transition: transform 500ms cubic-bezier(.2,.8,.2,1); }
+.exhibit-tile:is(:hover, :focus-visible) .exhibit-portrait { transform: translateY(-3px) scale(1.04); }
+.exhibit-halo { background: var(--exhibit-glow); opacity: .15; transition: opacity 400ms ease; }
+.exhibit-tile:is(:hover, :focus-visible) .exhibit-halo { opacity: .5; }
+.photo-viewer > button:last-child { top: 1rem; right: 1rem; padding: .5rem; background: #ffffff12; border-radius: 50%; }
+.photo-viewer > button:last-child svg { width: 1.25rem; height: 1.25rem; }
 @media (prefers-reduced-motion: reduce) {
-  .exhibit-tile, .exhibit-tile::before, .exhibit-tile::after, .exhibit-portrait {
-    transition: none;
-  }
-  .exhibit-tile:is(:hover, :focus-visible),
-  .exhibit-tile:is(:hover, :focus-visible) .exhibit-portrait {
-    transform: none;
-  }
+  .exhibit-tile, .exhibit-tile::before, .exhibit-tile::after, .exhibit-portrait, .exhibit-halo { transition: none; }
+  .exhibit-tile:is(:hover, :focus-visible), .exhibit-tile:is(:hover, :focus-visible) .exhibit-portrait { transform: none; }
   .exhibit-tile::after { display: none; }
 }

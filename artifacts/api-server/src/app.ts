@@ -1,3 +1,5 @@
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import express, { type Express } from "express";
 import cors from "cors";
 import pinoHttp from "pino-http";
@@ -30,5 +32,15 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use("/api", router);
+
+// Serve the collection and API together on a single host in production.
+if (process.env.NODE_ENV === "production") {
+  const publicDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../every-creature/dist/public");
+  app.use(express.static(publicDir));
+  app.get("/{*path}", (req, res, next) => {
+    if (req.path === "/api" || req.path.startsWith("/api/")) return next();
+    res.sendFile(path.join(publicDir, "index.html"));
+  });
+}
 
 export default app;

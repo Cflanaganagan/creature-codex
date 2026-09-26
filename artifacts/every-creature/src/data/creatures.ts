@@ -43,6 +43,7 @@ export const categories = [
   "Reptiles",
   "Birds",
   "Aquatic",
+  "Amphibians",
   "Invertebrates",
   "Mystery Creatures",
 ];
@@ -52,6 +53,7 @@ export const categoryEmojis: Record<string, string> = {
   "Reptiles": "🦖",
   "Birds": "🦅",
   "Aquatic": "🦈",
+  "Amphibians": "🐸",
   "Invertebrates": "🦟",
   "Mystery Creatures": "❓",
 };
@@ -61,6 +63,7 @@ export const categoryColors: Record<string, string> = {
   "Reptiles":         "bg-green-800 text-white",
   "Birds":            "bg-sky-600 text-white",
   "Aquatic":          "bg-cyan-700 text-white",
+  "Amphibians":       "bg-emerald-700 text-white",
   "Invertebrates":    "bg-lime-600 text-white",
   "Mystery Creatures":"bg-purple-900 text-white",
 };
@@ -70,6 +73,7 @@ export const categoryBgColors: Record<string, string> = {
   "Reptiles":         "from-green-900/80 to-green-950",
   "Birds":            "from-sky-900/80 to-sky-950",
   "Aquatic":          "from-cyan-900/80 to-cyan-950",
+  "Amphibians":       "from-emerald-800/80 to-teal-950",
   "Invertebrates":    "from-lime-800/80 to-green-950",
   "Mystery Creatures":"from-purple-900/80 to-slate-950",
 };
@@ -79,6 +83,7 @@ export const categoryGlowColors: Record<string, string> = {
   "Reptiles":         "#166534",
   "Birds":            "#0284c7",
   "Aquatic":          "#0e7490",
+  "Amphibians":       "#047857",
   "Invertebrates":    "#65a30d",
   "Mystery Creatures":"#7e22ce",
 };

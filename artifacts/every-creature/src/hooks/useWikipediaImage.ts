@@ -2,13 +2,13 @@ import { useState, useEffect } from "react";
 
 type ImageState =
   | { status: "loading" }
-  | { status: "found"; url: string; pageUrl: string }
+  | { status: "found"; url: string; originalUrl?: string; pageUrl: string }
   | { status: "not-found" };
 
 const memCache = new Map<string, ImageState>();
 
 function cacheKey(name: string) {
-  return `wiki-img:${name.toLowerCase()}`;
+  return `wiki-img:v2:${name.toLowerCase()}`;
 }
 
 function readSession(name: string): ImageState | null {
@@ -60,10 +60,11 @@ export function useWikipediaImage(creatureName: string): ImageState {
         });
         if (!res.ok) throw new Error("not-found");
         const data = await res.json();
-        const src: string | undefined = data?.thumbnail?.source;
+        const src: string | undefined = data?.thumbnail?.source ?? data?.originalimage?.source;
+        const originalUrl: string | undefined = data?.originalimage?.source;
         const pageUrl: string = data?.content_urls?.desktop?.page ?? `https://en.wikipedia.org/wiki/${encoded}`;
         const result: ImageState = src
-          ? { status: "found", url: src, pageUrl }
+          ? { status: "found", url: src, originalUrl, pageUrl }
           : { status: "not-found" };
         if (!cancelled) {
           memCache.set(key, result);

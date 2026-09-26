@@ -1,10 +1,11 @@
+import { ImageViewer } from "@/components/image-viewer";
 import { useState } from "react";
 import { Layout } from "@/components/layout";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Search, Sparkles, AlertCircle, Clock, Utensils, Ruler, MapPin, ExternalLink, CheckCircle2 } from "lucide-react";
+import { Search, Sparkles, AlertCircle, Clock, Utensils, Ruler, MapPin, ExternalLink, CheckCircle2, Maximize2 } from "lucide-react";
 import { categories, categoryEmojis, categoryColors, categoryBgColors, type Creature } from "@/data/creatures";
 import { useCreatures } from "@/hooks/useCreatures";
 import { useAiCreatureLookup } from "@workspace/api-client-react";
@@ -94,14 +95,14 @@ function AIHeroImage({ name, category }: { name: string; category: string }) {
         </div>
       )}
       {imgState.status === "found" && (
-        <motion.img
-          src={imgState.url}
-          alt={name}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5 }}
-          className="w-full h-full object-contain"
-        />
+        <ImageViewer image={imgState} name={name}>
+          <button type="button" className="group/image relative h-full w-full cursor-zoom-in" aria-label={`View full image of ${name}`}>
+            <motion.img src={imgState.url} alt={name} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }} className="w-full h-full object-contain" />
+            <span className="absolute left-4 top-4 flex items-center gap-1.5 rounded-full bg-black/55 px-3 py-1.5 text-xs text-white opacity-100 md:opacity-0 md:group-hover/image:opacity-100 md:group-focus-visible/image:opacity-100 transition-opacity">
+              <Maximize2 className="h-3.5 w-3.5" /> View full image
+            </span>
+          </button>
+        </ImageViewer>
       )}
       <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-card via-card/50 to-transparent pointer-events-none" />
       {imgState.status === "found" && (
@@ -293,7 +294,7 @@ export default function Browse() {
                 </Button>
               </div>
 
-              {/* Loading state — dodo walking animation */}
+              {/* Loading state — natural-history archive animation */}
               <AnimatePresence>
                 {isDiscovering && (
                   <motion.div

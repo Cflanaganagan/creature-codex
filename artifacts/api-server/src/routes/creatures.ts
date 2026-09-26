@@ -1,5 +1,5 @@
 import { Router, type IRouter } from "express";
-import { anthropic } from "@workspace/integrations-anthropic-ai";
+import { anthropic, anthropicConfigured } from "@workspace/integrations-anthropic-ai";
 import { AiCreatureLookupBody } from "@workspace/api-zod";
 
 const router: IRouter = Router();
@@ -26,11 +26,17 @@ CRITICAL RULES:
 - Each fun fact must be a complete, interesting sentence of at least 10 words.
 - Do not leave any funFacts entries empty or as placeholders.
 - For mysteryLevel: 0 = well known, 1 = some gaps in knowledge, 2 = very little known, 3 = almost unknown.
-- For category use one of: Mammals, Reptiles, Birds, Aquatic, Invertebrates, Mystery Creatures.
+- CREATURE ENTRY BOUNDARY: Create entries for scientifically recognized species. A recognized subspecies or distinct fossil taxon may also receive its own entry when it is commonly treated as a meaningful taxonomic entity in reliable natural-history sources.
+- Do NOT create separate entries for domestic breeds, cultivars, color morphs, pet varieties, sexes, life stages, or informal variants. For example, Golden Retriever, Chihuahua, and German Shepherd should resolve to the domestic dog (Canis lupus familiaris / Canis familiaris as appropriate), not become separate creature entries.
+- If the user searches a breed or informal variant, return the parent species/taxon in the name/genus fields and describe the species, not the breed.
+- Common umbrella words such as frog, shark, or beetle may refer to many species. When the search clearly names a recognized species (for example a specific poison dart frog species), that species can have its own entry.
+- For extinct organisms, allow recognized genera or other established fossil taxa when a species-level assignment is uncertain or the creature is conventionally known by that taxon (for example Tyrannosaurus or Dimetrodon). Do not invent taxonomic precision.
+- For category use one of: Mammals, Reptiles, Birds, Aquatic, Amphibians, Invertebrates, Mystery Creatures.
 - Mammals: any warm-blooded furry creature, prehistoric or living (mammoths, wolves, whales that are biological mammals but not primarily water-dwellers, etc.)
 - Reptiles: all dinosaurs (theropods, sauropods, ceratopsians, armoured, hadrosaurs), pterosaurs, synapsids, prehistoric and living reptiles (crocodilians, lizards, snakes)
 - Birds: all birds prehistoric and living, including recently extinct birds (dodo, great auk, terror bird, archaeopteryx, passenger pigeon, etc.)
-- Aquatic: anything that lived primarily in water regardless of biological class (plesiosaurs, mosasaurs, prehistoric sharks, marine mammals like orca/sperm whale, sea cows, aquatic invertebrates, aquatic reptiles)
+- Aquatic: vertebrates and invertebrates that lived primarily in water, EXCEPT amphibians, which always belong in Amphibians (plesiosaurs, mosasaurs, prehistoric sharks, marine mammals like orca/sperm whale, sea cows, aquatic invertebrates, aquatic reptiles)
+- Amphibians: all living and extinct amphibians, including frogs, toads, salamanders, newts, caecilians, temnospondyls, and other scientifically recognized amphibian taxa.
 - Invertebrates: insects, arthropods, worms, molluscs, and all spineless creatures (prehistoric or living)
 - Mystery Creatures: creatures with very little fossil evidence, debated classification, or so bizarre they defy easy categorisation. Use for mysteryLevel 2 or 3 creatures.
 - For the regions field: list the continents or major world regions where this creature lived or where its fossils have been found. Use these values only: "North America", "South America", "Europe", "Africa", "Asia", "Australia", "Antarctica", "Worldwide". Include all that apply. For marine/aquatic creatures that roamed globally use ["Worldwide"].
@@ -69,6 +75,11 @@ router.post("/creatures/ai-lookup", async (req, res) => {
   const parsed = AiCreatureLookupBody.safeParse(req.body);
   if (!parsed.success) {
     res.status(400).json({ error: "Invalid request body", details: parsed.error.issues });
+    return;
+  }
+
+  if (!anthropicConfigured) {
+    res.status(503).json({ error: "AI lookup is not configured yet. The existing collection is still available." });
     return;
   }
 

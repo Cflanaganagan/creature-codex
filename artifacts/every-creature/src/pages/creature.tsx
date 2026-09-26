@@ -1,3 +1,4 @@
+import { ImageViewer } from "@/components/image-viewer";
 import { useRoute } from "wouter";
 import { Layout } from "@/components/layout";
 import {
@@ -10,7 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
-import { Info, Clock, MapPin, Utensils, Ruler, ExternalLink, Shuffle } from "lucide-react";
+import { Info, Clock, MapPin, Utensils, Ruler, ExternalLink, Shuffle, Maximize2 } from "lucide-react";
 import NotFound from "./not-found";
 import { motion } from "framer-motion";
 import { WorldMap } from "@/components/world-map";
@@ -69,14 +70,21 @@ function HeroImage({ creature }: { creature: Creature }) {
       {imgState.status === "not-found" && <CategoryPlaceholder category={creature.category} />}
 
       {imgState.status === "found" && (
-        <motion.img
-          src={imgState.url}
-          alt={creature.name}
+        <ImageViewer image={imgState} name={creature.name}>
+        <motion.button
+          type="button"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.7 }}
-          className="w-full h-full object-cover object-center"
-        />
+          className="absolute inset-0 w-full h-full group/image cursor-zoom-in text-left"
+          aria-label={`View full image of ${creature.name}`}
+        >
+          <img src={imgState.url} alt={creature.name} className="w-full h-full object-cover object-center" />
+          <span className="absolute left-4 top-4 z-20 inline-flex items-center gap-1.5 rounded-full bg-black/45 px-3 py-1.5 text-xs font-medium text-white/85 opacity-100 md:opacity-0 md:group-hover/image:opacity-100 md:group-focus-visible/image:opacity-100 transition-opacity backdrop-blur-sm">
+            <Maximize2 className="w-3.5 h-3.5" /> View full image
+          </span>
+        </motion.button>
+        </ImageViewer>
       )}
 
       {/* Deep fade: image dissolves into card background */}
@@ -86,7 +94,7 @@ function HeroImage({ creature }: { creature: Creature }) {
       <div className="absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-black/20 to-transparent pointer-events-none" />
 
       {/* Name / genus overlay */}
-      <div className="absolute bottom-0 left-0 right-0 px-8 md:px-12 pb-7">
+      <div className="pointer-events-none absolute bottom-0 left-0 right-0 px-8 md:px-12 pb-7">
         <div className="flex flex-wrap items-center gap-2 mb-3">
           <Badge
             variant="outline"

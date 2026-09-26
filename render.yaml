@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: creature-codex
+    runtime: node
+    plan: free
+    branch: updates-test
+    buildCommand: npx --yes pnpm@10.28.2 install --frozen-lockfile && npx --yes pnpm@10.28.2 run build:deploy
+    startCommand: node --enable-source-maps artifacts/api-server/dist/index.mjs
+    healthCheckPath: /api/healthz
+    envVars:
+      - key: NODE_VERSION
+        value: 22.16.0
+      - key: NODE_ENV
+        value: production
+      - key: BASE_PATH
+        value: /
