@@ -163,3 +163,66 @@
     @apply font-serif;
   }
 }
+
+/* A museum spotlight, raised portrait, and glass-like glint for each exhibit. */
+.exhibit-tile {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border: 1px solid transparent;
+  transition: transform 350ms ease, box-shadow 350ms ease, border-color 350ms ease;
+}
+
+.exhibit-tile::before,
+.exhibit-tile::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.exhibit-tile::before {
+  background: radial-gradient(ellipse at 50% 32%, #ffffff30, transparent 70%);
+  opacity: 0;
+  transition: opacity 350ms ease;
+}
+
+.exhibit-tile::after {
+  background: linear-gradient(115deg, transparent 30%, #ffffff24 48%, transparent 65%);
+  transform: translateX(-140%);
+  transition: transform 650ms ease;
+}
+
+.exhibit-tile:is(:hover, :focus-visible) {
+  transform: translateY(-6px);
+  border-color: #ffffff80;
+  box-shadow: 0 14px 32px -16px var(--exhibit-glow),
+              0 0 24px -10px var(--exhibit-glow), inset 0 0 0 1px #ffffff20;
+}
+
+.exhibit-tile:focus-visible {
+  outline: 3px solid var(--exhibit-glow);
+  outline-offset: 4px;
+}
+
+.exhibit-tile:is(:hover, :focus-visible)::before { opacity: 1; }
+.exhibit-tile:is(:hover, :focus-visible)::after { transform: translateX(140%); }
+
+.exhibit-portrait {
+  mix-blend-mode: screen;
+  transition: transform 450ms cubic-bezier(.2,.8,.2,1);
+}
+.exhibit-tile:is(:hover, :focus-visible) .exhibit-portrait {
+  transform: translateY(-3px) scale(1.08) rotate(-2deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .exhibit-tile, .exhibit-tile::before, .exhibit-tile::after, .exhibit-portrait {
+    transition: none;
+  }
+  .exhibit-tile:is(:hover, :focus-visible),
+  .exhibit-tile:is(:hover, :focus-visible) .exhibit-portrait {
+    transform: none;
+  }
+  .exhibit-tile::after { display: none; }
+}

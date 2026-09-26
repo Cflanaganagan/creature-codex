@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import { Link, useLocation } from "wouter";
 import { Layout } from "@/components/layout";
 import { Button } from "@/components/ui/button";
@@ -59,11 +60,12 @@ export default function Home() {
               <Link
                 href={`/browse?category=${encodeURIComponent(category)}`}
                 data-testid={`tile-category-${category}`}
-                className={`block h-full group rounded-xl overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-xl ${colorClass}`}
+                className={`exhibit-tile block h-full group rounded-xl ${colorClass}`}
+                style={{ "--exhibit-glow": categoryGlowColors[category] || "#a78bfa" } as CSSProperties}
               >
                 <div className="flex flex-col items-center gap-4 p-6 pb-5">
                   {/* Badge image (user-provided) or SVG diamond portrait fallback */}
-                  <div className="relative w-36 h-36 group-hover:scale-105 transition-transform duration-300">
+                  <div className="exhibit-portrait relative w-36 h-36">
                     {categoryBadges[category] ? (
                       <CategoryBadge
                         src={categoryBadges[category]}

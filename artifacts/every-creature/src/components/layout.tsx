@@ -1,30 +1,8 @@
-import { useState } from "react";
 import { Link } from "wouter";
-import { Search, Database, Download, CheckCircle, Clock } from "lucide-react";
+import { Search, Database, Clock } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { useCreatures } from "@/hooks/useCreatures";
-
-function downloadJson(data: unknown, filename: string) {
-  const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = filename;
-  a.click();
-  URL.revokeObjectURL(url);
-}
 
 export function Layout({ children }: { children: React.ReactNode }) {
-  const { creatures } = useCreatures();
-  const [justExported, setJustExported] = useState(false);
-
-  const handleExport = () => {
-    const date = new Date().toISOString().slice(0, 10);
-    downloadJson(creatures, `every-creature-${date}.json`);
-    setJustExported(true);
-    setTimeout(() => setJustExported(false), 2500);
-  };
-
   return (
     <div className="min-h-[100dvh] flex flex-col">
       <header className="border-b bg-background sticky top-0 z-10">
@@ -53,19 +31,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
                 />
               </form>
             </div>
-
-            <button
-              onClick={handleExport}
-              title="Export collection as JSON"
-              data-testid="button-header-export"
-              className="shrink-0 inline-flex items-center gap-1.5 text-sm font-medium px-3 py-2 rounded-full transition-colors hover:bg-muted/50 text-muted-foreground hover:text-foreground"
-            >
-              {justExported
-                ? <CheckCircle className="w-4 h-4 text-green-500" />
-                : <Download className="w-4 h-4" />
-              }
-              <span className="hidden sm:inline">{justExported ? "Saved" : "Export"}</span>
-            </button>
 
             <Link
               href="/timeline"
