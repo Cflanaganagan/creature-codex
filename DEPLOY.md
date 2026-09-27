@@ -39,3 +39,9 @@ Run the API with `DATABASE_URL` and, for live generation, the AI key in its envi
 ## Integration test
 
 `scripts/test-shared-collection.cjs` uses a dedicated PostgreSQL test database and a local Anthropic protocol stub. Set `TEST_DATABASE_URL`, build the app, then run `node scripts/test-shared-collection.cjs`. It verifies saving, separate clients, duplicate requests, alias reuse, invalid-response rejection, seed preservation, and restart persistence without making paid AI calls. The test database must have a name ending in `_test` and is emptied by the test.
+
+## AI model and spending setup
+
+Woolly uses `claude-haiku-4-5-20251001` for both initial discovery and its optional correction request. Standard Haiku 4.5 pricing is US$1 per million input tokens and US$5 per million output tokens. At an illustrative 1,500 input and 800 output tokens, 10,000 new entries cost about US$55 before retries and taxes. Actual usage must be measured after connecting the API.
+
+In the Claude Console, purchase prepaid API credits and set a US$20 monthly spend limit under Settings → Billing → Spend limits before public launch. Leave automatic credit reload disabled unless intentionally enabled. These account settings cannot be set by this repository: the existing daily discovery limit is not a monthly dollar cap.

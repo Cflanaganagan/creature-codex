@@ -48,7 +48,7 @@ CRITICAL RULES:
 
 async function callClaude(name: string): Promise<unknown> {
   const message = await anthropic.messages.create({
-    model: "claude-sonnet-4-6",
+    model: "claude-haiku-4-5-20251001",
     max_tokens: 1200,
     system: SYSTEM_PROMPT,
     messages: [{ role: "user", content: name }],
@@ -80,7 +80,7 @@ async function generateCreature(name: string): Promise<unknown> {
     if (!hasFiveFunFacts(creature)) {
       // Retry incomplete facts once before server-side validation.
       const retryMessage = await anthropic.messages.create({
-        model: "claude-sonnet-4-6",
+        model: "claude-haiku-4-5-20251001",
         max_tokens: 1200,
         system: SYSTEM_PROMPT,
         messages: [
