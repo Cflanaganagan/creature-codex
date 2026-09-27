@@ -18,8 +18,8 @@ export default function About() {
         <div className="museum-fossil-backdrop museum-fossil-left" aria-hidden="true"><img src={museumFossils} alt="" /></div>
         <div className="museum-fossil-backdrop museum-fossil-right" aria-hidden="true"><img src={museumFossils} alt="" /></div>
         <div className="relative">
-          <img src={codexLogo} alt="Every Creature mammoth emblem" className="mx-auto mb-6 h-24 w-24 rounded-2xl object-cover shadow-lg ring-1 ring-[#b99b63]/30" />
-          <p className="mb-4 text-[10px] font-semibold uppercase tracking-[.3em] text-muted-foreground">About Every Creature</p>
+          <img src={codexLogo} alt="Woolly mammoth emblem" className="mx-auto mb-6 h-24 w-24 rounded-2xl object-cover shadow-lg ring-1 ring-[#b99b63]/30" />
+          <p className="mb-4 text-[10px] font-semibold uppercase tracking-[.3em] text-muted-foreground">About Woolly</p>
           <h2 className="font-serif text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl">A world of life.<br /><span className="text-[#82653b]">Built by curiosity.</span></h2>
           <p className="mx-auto mt-6 max-w-xl text-lg leading-relaxed text-muted-foreground">For everyone who has ever seen a creature and wanted to know more.</p>
         </div>
@@ -29,8 +29,8 @@ export default function About() {
         <p className="mb-4 text-[10px] font-semibold uppercase tracking-[.25em] text-muted-foreground">Our idea</p>
         <h3 className="mb-6 font-serif text-3xl font-bold md:text-4xl">An archive as extraordinary<br className="hidden sm:block" /> as life itself.</h3>
         <div className="space-y-5 text-base leading-8 text-foreground/75 md:text-lg">
-          <p>Every Creature was created for animal lovers, fossil enthusiasts, and anyone fascinated by the living world. Our ambition is to build an enormous, ever-growing database of the creatures that have called Earth home—from familiar animals living alongside us to extraordinary life known only through fossils.</p>
-          <p>The idea is simple: your curiosity helps the collection grow. Search for a creature that is already here, and its card is ready to explore. When a valid creature is missing, AI helps create a new entry and saves it to the shared collection. The next person who searches for it can discover what you helped add.</p>
+          <p>Woolly was created for animal lovers, fossil enthusiasts, and anyone fascinated by the living world. Our ambition is to build an enormous, ever-growing database of the creatures that have called Earth home—from familiar animals living alongside us to extraordinary life known only through fossils.</p>
+          <p>The idea is simple: your curiosity helps the collection grow. Search for a creature that is already here, and its card is ready to explore. When a valid creature is missing, our AI naturalist, powered by an AI API, helps create a new entry and saves it to the shared collection. The next person who searches for it can discover what you helped add.</p>
           <p>Creature lovers around the world can help build the same archive, one question and one discovery at a time.</p>
         </div>
       </section>
@@ -38,7 +38,7 @@ export default function About() {
       <section aria-label="How the collection grows" className="grid gap-4 sm:grid-cols-3">
         {[
           { icon: Search, number: "01", title: "Follow a question", body: "Start with a favourite animal, an unfamiliar fossil, or a name you've never heard before." },
-          { icon: BookOpen, number: "02", title: "Make a discovery", body: "Explore an existing creature or help add a new, AI-assisted entry to the collection." },
+          { icon: BookOpen, number: "02", title: "Make a discovery", body: "Explore an existing creature or let our AI naturalist help add a new entry to the collection." },
           { icon: Globe2, number: "03", title: "Leave it for everyone", body: "New discoveries become part of the shared archive, ready for the next curious visitor." },
         ].map(({icon:Icon,number,title,body}) => <div key={number} className="rounded-2xl border border-[#a48a5c]/20 bg-[#f4ead2]/25 p-6 md:p-7">
           <div className="mb-7 flex items-center justify-between text-[#947446]"><Icon className="h-6 w-6" /><span className="font-serif text-sm opacity-60">{number}</span></div>

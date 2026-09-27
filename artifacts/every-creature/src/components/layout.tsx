@@ -11,9 +11,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <div className="container max-w-7xl mx-auto px-5 md:px-8 py-4 flex flex-col md:flex-row items-center justify-between gap-4">
           <Link href="/" className="group flex items-center gap-2 no-underline">
             <div className="w-11 h-11 relative flex items-center justify-center overflow-hidden rounded-xl shadow-sm group-hover:scale-105 transition-transform duration-300">
-              <img src={codexLogo} alt="Creature Codex home" className="w-full h-full object-cover" />
+              <img src={codexLogo} alt="Woolly home" className="w-full h-full object-cover" />
             </div>
-            <h1 className="text-3xl font-serif font-bold tracking-tight text-primary m-0">Every Creature</h1>
+            <h1 className="text-3xl font-serif font-bold tracking-tight text-primary m-0">Woolly</h1>
           </Link>
 
           <div className="flex items-center gap-1 w-full sm:w-auto">
