@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: creature-codex
+    name: woolly
     runtime: node
     plan: free
     branch: updates-test

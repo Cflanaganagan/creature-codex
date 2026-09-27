@@ -1,4 +1,4 @@
-# Publish Every Creature with a shared collection
+# Publish Woolly with a shared collection
 
 The `updates-test` branch includes a Render Blueprint for a Node web service serving both the website and API. A separate PostgreSQL database stores the worldwide collection.
 
@@ -10,6 +10,8 @@ The `updates-test` branch includes a Render Blueprint for a Node web service ser
 Keep both values in the hosting service's Environment settings, never in GitHub or frontend code.
 
 ## Publish on Render
+
+[Open Woolly’s prepared Render deployment](https://render.com/deploy?repo=https%3A%2F%2Fgithub.com%2FCflanaganagan%2Fcreature-codex%2Ftree%2Fupdates-test). This selects the correct repository and branch. The service requests the two server-side credentials below.
 
 1. Sign into Render with GitHub, choose **New → Blueprint**, select **Cflanaganagan/creature-codex**, and choose **updates-test** as the Blueprint branch.
 2. Supply `DATABASE_URL` and `ANTHROPIC_API_KEY` when requested, confirm the free web service, and deploy.
