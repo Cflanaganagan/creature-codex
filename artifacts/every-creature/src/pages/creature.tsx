@@ -20,7 +20,7 @@ import { WorldMap } from "@/components/world-map";
 
 function myaToSentence(mya: string): string {
   const lower = mya.toLowerCase().trim();
-  if (!lower || lower === "present" || lower === "extant") return "Living today";
+  if (/\b(present|extant|living today|ongoing)\b/.test(lower) || lower === "0") return "Living Today";
   if (lower.startsWith("extinct")) {
     const year = mya.replace(/extinct\s*/i, "").trim();
     return year ? `Extinct — last seen approximately ${year}` : "Recently extinct";
@@ -122,7 +122,7 @@ function HeroImage({ creature }: { creature: Creature }) {
           {creature.genus}
         </p>
         <p className="text-sm text-white/40 font-serif italic mt-1">
-          {myaToSentence(creature.mya)}
+          {creature.lifeStatus === "extant" ? "Living Today" : myaToSentence(creature.mya)}
         </p>
       </div>
 

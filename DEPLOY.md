@@ -45,3 +45,13 @@ Run the API with `DATABASE_URL` and, for live generation, the AI key in its envi
 Woolly uses `claude-haiku-4-5-20251001` for both initial discovery and its optional correction request. Standard Haiku 4.5 pricing is US$1 per million input tokens and US$5 per million output tokens. At an illustrative 1,500 input and 800 output tokens, 10,000 new entries cost about US$55 before retries and taxes. Actual usage must be measured after connecting the API.
 
 In the Claude Console, purchase prepaid API credits and set a US$20 monthly spend limit under Settings → Billing → Spend limits before public launch. Leave automatic credit reload disabled unless intentionally enabled. These account settings cannot be set by this repository: the existing daily discovery limit is not a monthly dollar cap.
+
+## Species validation (v2)
+
+New discoveries resolve a search into a high-confidence species, subspecies, or domestic form before generating prose. Families, genera (including new fossil-genus searches), broad names and uncertain names receive a clarification response without a new entry. Existing founding fossil entries remain available. Dog, cat and horse have explicit domestic defaults. Breeds resolve to their domestic species; the profile writer receives only the canonical identity, not the original query. Saved canonical species are reused before profile generation.
+
+Every new profile has an explicit `lifeStatus`. Living species are normalized server-side to `mya: Present` and `era: Modern`. Resolution usually adds one short Haiku call to a new search; the existing daily allowance counts discovery attempts, not individual model calls. Model-based resolution is not independent scientific verification.
+
+A one-time startup repair preserves original records in `creature_revision_backups`, fixes reviewed living-species dates and domestic dog/rabbit copy, relabels the existing fire salamander, and withdraws Felidae and the genus-wide Sea Horse entry without deleting their records. Those withdrawn entries are excluded from public counts and the sitemap. No public database editing endpoint is added.
+
+Run `node scripts/test-discovery-validation.cjs` with a dedicated `TEST_DATABASE_URL` ending in `_test` after building. Tests use a local provider stub and verify rejected searches, breed isolation, extant/extinct handling, concurrency, persistence and reversible legacy repairs. The original collection integration test remains available separately.

@@ -11,6 +11,7 @@ export type Creature = {
   category: string;
   era: string;
   mya: string;
+  lifeStatus?: "extant" | "extinct";
   diet: string;
   size: string;
   habitat: string;
@@ -28,6 +29,7 @@ export const creatureSchema: z.ZodType<Creature> = z.object({
   category: z.string().min(1, "category is required"),
   era: z.string().min(1, "era is required"),
   mya: z.string().min(1, "mya is required"),
+  lifeStatus: z.enum(["extant", "extinct"]).optional(),
   diet: z.string().min(1, "diet is required"),
   size: z.string().min(1, "size is required"),
   habitat: z.string().min(1, "habitat is required"),

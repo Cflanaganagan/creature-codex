@@ -48,7 +48,7 @@ paths:
       operationId: aiCreatureLookup
       tags: [creatures]
       summary: AI creature lookup
-      description: Returns a saved shared creature or generates, validates, and persistently saves a new entry.
+      description: Resolves a search to a specific species before generating and saving a profile. Broad or uncertain searches request clarification without creating an entry. Existing profiles are reused.
       requestBody:
         required: true
         content:
@@ -64,8 +64,26 @@ paths:
                 $ref: "#/components/schemas/AICreatureLookupResponse"
         "400":
           description: Bad request
-        "500":
-          description: Server error
+        "422":
+          description: Clarification required or generated profile failed validation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  code:
+                    type: string
+                    example: clarification_required
+                  suggestions:
+                    type: array
+                    items:
+                      type: string
+        "429":
+          description: Discovery allowance or request limit reached
+        "503":
+          description: Discovery temporarily unavailable
   /healthz:
     get:
       operationId: healthCheck
@@ -109,6 +127,14 @@ components:
     AICreatureLookupResponse:
       type: object
       properties:
+        lifeStatus:
+          type: string
+          enum: [extant, extinct]
+        scientificName:
+          type: string
+        taxonRank:
+          type: string
+          enum: [species, subspecies, domestic_form]
         name:
           type: string
         genus:

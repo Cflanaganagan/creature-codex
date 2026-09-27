@@ -135,7 +135,7 @@ export default function Browse() {
   const [savedId, setSavedId] = useState<string | null>(null);
   const [invalidResponse, setInvalidResponse] = useState(false);
 
-  const { mutate: lookupAI, isPending: isDiscovering, isError, error: discoveryError } = useAiCreatureLookup({
+  const { mutate: lookupAI, isPending: isDiscovering, isError, error: discoveryError, reset: resetDiscovery } = useAiCreatureLookup({
     mutation: {
       onSuccess: (data, variables) => {
         const result = data as AIResult;
@@ -165,6 +165,8 @@ export default function Browse() {
     },
   });
 
+  const discoveryDetails = (discoveryError as {data?: {code?: string; error?: string; suggestions?: string[]}} | null)?.data;
+  const needsClarification = discoveryDetails?.code === "clarification_required";
   const filteredCreatures = creatures.filter((c) => {
     const matchesQuery = c.name.toLowerCase().includes(query.toLowerCase()) || c.genus.toLowerCase().includes(query.toLowerCase());
     const matchesCategory = selectedCategory ? c.category === selectedCategory : true;
@@ -209,7 +211,7 @@ export default function Browse() {
         <div className="flex flex-col gap-6">
           <div className="relative max-w-md">
             <CreatureSearch value={query} onChange={(value) => {
-              setQuery(value); setAiResult(null); setSavedId(null); setInvalidResponse(false);
+              setQuery(value); setAiResult(null); setSavedId(null); setInvalidResponse(false); resetDiscovery();
             }} onSearch={() => { if (showAISection && !isDiscovering) handleDiscover(); }}
               placeholder="Search by name or genus..." testId="input-search"
               className="text-lg py-6 rounded-xl border-border bg-card/5 focus-visible:ring-primary" />
@@ -317,10 +319,14 @@ export default function Browse() {
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  className="flex items-center gap-3 p-4 rounded-xl bg-destructive/10 border border-destructive/30 text-destructive"
+                  className={`flex items-center gap-3 p-4 rounded-xl border ${needsClarification ? "bg-amber-50/60 border-amber-800/20 text-foreground" : "bg-destructive/10 border-destructive/30 text-destructive"}`}
                 >
                   <AlertCircle className="w-5 h-5 shrink-0" />
-                  <p>{discoveryError instanceof Error ? discoveryError.message : "Could not reach the AI naturalist. Please try again."}</p>
+                  <div>
+                    <h3 className="font-serif text-lg font-semibold">{needsClarification ? "Which creature did you mean?" : "Discovery unavailable"}</h3>
+                    <p>{discoveryDetails?.error || "Could not reach the AI naturalist. Please try again."}</p>
+                    {needsClarification && <p className="mt-2 text-sm">No creature was added. Try a specific name{(discoveryDetails?.suggestions || []).length > 0 ? `, such as ${discoveryDetails!.suggestions!.join(" or ")}` : " or a scientific species name"}.</p>}
+                  </div>
                 </motion.div>
               )}
 

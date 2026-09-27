@@ -11,22 +11,22 @@ if(!databaseUrl || !new URL(databaseUrl).pathname.endsWith('_test')) throw new E
 const pool=new Pool({connectionString:databaseUrl});
 const apiPort=5128, stubPort=5127;let server, providerCalls=0;
 const fixture={name:'Koala',scientificName:'Phascolarctos cinereus',genus:'Phascolarctos',category:'Mammals',era:'Present',mya:'Present',diet:'Herbivore',size:'60–85 cm',habitat:'Australian eucalyptus forests',description:'The koala is an arboreal marsupial native to eastern and southern Australia.',funFacts:Array(5).fill('Koalas are marsupials that spend much of their time resting in eucalyptus trees.'),family:[{name:'Wombats',living:true}],mysteryLevel:0,regions:['Australia']};
-const stub=http.createServer(async(req,res)=>{let body='';for await(const chunk of req)body+=chunk;const payload=JSON.parse(body);providerCalls++;const name=payload.messages[0].content;const creature=/dragon/i.test(name)?{...fixture,name:'Dragon',genus:'Unknown',description:'A fictional creature that does not exist.'}:fixture;await new Promise(r=>setTimeout(r,150));res.writeHead(200,{'content-type':'application/json'});res.end(JSON.stringify({id:'msg_test',type:'message',role:'assistant',content:[{type:'text',text:JSON.stringify(creature)}],model:'claude-haiku-4-5-20251001',stop_reason:'end_turn',usage:{input_tokens:1,output_tokens:1}}));});
+const stub=http.createServer(async(req,res)=>{let body='';for await(const chunk of req)body+=chunk;const payload=JSON.parse(body);providerCalls++;const input=JSON.parse(payload.messages[0].content);const name=input.search||input.name;const creature=input.search?(/dragon/i.test(name)?{status:'clarification_required',message:'Enter a recognized species.',suggestions:[]}:{status:'resolved',name:'Koala',scientificName:'Phascolarctos cinereus',genus:'Phascolarctos',rank:'species',lifeStatus:'extant',confidence:'high'}):/dragon/i.test(name)?{...fixture,name:'Dragon',genus:'Unknown',description:'A fictional creature that does not exist.'}:fixture;await new Promise(r=>setTimeout(r,150));res.writeHead(200,{'content-type':'application/json'});res.end(JSON.stringify({id:'msg_test',type:'message',role:'assistant',content:[{type:'text',text:JSON.stringify(creature)}],model:'claude-haiku-4-5-20251001',stop_reason:'end_turn',usage:{input_tokens:1,output_tokens:1}}));});
 async function start(){server=spawn(process.execPath,['artifacts/api-server/dist/index.mjs'],{cwd:root,env:{...process.env,NODE_ENV:'production',PORT:String(apiPort),DATABASE_URL:databaseUrl,AI_INTEGRATIONS_ANTHROPIC_BASE_URL:`http://127.0.0.1:${stubPort}`,AI_INTEGRATIONS_ANTHROPIC_API_KEY:'local-test-only',DISCOVERY_DAILY_LIMIT:'20'},stdio:['ignore','ignore','pipe']});let logs='';server.stderr.on('data',d=>logs+=d);for(let i=0;i<100;i++){try{const r=await fetch(`http://127.0.0.1:${apiPort}/api/healthz`);if(r.ok)return;}catch{}if(server.exitCode!==null)throw new Error(logs);await new Promise(r=>setTimeout(r,100));}throw new Error('Test API failed to start: '+logs);}
 async function stop(){if(server && server.exitCode===null){const closed=new Promise(r=>server.once('exit',r));server.kill('SIGTERM');await closed;}}
 const get=async()=>{const r=await fetch(`http://127.0.0.1:${apiPort}/api/creatures`);assert.equal(r.status,200);return r.json()};
 const lookup=async name=>{const r=await fetch(`http://127.0.0.1:${apiPort}/api/creatures/ai-lookup`,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({name})});return {status:r.status,data:await r.json()};};
 (async()=>{
- await pool.query('DROP TABLE IF EXISTS creature_aliases, creature_collection, creature_discovery_usage');
+ await pool.query('DROP TABLE IF EXISTS creature_revision_backups, creature_aliases, creature_collection, creature_discovery_usage');
  await new Promise(r=>stub.listen(stubPort,'127.0.0.1',r));await start();
  assert.equal((await get()).total,100);assert.equal((await get()).mode,'shared');
  assert.equal((await lookup('Dodo')).status,200);assert.equal(providerCalls,0);
  const results=await Promise.all(Array.from({length:10},()=>lookup('Koala')));
- assert.ok(results.every(r=>r.status===200&&r.data.id==='koala'));assert.equal(providerCalls,1);assert.equal((await get()).total,101);
- assert.equal((await lookup('KOALA')).data.id,'koala');assert.equal((await lookup('Phascolarctos cinereus')).data.id,'koala');assert.equal(providerCalls,1);
- assert.equal((await lookup('Australian koala')).data.id,'koala');assert.equal(providerCalls,2);assert.equal((await get()).total,101);
+ assert.ok(results.every(r=>r.status===200&&r.data.id==='koala'));assert.equal(providerCalls,2);assert.equal((await get()).total,101);
+ assert.equal((await lookup('KOALA')).data.id,'koala');assert.equal((await lookup('Phascolarctos cinereus')).data.id,'koala');assert.equal(providerCalls,2);
+ assert.equal((await lookup('Australian koala')).data.id,'koala');assert.equal(providerCalls,3);assert.equal((await get()).total,101);
  assert.equal((await lookup('Dragon')).status,422);assert.equal((await get()).total,101);
- await stop();await start();assert.equal((await get()).total,101);assert.equal((await lookup('Koala')).data.id,'koala');assert.equal(providerCalls,3);
+ await stop();await start();assert.equal((await get()).total,101);assert.equal((await lookup('Koala')).data.id,'koala');assert.equal(providerCalls,4);
  if(process.env.PLAYWRIGHT_MODULE){
   await pool.query("DELETE FROM creature_aliases WHERE creature_id='koala'");
   await pool.query("DELETE FROM creature_collection WHERE id='koala'");
@@ -37,7 +37,7 @@ const lookup=async name=>{const r=await fetch(`http://127.0.0.1:${apiPort}/api/c
   await a.getByTestId('input-header-search').fill('Koala');await a.getByTestId('input-header-search').press('Enter');await a.getByTestId('card-creature-koala').waitFor();
   await b.reload();await b.getByTestId('collection-counter').filter({hasText:'101'}).waitFor();
   await a.getByTestId('input-header-search').fill('koa');await a.getByRole('option').filter({hasText:'Koala'}).click();await a.waitForURL('**/creature/koala');
-  await b.goto(`http://127.0.0.1:${apiPort}/creature/koala`);await b.getByTestId('text-creature-name').filter({hasText:'Koala'}).waitFor();assert.equal(providerCalls,4);
+  await b.goto(`http://127.0.0.1:${apiPort}/creature/koala`);await b.getByTestId('text-creature-name').filter({hasText:'Koala'}).waitFor();assert.equal(providerCalls,6);
   await b.getByTestId('link-about').click();await b.getByText('Built by curiosity.',{exact:true}).waitFor();assert.equal(await b.getByTestId('about-counter').textContent(),'101');
   await browser.close();
  }
