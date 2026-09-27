@@ -8,6 +8,8 @@ export const anthropicConfigured = Boolean(apiKey);
 // missing configuration instead of crashing the entire website at startup.
 export const anthropic = new Anthropic({
   apiKey: apiKey || "not-configured",
+  timeout: 45000,
+  maxRetries: 0,
   ...(process.env.AI_INTEGRATIONS_ANTHROPIC_BASE_URL
     ? { baseURL: process.env.AI_INTEGRATIONS_ANTHROPIC_BASE_URL }
     : {}),

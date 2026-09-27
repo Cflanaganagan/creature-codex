@@ -146,9 +146,10 @@ function HeroImage({ creature }: { creature: Creature }) {
 
 export default function CreatureDetail() {
   const [, params] = useRoute("/creature/:id");
-  const { creatures } = useCreatures();
+  const { creatures, collectionStatus } = useCreatures();
   const creature = creatures.find((c) => c.id === params?.id);
 
+  if (!creature && collectionStatus === "loading") return <Layout><div role="status" className="py-24 text-center text-muted-foreground">Opening the shared archive…</div></Layout>;
   if (!creature) return <NotFound />;
 
   const glowColor = categoryGlowColors[creature.category];

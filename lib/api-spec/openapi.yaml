@@ -13,12 +13,42 @@ tags:
   - name: creatures
     description: Creature operations
 paths:
+  /creatures:
+    get:
+      operationId: listCreatures
+      tags: [creatures]
+      summary: Read the shared creature collection
+      responses:
+        "200":
+          description: Shared collection, count, and connection mode
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [mode, total, creatures]
+                properties:
+                  mode:
+                    type: string
+                    enum: [shared, preview]
+                  total:
+                    type: integer
+                  creatures:
+                    type: array
+                    items:
+                      allOf:
+                        - $ref: "#/components/schemas/AICreatureLookupResponse"
+                        - type: object
+                          properties:
+                            id:
+                              type: string
+        "503":
+          description: Shared database temporarily unavailable
   /creatures/ai-lookup:
     post:
       operationId: aiCreatureLookup
       tags: [creatures]
       summary: AI creature lookup
-      description: Looks up a creature by name using AI if not found in local database
+      description: Returns a saved shared creature or generates, validates, and persistently saves a new entry.
       requestBody:
         required: true
         content:

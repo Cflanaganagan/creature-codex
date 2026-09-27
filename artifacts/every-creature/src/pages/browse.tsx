@@ -14,7 +14,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Separator } from "@/components/ui/separator";
 import { DodoLoader } from "@/components/dodo-loader";
 
-type AIResult = Omit<Creature, "id"> & { isUnknown?: boolean };
+type AIResult = Omit<Creature, "id"> & { id?: string; isUnknown?: boolean };
 
 function toSlug(name: string) {
   return name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
@@ -121,7 +121,7 @@ function AIHeroImage({ name, category, genus }: { name: string; category: string
 }
 
 export default function Browse() {
-  const { creatures, importCreatures } = useCreatures();
+  const { creatures, acceptDiscoveredCreature, collectionStatus } = useCreatures();
   const searchParams = new URLSearchParams(window.location.search);
   const initialCategory = searchParams.get("category") || null;
   const initialQuery = searchParams.get("q") || "";
@@ -135,7 +135,7 @@ export default function Browse() {
   const [savedId, setSavedId] = useState<string | null>(null);
   const [invalidResponse, setInvalidResponse] = useState(false);
 
-  const { mutate: lookupAI, isPending: isDiscovering, isError } = useAiCreatureLookup({
+  const { mutate: lookupAI, isPending: isDiscovering, isError, error: discoveryError } = useAiCreatureLookup({
     mutation: {
       onSuccess: (data, variables) => {
         const result = data as AIResult;
@@ -149,16 +149,17 @@ export default function Browse() {
         }
 
         if (isCurrentSearch) setAiResult(result);
-        const id = toSlug(result.name);
+        const id = result.id || toSlug(result.name);
         const creature: Creature = {
           ...result,
           id,
           mysteryLevel: result.mysteryLevel as 0 | 1 | 2 | 3,
         };
-        importCreatures([creature], "merge");
+        acceptDiscoveredCreature(creature);
         if (isCurrentSearch) setSavedId(id);
       },
-      onError: () => {
+      onError: (_error, variables) => {
+        if (queryRef.current.trim() !== variables.data.name) return;
         setAiResult(null);
       },
     },
@@ -187,11 +188,11 @@ export default function Browse() {
   };
 
   useEffect(() => {
-    if (!autoDiscovered.current && searchParams.get("discover") === "1" && showAISection) {
+    if (!autoDiscovered.current && searchParams.get("discover") === "1" && collectionStatus !== "loading" && showAISection) {
       autoDiscovered.current = true;
       handleDiscover();
     }
-  }, [showAISection]);
+  }, [showAISection, collectionStatus]);
 
   const mysteryLabels: Record<number, string | null> = {
     0: null,
@@ -319,7 +320,7 @@ export default function Browse() {
                   className="flex items-center gap-3 p-4 rounded-xl bg-destructive/10 border border-destructive/30 text-destructive"
                 >
                   <AlertCircle className="w-5 h-5 shrink-0" />
-                  <p>Could not reach the AI naturalist. Please try again.</p>
+                  <p>{discoveryError instanceof Error ? discoveryError.message : "Could not reach the AI naturalist. Please try again."}</p>
                 </motion.div>
               )}
 

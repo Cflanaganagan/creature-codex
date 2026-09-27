@@ -13,7 +13,7 @@ import { CategoryBadge } from "@/components/category-badge";
 
 export default function Home() {
   const [, setLocation] = useLocation();
-  const { creatures } = useCreatures();
+  const { creatures, sharedCount, collectionStatus } = useCreatures();
   const reducedMotion = useReducedMotion();
 
   const handleRandom = () => {
@@ -63,10 +63,11 @@ export default function Home() {
           </div>
         </div>
         <div className="museum-collection-note relative mt-8 flex flex-wrap justify-center gap-x-5 gap-y-2 text-[10px] uppercase tracking-[.2em] text-foreground/50">
-          <span>{creatures.length} creatures catalogued</span><span aria-hidden="true">✦</span><span>{categories.length} exhibition halls</span><span aria-hidden="true">✦</span><span>A world of discovery</span>
+          <span data-testid="collection-counter">{sharedCount.toLocaleString()} creatures catalogued</span><span aria-hidden="true">✦</span><span>{categories.length} exhibition halls</span><span aria-hidden="true">✦</span><span>A world of discovery</span>
         </div>
       </section>
 
+      {collectionStatus === "offline" && <p className="mb-6 text-sm text-muted-foreground" role="status">Showing the last available collection. Reconnecting to the shared archive…</p>}
       <div className="flex flex-wrap items-end justify-between gap-4 mb-7">
         <div>
           <div className="text-[10px] uppercase tracking-[0.32em] font-semibold text-foreground/40 mb-1">

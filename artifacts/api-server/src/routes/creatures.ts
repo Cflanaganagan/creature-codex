@@ -1,3 +1,4 @@
+import { readCollection, discoverCreature, CollectionError } from "@workspace/db";
 import { Router, type IRouter } from "express";
 import { anthropic, anthropicConfigured } from "@workspace/integrations-anthropic-ai";
 import { AiCreatureLookupBody } from "@workspace/api-zod";
@@ -8,6 +9,7 @@ const SYSTEM_PROMPT = `You are a natural history expert. When given a creature n
 {
   "name": "",
   "genus": "",
+  "scientificName": "",
   "category": "",
   "era": "",
   "mya": "",
@@ -41,6 +43,7 @@ CRITICAL RULES:
 - Mystery Creatures: creatures with very little fossil evidence, debated classification, or so bizarre they defy easy categorisation. Use for mysteryLevel 2 or 3 creatures.
 - For the regions field: list the continents or major world regions where this creature lived or where its fossils have been found. Use these values only: "North America", "South America", "Europe", "Africa", "Asia", "Australia", "Antarctica", "Worldwide". Include all that apply. For marine/aquatic creatures that roamed globally use ["Worldwide"].
 - If the search term is not a real creature or is fictional, return a mysteryLevel 3 entry with category "Mystery Creatures", genus "Unknown", and still include exactly 5 funFacts explaining what is unknown. Set regions to [].
+- Set scientificName to the accepted Latin species name when known, or the recognized fossil taxon. Use the same canonical name for synonyms and breeds, so each taxon has one shared entry.
 - Respond with ONLY the JSON. No markdown, no code blocks, no explanation.`;
 
 async function callClaude(name: string): Promise<unknown> {
@@ -71,25 +74,11 @@ function hasFiveFunFacts(data: unknown): boolean {
     d.funFacts.every((f) => typeof f === "string" && f.trim().length > 5);
 }
 
-router.post("/creatures/ai-lookup", async (req, res) => {
-  const parsed = AiCreatureLookupBody.safeParse(req.body);
-  if (!parsed.success) {
-    res.status(400).json({ error: "Invalid request body", details: parsed.error.issues });
-    return;
-  }
-
-  if (!anthropicConfigured) {
-    res.status(503).json({ error: "AI lookup is not configured yet. The existing collection is still available." });
-    return;
-  }
-
-  const { name } = parsed.data;
-
-  try {
+async function generateCreature(name: string): Promise<unknown> {
     let creature = await callClaude(name);
 
     if (!hasFiveFunFacts(creature)) {
-      req.log.warn({ name }, "Fun facts missing or incomplete — retrying");
+      // Retry incomplete facts once before server-side validation.
       const retryMessage = await anthropic.messages.create({
         model: "claude-sonnet-4-6",
         max_tokens: 1200,
@@ -112,10 +101,34 @@ router.post("/creatures/ai-lookup", async (req, res) => {
       }
     }
 
+    return creature;
+}
+
+router.get("/creatures", async (_req, res) => {
+  try { res.setHeader("Cache-Control", "no-store"); res.json(await readCollection()); }
+  catch(error) { res.status(503).json({error:"The shared collection is temporarily unavailable. Please try again shortly."}); }
+});
+
+const recentRequests = new Map<string, { count: number; until: number }>();
+router.post("/creatures/ai-lookup", async (req, res) => {
+  const parsed = AiCreatureLookupBody.safeParse(req.body);
+  if (!parsed.success || !parsed.data.name.trim() || parsed.data.name.trim().length > 160) {
+    res.status(400).json({ error: "Enter a creature name of up to 160 characters." }); return;
+  }
+  const now = Date.now();
+  for (const [key, value] of recentRequests) if (value.until < now) recentRequests.delete(key);
+  const ip = req.ip || "unknown";
+  const usage = recentRequests.get(ip) || { count: 0, until: now + 600000 };
+  if (usage.count >= 20) { res.status(429).json({error:"Please wait a few minutes before making more discovery requests."}); return; }
+  usage.count++; recentRequests.set(ip, usage);
+  try {
+    const name = parsed.data.name.trim();
+    const creature = await discoverCreature(name, () => generateCreature(name), anthropicConfigured);
     res.json(creature);
-  } catch (err) {
-    req.log.error({ err }, "AI creature lookup failed");
-    res.status(500).json({ error: "AI lookup failed" });
+  } catch (error) {
+    if (error instanceof CollectionError) { res.status(error.status).json({error:error.message}); return; }
+    req.log.error({err:error}, "Creature discovery failed");
+    res.status(503).json({error:"We couldn't complete that discovery right now. Please try again shortly."});
   }
 });
 

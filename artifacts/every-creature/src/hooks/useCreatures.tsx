@@ -1,7 +1,8 @@
-import { createContext, useContext, useState, useCallback, type ReactNode } from "react";
+import { createContext, useContext, useState, useCallback, useEffect, useMemo, useRef, type ReactNode } from "react";
 import { creatures as defaultCreatures, type Creature } from "@/data/creatures";
 
 const STORAGE_KEY = "every-creature-db";
+const SHARED_CACHE_KEY = "every-creature-shared-cache";
 
 const CATEGORY_MIGRATION: Record<string, string> = {
   "Theropods":               "Reptiles",
@@ -77,49 +78,79 @@ function saveToStorage(data: Creature[]) {
 
 type ImportMode = "replace" | "merge";
 
+type CollectionStatus = "loading" | "shared" | "preview" | "offline";
 type CreaturesContextValue = {
   creatures: Creature[];
   isCustom: boolean;
+  collectionStatus: CollectionStatus;
+  sharedCount: number;
+  refreshCollection: () => Promise<void>;
+  acceptDiscoveredCreature: (creature: Creature) => void;
   importCreatures: (incoming: Creature[], mode: ImportMode) => void;
   resetToDefaults: () => void;
 };
-
 const CreaturesContext = createContext<CreaturesContextValue | null>(null);
+function readSharedCache(): Creature[] {
+  try { const cached = JSON.parse(localStorage.getItem(SHARED_CACHE_KEY) || "null"); if (Array.isArray(cached) && cached.length) return cached; } catch { /* optional cache */ }
+  return defaultCreatures;
+}
 
 export function CreaturesProvider({ children }: { children: ReactNode }) {
-  const [creatures, setCreatures] = useState<Creature[]>(() => {
-    return loadFromStorage() ?? defaultCreatures;
-  });
-
-  const [isCustom, setIsCustom] = useState<boolean>(() => {
-    return loadFromStorage() !== null;
-  });
-
-  const importCreatures = useCallback((incoming: Creature[], mode: ImportMode) => {
-    let next: Creature[];
-    if (mode === "replace") {
-      next = incoming;
-    } else {
-      const existingIds = new Set(creatures.map((c) => c.id));
-      const newOnes = incoming.filter((c) => !existingIds.has(c.id));
-      next = [...creatures, ...newOnes];
-    }
-    saveToStorage(next);
-    setCreatures(next);
-    setIsCustom(true);
-  }, [creatures]);
-
-  const resetToDefaults = useCallback(() => {
-    localStorage.removeItem(STORAGE_KEY);
-    setCreatures(defaultCreatures);
-    setIsCustom(false);
+  const [shared, setShared] = useState<Creature[]>(readSharedCache);
+  // Preserve old browser discoveries and imports without publishing unvalidated JSON.
+  const [personal, setPersonal] = useState<Creature[]>(() => loadFromStorage() || []);
+  const [collectionStatus, setCollectionStatus] = useState<CollectionStatus>("loading");
+  const inFlight = useRef(false);
+  const revision = useRef(0);
+  const refreshCollection = useCallback(async () => {
+    if (inFlight.current) return;
+    inFlight.current = true;
+    const startedAt = revision.current;
+    try {
+      const response = await fetch("/api/creatures", { signal: AbortSignal.timeout(12000) });
+      if (!response.ok) throw new Error("Collection unavailable");
+      const data = await response.json();
+      if (!Array.isArray(data.creatures) || !["shared", "preview"].includes(data.mode)) throw new Error("Invalid collection");
+      // A discovery that completes during this fetch must not be replaced by an older snapshot.
+      if (revision.current === startedAt) {
+        setShared(data.creatures);
+        if (data.mode === "shared") try { localStorage.setItem(SHARED_CACHE_KEY, JSON.stringify(data.creatures)); } catch { /* optional cache */ }
+      }
+      setCollectionStatus(data.mode);
+    } catch { setCollectionStatus("offline"); }
+    finally { inFlight.current = false; }
   }, []);
-
-  return (
-    <CreaturesContext.Provider value={{ creatures, isCustom, importCreatures, resetToDefaults }}>
-      {children}
-    </CreaturesContext.Provider>
-  );
+  useEffect(() => {
+    void refreshCollection();
+    const refreshWhenVisible = () => { if (document.visibilityState === "visible") void refreshCollection(); };
+    const interval = window.setInterval(refreshWhenVisible, 15000);
+    window.addEventListener("focus", refreshWhenVisible);
+    window.addEventListener("online", refreshWhenVisible);
+    return () => { clearInterval(interval); window.removeEventListener("focus", refreshWhenVisible); window.removeEventListener("online", refreshWhenVisible); };
+  }, [refreshCollection]);
+  const creatures = useMemo(() => {
+    const ids = new Set(shared.map(c=>c.id));
+    return [...shared, ...personal.filter(c=>!ids.has(c.id))];
+  }, [shared, personal]);
+  const acceptDiscoveredCreature = useCallback((creature: Creature) => {
+    revision.current++;
+    setShared(current => {
+      const next = current.some(c=>c.id===creature.id) ? current : [...current, creature];
+      try { localStorage.setItem(SHARED_CACHE_KEY, JSON.stringify(next)); } catch { /* optional cache */ }
+      return next;
+    });
+    setCollectionStatus("shared");
+    void refreshCollection();
+  }, [refreshCollection]);
+  const importCreatures = useCallback((incoming: Creature[], mode: ImportMode) => {
+    setPersonal(current => {
+      const existingIds = new Set(current.map(c=>c.id));
+      const next = mode === "replace" ? incoming : [...current,...incoming.filter(c=>!existingIds.has(c.id))];
+      saveToStorage(next); return next;
+    });
+  }, []);
+  const resetToDefaults = useCallback(() => { localStorage.removeItem(STORAGE_KEY); setPersonal([]); }, []);
+  return <CreaturesContext.Provider value={{creatures,isCustom:personal.length>0,collectionStatus,sharedCount:shared.length,refreshCollection,acceptDiscoveredCreature,importCreatures,resetToDefaults}}>{children}</CreaturesContext.Provider>;
 }
 
 export function useCreatures() {

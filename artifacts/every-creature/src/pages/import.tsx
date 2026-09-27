@@ -144,7 +144,7 @@ export default function Import() {
         <div className="max-w-2xl mx-auto py-16 text-center">
           <motion.div initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ type: "spring" }}>
             <CheckCircle className="w-20 h-20 text-green-500 mx-auto mb-6" />
-            <h1 className="text-4xl font-serif font-bold mb-4">Collection Updated</h1>
+            <h1 className="text-4xl font-serif font-bold mb-4">Personal Collection Updated</h1>
             <p className="text-xl text-muted-foreground mb-8">
               {count} creature{count !== 1 ? "s" : ""} {mode === "replace" ? "loaded into" : "added to"} the encyclopedia.
             </p>
@@ -170,7 +170,7 @@ export default function Import() {
         <div className="mb-10">
           <h1 className="text-4xl font-serif font-bold mb-3">Data Management</h1>
           <p className="text-lg text-muted-foreground">
-            Export your collection as a backup, or import a new creature database.
+            Export the collection as a backup, or import personal additions on this device. The shared archive is preserved.
           </p>
         </div>
 

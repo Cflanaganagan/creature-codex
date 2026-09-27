@@ -7,6 +7,8 @@ import router from "./routes";
 import { logger } from "./lib/logger";
 
 const app: Express = express();
+// Render terminates TLS through one trusted reverse-proxy hop.
+if (process.env.RENDER) app.set("trust proxy", 1);
 
 app.use(
   pinoHttp({

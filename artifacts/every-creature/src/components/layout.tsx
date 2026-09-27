@@ -1,5 +1,5 @@
 import { Link } from "wouter";
-import { Clock } from "lucide-react";
+import { Clock, Info } from "lucide-react";
 import { CreatureSearch } from "@/components/creature-search";
 import codexLogo from "@/assets/creature-codex-logo.png";
 
@@ -23,11 +23,15 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
             <Link
               href="/timeline"
+              aria-label="Timeline"
               data-testid="link-timeline"
               className="shrink-0 inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors font-medium px-3 py-2 rounded-full hover:bg-muted/50"
             >
               <Clock className="w-4 h-4" />
               <span className="hidden sm:inline">Timeline</span>
+            </Link>
+            <Link href="/about" aria-label="About" data-testid="link-about" className="shrink-0 inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors font-medium px-3 py-2 rounded-full hover:bg-muted/50">
+              <Info className="w-4 h-4" /><span className="hidden sm:inline">About</span>
             </Link>
 
 

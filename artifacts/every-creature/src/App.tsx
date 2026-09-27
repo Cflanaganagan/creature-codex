@@ -9,6 +9,7 @@ import Browse from "@/pages/browse";
 import Mystery from "@/pages/mystery";
 import CreatureDetail from "@/pages/creature";
 import Import from "@/pages/import";
+import About from "@/pages/about";
 import Timeline from "@/pages/timeline";
 
 const queryClient = new QueryClient();
@@ -19,6 +20,7 @@ function Router() {
       <Route path="/" component={Home} />
       <Route path="/browse" component={Browse} />
       <Route path="/mystery" component={Mystery} />
+      <Route path="/about" component={About} />
       <Route path="/timeline" component={Timeline} />
       <Route path="/import" component={Import} />
       <Route path="/creature/:id" component={CreatureDetail} />

@@ -14,3 +14,9 @@ services:
         value: production
       - key: BASE_PATH
         value: /
+      - key: DATABASE_URL
+        sync: false
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: DISCOVERY_DAILY_LIMIT
+        value: "100"
