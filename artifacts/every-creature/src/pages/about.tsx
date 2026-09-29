@@ -20,8 +20,8 @@ export default function About() {
         <div className="relative">
           <img src={codexLogo} alt="Woolly mammoth emblem" className="mx-auto mb-6 h-24 w-24 rounded-2xl object-cover shadow-lg ring-1 ring-[#b99b63]/30" />
           <p className="mb-4 text-[10px] font-semibold uppercase tracking-[.3em] text-muted-foreground">About Woolly</p>
-          <h2 className="font-serif text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl">A world of life.<br /><span className="text-[#82653b]">Built by curiosity.</span></h2>
-          <p className="mx-auto mt-6 max-w-xl text-lg leading-relaxed text-muted-foreground">For everyone who has ever seen a creature and wanted to know more.</p>
+          <h2 className="font-serif text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl">A vanished world.<br /><span className="text-[#82653b]">Built by curiosity.</span></h2>
+          <p className="mx-auto mt-6 max-w-xl text-lg leading-relaxed text-muted-foreground">For everyone who has ever imagined the creatures that came before us.</p>
         </div>
       </header>
 
@@ -29,16 +29,16 @@ export default function About() {
         <p className="mb-4 text-[10px] font-semibold uppercase tracking-[.25em] text-muted-foreground">Our idea</p>
         <h3 className="mb-6 font-serif text-3xl font-bold md:text-4xl">An archive as extraordinary<br className="hidden sm:block" /> as life itself.</h3>
         <div className="space-y-5 text-base leading-8 text-foreground/75 md:text-lg">
-          <p>Woolly was created for animal lovers, fossil enthusiasts, and anyone fascinated by the living world. Our ambition is to build an enormous, ever-growing database of the creatures that have called Earth home—from familiar animals living alongside us to extraordinary life known only through fossils.</p>
-          <p>The idea is simple: your curiosity helps the collection grow. Search for a creature that is already here, and its card is ready to explore. When a valid creature is missing, our AI naturalist, powered by an AI API, helps create a new entry and saves it to the shared collection. The next person who searches for it can discover what you helped add.</p>
+          <p>Woolly — Museum of the Extinct was created for creature lovers, fossil enthusiasts, and anyone fascinated by Earth’s lost worlds. Our ambition is to build an enormous, ever-growing archive of extinct animals—from prehistoric giants known through fossils to species that disappeared within human history.</p>
+          <p>The idea is simple: your curiosity helps the collection grow. Search for a creature that is already here, and its card is ready to explore. When a specific extinct creature is missing, you choose whether to click Discover. Our AI naturalist, powered by an API, first checks its identity and extinction status, then creates an entry about that resolved creature and saves it to the shared collection. Searching alone never creates a card. Living animals are not added, and broad names such as “mammoth” need a more specific species. The next person who searches for it can discover what you helped add.</p>
           <p>Creature lovers around the world can help build the same archive, one question and one discovery at a time.</p>
         </div>
       </section>
 
       <section aria-label="How the collection grows" className="grid gap-4 sm:grid-cols-3">
         {[
-          { icon: Search, number: "01", title: "Follow a question", body: "Start with a favourite animal, an unfamiliar fossil, or a name you've never heard before." },
-          { icon: BookOpen, number: "02", title: "Make a discovery", body: "Explore an existing creature or let our AI naturalist help add a new entry to the collection." },
+          { icon: Search, number: "01", title: "Follow a question", body: "Start with an extinct animal, an unfamiliar fossil, or a name you've never heard before." },
+          { icon: BookOpen, number: "02", title: "Make a discovery", body: "Explore an existing entry, or click Discover to ask our AI naturalist to identify and add a specific extinct creature." },
           { icon: Globe2, number: "03", title: "Leave it for everyone", body: "New discoveries become part of the shared archive, ready for the next curious visitor." },
         ].map(({icon:Icon,number,title,body}) => <div key={number} className="rounded-2xl border border-[#a48a5c]/20 bg-[#f4ead2]/25 p-6 md:p-7">
           <div className="mb-7 flex items-center justify-between text-[#947446]"><Icon className="h-6 w-6" /><span className="font-serif text-sm opacity-60">{number}</span></div>
@@ -46,12 +46,12 @@ export default function About() {
         </div>)}
       </section>
       <div className="my-12 flex flex-wrap items-center justify-center gap-3 text-sm text-muted-foreground">
-        <span className="font-serif text-3xl text-foreground" data-testid="about-counter">{sharedCount.toLocaleString()}</span><span>creatures catalogued. Countless discoveries ahead.</span>
+        <span className="font-serif text-3xl text-foreground" data-testid="about-counter">{sharedCount.toLocaleString()}</span><span>extinct creatures catalogued. Countless discoveries ahead.</span>
       </div>
       {collectionStatus === "preview" && <p className="mb-8 text-center text-sm text-muted-foreground">The shared archive is being connected. For now, enjoy exploring the founding collection.</p>}
       <section className="mb-6 rounded-[2rem] border border-[#9a7a46]/20 bg-[#f4ead2]/30 px-6 py-10 text-center md:px-16 md:py-12">
         <p className="mb-4 font-serif text-2xl italic text-[#82653b] md:text-3xl">Your curiosity helps grow the database.</p>
-        <p className="mx-auto max-w-2xl text-base leading-8 text-muted-foreground">We hope you enjoy scrolling through the many different creatures that have called this planet home at one point or another. Not sure where to begin? Try the Random Creature generator—you might meet your next favourite.</p>
+        <p className="mx-auto max-w-2xl text-base leading-8 text-muted-foreground">We hope you enjoy scrolling through the extraordinary extinct creatures that once called this planet home. Not sure where to begin? Try the Random Creature generator—you might meet your next favourite.</p>
         <div className="mt-7 flex flex-wrap items-center justify-center gap-5">
           <button type="button" onClick={randomCreature} data-testid="button-about-random" className="random-creature-button inline-flex items-center rounded-full border px-6 py-3 font-semibold"><Dices className="mr-2 h-5 w-5" /> Random Creature</button>
           <Link href="/browse" className="inline-flex items-center gap-1 text-sm font-medium underline underline-offset-4">Explore the collection <ArrowUpRight className="h-4 w-4" /></Link>

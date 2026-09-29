@@ -11,6 +11,7 @@ export type Creature = {
   category: string;
   era: string;
   mya: string;
+  scientificName?: string;
   lifeStatus?: "extant" | "extinct";
   diet: string;
   size: string;
@@ -29,6 +30,7 @@ export const creatureSchema: z.ZodType<Creature> = z.object({
   category: z.string().min(1, "category is required"),
   era: z.string().min(1, "era is required"),
   mya: z.string().min(1, "mya is required"),
+  scientificName: z.string().optional(),
   lifeStatus: z.enum(["extant", "extinct"]).optional(),
   diet: z.string().min(1, "diet is required"),
   size: z.string().min(1, "size is required"),
@@ -53,7 +55,7 @@ export const categories = [
 export const categoryEmojis: Record<string, string> = {
   "Mammals": "🦣",
   "Reptiles": "🦖",
-  "Birds": "🦅",
+  "Birds": "🦤",
   "Aquatic": "🦈",
   "Amphibians": "🐸",
   "Invertebrates": "🦟",
@@ -62,37 +64,38 @@ export const categoryEmojis: Record<string, string> = {
 
 export const categoryColors: Record<string, string> = {
   "Mammals":          "bg-amber-700 text-white",
-  "Reptiles":         "bg-green-800 text-white",
-  "Birds":            "bg-sky-600 text-white",
-  "Aquatic":          "bg-cyan-700 text-white",
-  "Amphibians":       "bg-emerald-700 text-white",
-  "Invertebrates":    "bg-lime-600 text-white",
+  "Reptiles":         "bg-rose-900 text-white",
+  "Birds":            "bg-blue-800 text-white",
+  "Aquatic":          "bg-teal-800 text-white",
+  "Amphibians":       "bg-orange-800 text-white",
+  "Invertebrates":    "bg-slate-700 text-white",
   "Mystery Creatures":"bg-purple-900 text-white",
 };
 
 export const categoryBgColors: Record<string, string> = {
   "Mammals":          "from-amber-900/80 to-stone-950",
-  "Reptiles":         "from-green-900/80 to-green-950",
-  "Birds":            "from-sky-900/80 to-sky-950",
-  "Aquatic":          "from-cyan-900/80 to-cyan-950",
-  "Amphibians":       "from-emerald-800/80 to-teal-950",
-  "Invertebrates":    "from-lime-800/80 to-green-950",
+  "Reptiles":         "from-rose-900/80 to-stone-950",
+  "Birds":            "from-blue-900/80 to-slate-950",
+  "Aquatic":          "from-teal-900/80 to-teal-950",
+  "Amphibians":       "from-orange-900/80 to-stone-950",
+  "Invertebrates":    "from-slate-700/80 to-slate-950",
   "Mystery Creatures":"from-purple-900/80 to-slate-950",
 };
 
 export const categoryGlowColors: Record<string, string> = {
   "Mammals":          "#b45309",
-  "Reptiles":         "#166534",
-  "Birds":            "#0284c7",
-  "Aquatic":          "#0e7490",
-  "Amphibians":       "#047857",
-  "Invertebrates":    "#65a30d",
+  "Reptiles":         "#9f3450",
+  "Birds":            "#416fbe",
+  "Aquatic":          "#218f87",
+  "Amphibians":       "#b56c35",
+  "Invertebrates":    "#708699",
   "Mystery Creatures":"#7e22ce",
 };
 
-export const creatures: Creature[] = [
+const foundingCreatures: Creature[] = [
   {
     id: "tyrannosaurus-rex",
+    lifeStatus: "extinct",
     name: "Tyrannosaurus Rex",
     genus: "Tyrannosaurus",
     category: "Reptiles",
@@ -119,6 +122,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "spinosaurus",
+    lifeStatus: "extinct",
     name: "Spinosaurus",
     genus: "Spinosaurus",
     category: "Reptiles",
@@ -144,6 +148,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "velociraptor",
+    lifeStatus: "extinct",
     name: "Velociraptor",
     genus: "Velociraptor",
     category: "Reptiles",
@@ -169,6 +174,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "giganotosaurus",
+    lifeStatus: "extinct",
     name: "Giganotosaurus",
     genus: "Giganotosaurus",
     category: "Reptiles",
@@ -194,6 +200,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "carnotaurus",
+    lifeStatus: "extinct",
     name: "Carnotaurus",
     genus: "Carnotaurus",
     category: "Reptiles",
@@ -219,6 +226,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "allosaurus",
+    lifeStatus: "extinct",
     name: "Allosaurus",
     genus: "Allosaurus",
     category: "Reptiles",
@@ -244,6 +252,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "utahraptor",
+    lifeStatus: "extinct",
     name: "Utahraptor",
     genus: "Utahraptor",
     category: "Reptiles",
@@ -269,6 +278,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "therizinosaurus",
+    lifeStatus: "extinct",
     name: "Therizinosaurus",
     genus: "Therizinosaurus",
     category: "Reptiles",
@@ -293,6 +303,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "dilophosaurus",
+    lifeStatus: "extinct",
     name: "Dilophosaurus",
     genus: "Dilophosaurus",
     category: "Reptiles",
@@ -317,6 +328,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "coelophysis",
+    lifeStatus: "extinct",
     name: "Coelophysis",
     genus: "Coelophysis",
     category: "Reptiles",
@@ -341,6 +353,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "carcharodontosaurus",
+    lifeStatus: "extinct",
     name: "Carcharodontosaurus",
     genus: "Carcharodontosaurus",
     category: "Reptiles",
@@ -365,6 +378,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "baryonyx",
+    lifeStatus: "extinct",
     name: "Baryonyx",
     genus: "Baryonyx",
     category: "Reptiles",
@@ -390,6 +404,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "majungasaurus",
+    lifeStatus: "extinct",
     name: "Majungasaurus",
     genus: "Majungasaurus",
     category: "Reptiles",
@@ -415,6 +430,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "pachycephalosaurus",
+    lifeStatus: "extinct",
     name: "Pachycephalosaurus",
     genus: "Pachycephalosaurus",
     category: "Reptiles",
@@ -440,6 +456,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "iguanodon",
+    lifeStatus: "extinct",
     name: "Iguanodon",
     genus: "Iguanodon",
     category: "Reptiles",
@@ -464,6 +481,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "parasaurolophus",
+    lifeStatus: "extinct",
     name: "Parasaurolophus",
     genus: "Parasaurolophus",
     category: "Reptiles",
@@ -489,6 +507,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "oviraptor",
+    lifeStatus: "extinct",
     name: "Oviraptor",
     genus: "Oviraptor",
     category: "Reptiles",
@@ -513,6 +532,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "troodon",
+    lifeStatus: "extinct",
     name: "Troodon",
     genus: "Troodon",
     category: "Reptiles",
@@ -537,6 +557,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "megalosaurus",
+    lifeStatus: "extinct",
     name: "Megalosaurus",
     genus: "Megalosaurus",
     category: "Reptiles",
@@ -561,6 +582,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "deinonychus",
+    lifeStatus: "extinct",
     name: "Deinonychus",
     genus: "Deinonychus",
     category: "Reptiles",
@@ -586,6 +608,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "brachiosaurus",
+    lifeStatus: "extinct",
     name: "Brachiosaurus",
     genus: "Brachiosaurus",
     category: "Reptiles",
@@ -601,6 +624,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "argentinosaurus",
+    lifeStatus: "extinct",
     name: "Argentinosaurus",
     genus: "Argentinosaurus",
     category: "Reptiles",
@@ -616,6 +640,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "diplodocus",
+    lifeStatus: "extinct",
     name: "Diplodocus",
     genus: "Diplodocus",
     category: "Reptiles",
@@ -631,6 +656,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "patagotitan",
+    lifeStatus: "extinct",
     name: "Patagotitan",
     genus: "Patagotitan",
     category: "Reptiles",
@@ -646,6 +672,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "apatosaurus",
+    lifeStatus: "extinct",
     name: "Apatosaurus",
     genus: "Apatosaurus",
     category: "Reptiles",
@@ -661,6 +688,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "nigersaurus",
+    lifeStatus: "extinct",
     name: "Nigersaurus",
     genus: "Nigersaurus",
     category: "Reptiles",
@@ -676,6 +704,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "triceratops",
+    lifeStatus: "extinct",
     name: "Triceratops",
     genus: "Triceratops",
     category: "Reptiles",
@@ -691,6 +720,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "styracosaurus",
+    lifeStatus: "extinct",
     name: "Styracosaurus",
     genus: "Styracosaurus",
     category: "Reptiles",
@@ -706,6 +736,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "protoceratops",
+    lifeStatus: "extinct",
     name: "Protoceratops",
     genus: "Protoceratops",
     category: "Reptiles",
@@ -721,6 +752,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "ankylosaurus",
+    lifeStatus: "extinct",
     name: "Ankylosaurus",
     genus: "Ankylosaurus",
     category: "Reptiles",
@@ -736,6 +768,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "stegosaurus",
+    lifeStatus: "extinct",
     name: "Stegosaurus",
     genus: "Stegosaurus",
     category: "Reptiles",
@@ -751,6 +784,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "kentrosaurus",
+    lifeStatus: "extinct",
     name: "Kentrosaurus",
     genus: "Kentrosaurus",
     category: "Reptiles",
@@ -766,6 +800,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "euoplocephalus",
+    lifeStatus: "extinct",
     name: "Euoplocephalus",
     genus: "Euoplocephalus",
     category: "Reptiles",
@@ -781,6 +816,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "mosasaurus",
+    lifeStatus: "extinct",
     name: "Mosasaurus",
     genus: "Mosasaurus",
     category: "Aquatic",
@@ -796,6 +832,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "elasmosaurus",
+    lifeStatus: "extinct",
     name: "Elasmosaurus",
     genus: "Elasmosaurus",
     category: "Aquatic",
@@ -811,6 +848,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "ichthyosaurus",
+    lifeStatus: "extinct",
     name: "Ichthyosaurus",
     genus: "Ichthyosaurus",
     category: "Aquatic",
@@ -826,6 +864,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "plesiosaurus",
+    lifeStatus: "extinct",
     name: "Plesiosaurus",
     genus: "Plesiosaurus",
     category: "Aquatic",
@@ -841,6 +880,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "sarcosuchus",
+    lifeStatus: "extinct",
     name: "Sarcosuchus",
     genus: "Sarcosuchus",
     category: "Reptiles",
@@ -856,6 +896,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "deinosuchus",
+    lifeStatus: "extinct",
     name: "Deinosuchus",
     genus: "Deinosuchus",
     category: "Reptiles",
@@ -871,6 +912,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "kronosaurus",
+    lifeStatus: "extinct",
     name: "Kronosaurus",
     genus: "Kronosaurus",
     category: "Aquatic",
@@ -886,6 +928,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "liopleurodon",
+    lifeStatus: "extinct",
     name: "Liopleurodon",
     genus: "Liopleurodon",
     category: "Aquatic",
@@ -901,6 +944,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "quetzalcoatlus",
+    lifeStatus: "extinct",
     name: "Quetzalcoatlus",
     genus: "Quetzalcoatlus",
     category: "Reptiles",
@@ -916,6 +960,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "pteranodon",
+    lifeStatus: "extinct",
     name: "Pteranodon",
     genus: "Pteranodon",
     category: "Reptiles",
@@ -931,6 +976,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "rhamphorhynchus",
+    lifeStatus: "extinct",
     name: "Rhamphorhynchus",
     genus: "Rhamphorhynchus",
     category: "Reptiles",
@@ -946,6 +992,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "dimorphodon",
+    lifeStatus: "extinct",
     name: "Dimorphodon",
     genus: "Dimorphodon",
     category: "Reptiles",
@@ -961,6 +1008,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "megalodon",
+    lifeStatus: "extinct",
     name: "Megalodon",
     genus: "Otodus",
     category: "Aquatic",
@@ -976,6 +1024,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "dunkleosteus",
+    lifeStatus: "extinct",
     name: "Dunkleosteus",
     genus: "Dunkleosteus",
     category: "Aquatic",
@@ -991,6 +1040,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "helicoprion",
+    lifeStatus: "extinct",
     name: "Helicoprion",
     genus: "Helicoprion",
     category: "Aquatic",
@@ -1006,6 +1056,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "leedsichthys",
+    lifeStatus: "extinct",
     name: "Leedsichthys",
     genus: "Leedsichthys",
     category: "Aquatic",
@@ -1021,6 +1072,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "coelacanth",
+    lifeStatus: "extant",
     name: "Coelacanth",
     genus: "Latimeria",
     category: "Aquatic",
@@ -1036,6 +1088,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "meganeura",
+    lifeStatus: "extinct",
     name: "Meganeura",
     genus: "Meganeura",
     category: "Invertebrates",
@@ -1051,6 +1104,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "arthropleura",
+    lifeStatus: "extinct",
     name: "Arthropleura",
     genus: "Arthropleura",
     category: "Invertebrates",
@@ -1066,6 +1120,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "pulmonoscorpius",
+    lifeStatus: "extinct",
     name: "Pulmonoscorpius",
     genus: "Pulmonoscorpius",
     category: "Invertebrates",
@@ -1081,6 +1136,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "jaekelopterus",
+    lifeStatus: "extinct",
     name: "Jaekelopterus",
     genus: "Jaekelopterus",
     category: "Invertebrates",
@@ -1096,6 +1152,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "dimetrodon",
+    lifeStatus: "extinct",
     name: "Dimetrodon",
     genus: "Dimetrodon",
     category: "Reptiles",
@@ -1111,6 +1168,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "gorgonops",
+    lifeStatus: "extinct",
     name: "Gorgonops",
     genus: "Gorgonops",
     category: "Reptiles",
@@ -1126,6 +1184,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "lystrosaurus",
+    lifeStatus: "extinct",
     name: "Lystrosaurus",
     genus: "Lystrosaurus",
     category: "Reptiles",
@@ -1141,6 +1200,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "woolly-mammoth",
+    lifeStatus: "extinct",
     name: "Woolly Mammoth",
     genus: "Mammuthus",
     category: "Mammals",
@@ -1156,6 +1216,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "smilodon",
+    lifeStatus: "extinct",
     name: "Smilodon",
     genus: "Smilodon",
     category: "Mammals",
@@ -1171,6 +1232,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "woolly-rhinoceros",
+    lifeStatus: "extinct",
     name: "Woolly Rhinoceros",
     genus: "Coelodonta",
     category: "Mammals",
@@ -1186,6 +1248,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "dire-wolf",
+    lifeStatus: "extinct",
     name: "Dire Wolf",
     genus: "Aenocyon",
     category: "Mammals",
@@ -1201,6 +1264,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "giant-ground-sloth",
+    lifeStatus: "extinct",
     name: "Giant Ground Sloth",
     genus: "Megatherium",
     category: "Mammals",
@@ -1216,6 +1280,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "doedicurus",
+    lifeStatus: "extinct",
     name: "Doedicurus",
     genus: "Doedicurus",
     category: "Mammals",
@@ -1231,6 +1296,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "megaloceros",
+    lifeStatus: "extinct",
     name: "Megaloceros",
     genus: "Megaloceros",
     category: "Mammals",
@@ -1246,6 +1312,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "paraceratherium",
+    lifeStatus: "extinct",
     name: "Paraceratherium",
     genus: "Paraceratherium",
     category: "Mammals",
@@ -1261,6 +1328,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "andrewsarchus",
+    lifeStatus: "extinct",
     name: "Andrewsarchus",
     genus: "Andrewsarchus",
     category: "Mammals",
@@ -1276,6 +1344,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "entelodon",
+    lifeStatus: "extinct",
     name: "Entelodon",
     genus: "Entelodon",
     category: "Mammals",
@@ -1291,6 +1360,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "basilosaurus",
+    lifeStatus: "extinct",
     name: "Basilosaurus",
     genus: "Basilosaurus",
     category: "Aquatic",
@@ -1306,6 +1376,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "titanoboa",
+    lifeStatus: "extinct",
     name: "Titanoboa",
     genus: "Titanoboa",
     category: "Reptiles",
@@ -1321,6 +1392,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "terror-bird",
+    lifeStatus: "extinct",
     name: "Terror Bird",
     genus: "Phorusrhacidae",
     category: "Birds",
@@ -1336,6 +1408,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "dodo",
+    lifeStatus: "extinct",
     name: "Dodo",
     genus: "Raphus",
     category: "Birds",
@@ -1351,6 +1424,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "thylacine",
+    lifeStatus: "extinct",
     name: "Thylacine",
     genus: "Thylacinus",
     category: "Mammals",
@@ -1366,6 +1440,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "passenger-pigeon",
+    lifeStatus: "extinct",
     name: "Passenger Pigeon",
     genus: "Ectopistes",
     category: "Birds",
@@ -1381,6 +1456,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "stellers-sea-cow",
+    lifeStatus: "extinct",
     name: "Stellers Sea Cow",
     genus: "Hydrodamalis",
     category: "Aquatic",
@@ -1396,6 +1472,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "great-auk",
+    lifeStatus: "extinct",
     name: "Great Auk",
     genus: "Pinguinus",
     category: "Birds",
@@ -1411,6 +1488,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "aurochs",
+    lifeStatus: "extinct",
     name: "Aurochs",
     genus: "Bos",
     category: "Mammals",
@@ -1426,6 +1504,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "lion",
+    lifeStatus: "extant",
     name: "Lion",
     genus: "Panthera",
     category: "Mammals",
@@ -1441,6 +1520,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "african-elephant",
+    lifeStatus: "extant",
     name: "African Elephant",
     genus: "Loxodonta",
     category: "Mammals",
@@ -1456,6 +1536,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "orca",
+    lifeStatus: "extant",
     name: "Orca",
     genus: "Orcinus",
     category: "Aquatic",
@@ -1471,6 +1552,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "saltwater-crocodile",
+    lifeStatus: "extant",
     name: "Saltwater Crocodile",
     genus: "Crocodylus",
     category: "Reptiles",
@@ -1486,6 +1568,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "komodo-dragon",
+    lifeStatus: "extant",
     name: "Komodo Dragon",
     genus: "Varanus",
     category: "Reptiles",
@@ -1501,6 +1584,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "sperm-whale",
+    lifeStatus: "extant",
     name: "Sperm Whale",
     genus: "Physeter",
     category: "Aquatic",
@@ -1516,6 +1600,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "gorilla",
+    lifeStatus: "extant",
     name: "Gorilla",
     genus: "Gorilla",
     category: "Mammals",
@@ -1531,6 +1616,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "polar-bear",
+    lifeStatus: "extant",
     name: "Polar Bear",
     genus: "Ursus",
     category: "Mammals",
@@ -1546,6 +1632,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "hippopotamus",
+    lifeStatus: "extant",
     name: "Hippopotamus",
     genus: "Hippopotamus",
     category: "Mammals",
@@ -1561,6 +1648,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "great-white-shark",
+    lifeStatus: "extant",
     name: "Great White Shark",
     genus: "Carcharodon",
     category: "Aquatic",
@@ -1576,6 +1664,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "green-anaconda",
+    lifeStatus: "extant",
     name: "Green Anaconda",
     genus: "Eunectes",
     category: "Aquatic",
@@ -1591,6 +1680,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "mantis-shrimp",
+    lifeStatus: "extant",
     name: "Mantis Shrimp",
     genus: "Stomatopoda",
     category: "Aquatic",
@@ -1606,6 +1696,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "peregrine-falcon",
+    lifeStatus: "extant",
     name: "Peregrine Falcon",
     genus: "Falco",
     category: "Birds",
@@ -1621,6 +1712,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "pistol-shrimp",
+    lifeStatus: "extant",
     name: "Pistol Shrimp",
     genus: "Alpheus",
     category: "Aquatic",
@@ -1636,6 +1728,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "tardigrade",
+    lifeStatus: "extant",
     name: "Tardigrade",
     genus: "Tardigrada",
     category: "Invertebrates",
@@ -1651,6 +1744,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "platypus",
+    lifeStatus: "extant",
     name: "Platypus",
     genus: "Ornithorhynchus",
     category: "Mammals",
@@ -1666,6 +1760,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "archerfish",
+    lifeStatus: "extant",
     name: "Archerfish",
     genus: "Toxotes",
     category: "Aquatic",
@@ -1681,6 +1776,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "mimic-octopus",
+    lifeStatus: "extant",
     name: "Mimic Octopus",
     genus: "Thaumoctopus",
     category: "Aquatic",
@@ -1696,6 +1792,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "mantis",
+    lifeStatus: "extant",
     name: "Mantis",
     genus: "Mantodea",
     category: "Invertebrates",
@@ -1711,6 +1808,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "cambrian-anomalocaris",
+    lifeStatus: "extinct",
     name: "Cambrian Anomalocaris",
     genus: "Anomalocaris",
     category: "Invertebrates",
@@ -1726,6 +1824,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "hallucigenia",
+    lifeStatus: "extinct",
     name: "Hallucigenia",
     genus: "Hallucigenia",
     category: "Mystery Creatures",
@@ -1741,6 +1840,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "opabinia",
+    lifeStatus: "extinct",
     name: "Opabinia",
     genus: "Opabinia",
     category: "Mystery Creatures",
@@ -1756,6 +1856,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "dickinsonia",
+    lifeStatus: "extinct",
     name: "Dickinsonia",
     genus: "Dickinsonia",
     category: "Mystery Creatures",
@@ -1771,6 +1872,7 @@ export const creatures: Creature[] = [
   },
   {
     id: "tully-monster",
+    lifeStatus: "extinct",
     name: "Tully Monster",
     genus: "Tullimonstrum",
     category: "Mystery Creatures",
@@ -1793,3 +1895,7 @@ export const creatures: Creature[] = [
     mysteryLevel: 3
   }
 ];
+
+// Keep the original data above recoverable, but never exhibit living entries.
+export const isExtinctCreature = (c: Creature) => c.lifeStatus === "extinct" && !/present|extant|living|ongoing/i.test(c.mya);
+export const creatures = foundingCreatures.filter(isExtinctCreature);

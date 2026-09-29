@@ -1,3 +1,4 @@
+import { ReconstructionLinks } from "@/components/reconstruction-links";
 import { ImageViewer } from "@/components/image-viewer";
 import { useRoute } from "wouter";
 import { Layout } from "@/components/layout";
@@ -175,6 +176,8 @@ export default function CreatureDetail() {
             {/* Category accent bar */}
             <div className={`h-1 rounded-full mb-8 ${categoryColors[creature.category]?.split(" ")[0] ?? "bg-slate-600"}`} />
 
+            <ReconstructionLinks creature={creature} />
+
             {/* Stats grid */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 bg-white/5 p-5 rounded-2xl mb-8">
               {[
@@ -235,8 +238,9 @@ export default function CreatureDetail() {
 
                 <section>
                   <h2 className="text-xl font-serif font-bold mb-4 text-card-foreground">
-                    Living Relatives &amp; Family
+                    Related lineages
                   </h2>
+                  <p className="mb-3 text-xs text-card-foreground/60">Living relatives are shown for comparison; they are not part of the museum collection.</p>
                   <div className="space-y-2">
                     {creature.family.map((relative, i) => (
                       <div key={i} className="flex items-center justify-between p-3 rounded-lg bg-white/5 border border-white/10">

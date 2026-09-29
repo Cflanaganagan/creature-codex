@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { useCreatures } from "@/hooks/useCreatures";
-import { creatureSchema, type Creature } from "@/data/creatures";
+import { creatureSchema, isExtinctCreature, type Creature } from "@/data/creatures";
 import { Download, Upload, FileJson, CheckCircle, AlertCircle, Trash2, RotateCcw, ChevronDown, ChevronUp } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -43,7 +43,8 @@ function parseInput(raw: string): ParseResult {
   items.forEach((item, idx) => {
     const result = creatureSchema.safeParse(item);
     if (result.success) {
-      validated.push(result.data);
+      if (isExtinctCreature(result.data)) validated.push(result.data);
+      else errors.push(`"${result.data.name}": Woolly only accepts extinct creatures. Include lifeStatus: "extinct" and an extinction date or fossil range.`);
     } else {
       const issues = result.error.errors.map((e) => `  • ${e.path.join(".")}: ${e.message}`).join("\n");
       const label = (item as { name?: string }).name ? `"${(item as { name: string }).name}"` : `item #${idx + 1}`;
@@ -362,7 +363,8 @@ export default function Import() {
   "genus": "string",       // scientific genus
   "category": "string",    // one of the 14 categories
   "era": "string",         // e.g. "Late Cretaceous"
-  "mya": "string",         // e.g. "68-66 MYA"
+  "mya": "Extinct 1883",
+  "lifeStatus": "extinct",         // e.g. "68-66 MYA"
   "diet": "string",        // e.g. "Carnivore"
   "size": "string",        // e.g. "12m long"
   "habitat": "string",

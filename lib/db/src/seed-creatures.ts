@@ -1,4 +1,4 @@
-// Initial collection, preserved from the original frontend data. Never overwrites saved entries.
+// Original founding collection, retained for recovery. Only extinct entries are exhibited.
 export const seedCreatures = [
   {
     "id": "tyrannosaurus-rex",
@@ -36,7 +36,8 @@ export const seedCreatures = [
         "living": false
       }
     ],
-    "mysteryLevel": 0
+    "mysteryLevel": 0,
+    "lifeStatus": "extinct"
   },
   {
     "id": "spinosaurus",
@@ -70,7 +71,8 @@ export const seedCreatures = [
         "living": false
       }
     ],
-    "mysteryLevel": 0
+    "mysteryLevel": 0,
+    "lifeStatus": "extinct"
   },
   {
     "id": "velociraptor",
@@ -104,7 +106,8 @@ export const seedCreatures = [
         "living": false
       }
     ],
-    "mysteryLevel": 0
+    "mysteryLevel": 0,
+    "lifeStatus": "extinct"
   },
   {
     "id": "giganotosaurus",
@@ -138,7 +141,8 @@ export const seedCreatures = [
         "living": false
       }
     ],
-    "mysteryLevel": 0
+    "mysteryLevel": 0,
+    "lifeStatus": "extinct"
   },
   {
     "id": "carnotaurus",
@@ -172,7 +176,8 @@ export const seedCreatures = [
         "living": false
       }
     ],
-    "mysteryLevel": 0
+    "mysteryLevel": 0,
+    "lifeStatus": "extinct"
   },
   {
     "id": "allosaurus",
@@ -206,7 +211,8 @@ export const seedCreatures = [
         "living": false
       }
     ],
-    "mysteryLevel": 0
+    "mysteryLevel": 0,
+    "lifeStatus": "extinct"
   },
   {
     "id": "utahraptor",
@@ -240,7 +246,8 @@ export const seedCreatures = [
         "living": false
       }
     ],
-    "mysteryLevel": 0
+    "mysteryLevel": 0,
+    "lifeStatus": "extinct"
   },
   {
     "id": "therizinosaurus",
@@ -270,7 +277,8 @@ export const seedCreatures = [
         "living": false
       }
     ],
-    "mysteryLevel": 0
+    "mysteryLevel": 0,
+    "lifeStatus": "extinct"
   },
   {
     "id": "dilophosaurus",
@@ -300,7 +308,8 @@ export const seedCreatures = [
         "living": false
       }
     ],
-    "mysteryLevel": 0
+    "mysteryLevel": 0,
+    "lifeStatus": "extinct"
   },
   {
     "id": "coelophysis",
@@ -330,7 +339,8 @@ export const seedCreatures = [
         "living": false
       }
     ],
-    "mysteryLevel": 0
+    "mysteryLevel": 0,
+    "lifeStatus": "extinct"
   },
   {
     "id": "carcharodontosaurus",
@@ -360,7 +370,8 @@ export const seedCreatures = [
         "living": false
       }
     ],
-    "mysteryLevel": 0
+    "mysteryLevel": 0,
+    "lifeStatus": "extinct"
   },
   {
     "id": "baryonyx",
@@ -394,7 +405,8 @@ export const seedCreatures = [
         "living": false
       }
     ],
-    "mysteryLevel": 0
+    "mysteryLevel": 0,
+    "lifeStatus": "extinct"
   },
   {
     "id": "majungasaurus",
@@ -428,7 +440,8 @@ export const seedCreatures = [
         "living": false
       }
     ],
-    "mysteryLevel": 0
+    "mysteryLevel": 0,
+    "lifeStatus": "extinct"
   },
   {
     "id": "pachycephalosaurus",
@@ -462,7 +475,8 @@ export const seedCreatures = [
         "living": false
       }
     ],
-    "mysteryLevel": 0
+    "mysteryLevel": 0,
+    "lifeStatus": "extinct"
   },
   {
     "id": "iguanodon",
@@ -492,7 +506,8 @@ export const seedCreatures = [
         "living": false
       }
     ],
-    "mysteryLevel": 0
+    "mysteryLevel": 0,
+    "lifeStatus": "extinct"
   },
   {
     "id": "parasaurolophus",
@@ -526,7 +541,8 @@ export const seedCreatures = [
         "living": false
       }
     ],
-    "mysteryLevel": 0
+    "mysteryLevel": 0,
+    "lifeStatus": "extinct"
   },
   {
     "id": "oviraptor",
@@ -556,7 +572,8 @@ export const seedCreatures = [
         "living": false
       }
     ],
-    "mysteryLevel": 0
+    "mysteryLevel": 0,
+    "lifeStatus": "extinct"
   },
   {
     "id": "troodon",
@@ -586,7 +603,8 @@ export const seedCreatures = [
         "living": false
       }
     ],
-    "mysteryLevel": 0
+    "mysteryLevel": 0,
+    "lifeStatus": "extinct"
   },
   {
     "id": "megalosaurus",
@@ -616,7 +634,8 @@ export const seedCreatures = [
         "living": false
       }
     ],
-    "mysteryLevel": 0
+    "mysteryLevel": 0,
+    "lifeStatus": "extinct"
   },
   {
     "id": "deinonychus",
@@ -650,7 +669,8 @@ export const seedCreatures = [
         "living": false
       }
     ],
-    "mysteryLevel": 0
+    "mysteryLevel": 0,
+    "lifeStatus": "extinct"
   },
   {
     "id": "brachiosaurus",
@@ -680,7 +700,8 @@ export const seedCreatures = [
         "living": false
       }
     ],
-    "mysteryLevel": 0
+    "mysteryLevel": 0,
+    "lifeStatus": "extinct"
   },
   {
     "id": "argentinosaurus",
@@ -710,7 +731,8 @@ export const seedCreatures = [
         "living": false
       }
     ],
-    "mysteryLevel": 0
+    "mysteryLevel": 0,
+    "lifeStatus": "extinct"
   },
   {
     "id": "diplodocus",
@@ -740,7 +762,8 @@ export const seedCreatures = [
         "living": false
       }
     ],
-    "mysteryLevel": 0
+    "mysteryLevel": 0,
+    "lifeStatus": "extinct"
   },
   {
     "id": "patagotitan",
@@ -770,7 +793,8 @@ export const seedCreatures = [
         "living": false
       }
     ],
-    "mysteryLevel": 0
+    "mysteryLevel": 0,
+    "lifeStatus": "extinct"
   },
   {
     "id": "apatosaurus",
@@ -800,7 +824,8 @@ export const seedCreatures = [
         "living": false
       }
     ],
-    "mysteryLevel": 0
+    "mysteryLevel": 0,
+    "lifeStatus": "extinct"
   },
   {
     "id": "nigersaurus",
@@ -830,7 +855,8 @@ export const seedCreatures = [
         "living": false
       }
     ],
-    "mysteryLevel": 0
+    "mysteryLevel": 0,
+    "lifeStatus": "extinct"
   },
   {
     "id": "triceratops",
@@ -860,7 +886,8 @@ export const seedCreatures = [
         "living": false
       }
     ],
-    "mysteryLevel": 0
+    "mysteryLevel": 0,
+    "lifeStatus": "extinct"
   },
   {
     "id": "styracosaurus",
@@ -890,7 +917,8 @@ export const seedCreatures = [
         "living": false
       }
     ],
-    "mysteryLevel": 0
+    "mysteryLevel": 0,
+    "lifeStatus": "extinct"
   },
   {
     "id": "protoceratops",
@@ -920,7 +948,8 @@ export const seedCreatures = [
         "living": false
       }
     ],
-    "mysteryLevel": 0
+    "mysteryLevel": 0,
+    "lifeStatus": "extinct"
   },
   {
     "id": "ankylosaurus",
@@ -950,7 +979,8 @@ export const seedCreatures = [
         "living": false
       }
     ],
-    "mysteryLevel": 0
+    "mysteryLevel": 0,
+    "lifeStatus": "extinct"
   },
   {
     "id": "stegosaurus",
@@ -980,7 +1010,8 @@ export const seedCreatures = [
         "living": false
       }
     ],
-    "mysteryLevel": 0
+    "mysteryLevel": 0,
+    "lifeStatus": "extinct"
   },
   {
     "id": "kentrosaurus",
@@ -1010,7 +1041,8 @@ export const seedCreatures = [
         "living": false
       }
     ],
-    "mysteryLevel": 0
+    "mysteryLevel": 0,
+    "lifeStatus": "extinct"
   },
   {
     "id": "euoplocephalus",
@@ -1040,7 +1072,8 @@ export const seedCreatures = [
         "living": false
       }
     ],
-    "mysteryLevel": 0
+    "mysteryLevel": 0,
+    "lifeStatus": "extinct"
   },
   {
     "id": "mosasaurus",
@@ -1074,7 +1107,8 @@ export const seedCreatures = [
         "living": false
       }
     ],
-    "mysteryLevel": 0
+    "mysteryLevel": 0,
+    "lifeStatus": "extinct"
   },
   {
     "id": "elasmosaurus",
@@ -1104,7 +1138,8 @@ export const seedCreatures = [
         "living": true
       }
     ],
-    "mysteryLevel": 0
+    "mysteryLevel": 0,
+    "lifeStatus": "extinct"
   },
   {
     "id": "ichthyosaurus",
@@ -1134,7 +1169,8 @@ export const seedCreatures = [
         "living": false
       }
     ],
-    "mysteryLevel": 0
+    "mysteryLevel": 0,
+    "lifeStatus": "extinct"
   },
   {
     "id": "plesiosaurus",
@@ -1164,7 +1200,8 @@ export const seedCreatures = [
         "living": true
       }
     ],
-    "mysteryLevel": 0
+    "mysteryLevel": 0,
+    "lifeStatus": "extinct"
   },
   {
     "id": "sarcosuchus",
@@ -1198,7 +1235,8 @@ export const seedCreatures = [
         "living": false
       }
     ],
-    "mysteryLevel": 0
+    "mysteryLevel": 0,
+    "lifeStatus": "extinct"
   },
   {
     "id": "deinosuchus",
@@ -1228,7 +1266,8 @@ export const seedCreatures = [
         "living": true
       }
     ],
-    "mysteryLevel": 0
+    "mysteryLevel": 0,
+    "lifeStatus": "extinct"
   },
   {
     "id": "kronosaurus",
@@ -1258,7 +1297,8 @@ export const seedCreatures = [
         "living": false
       }
     ],
-    "mysteryLevel": 0
+    "mysteryLevel": 0,
+    "lifeStatus": "extinct"
   },
   {
     "id": "liopleurodon",
@@ -1288,7 +1328,8 @@ export const seedCreatures = [
         "living": true
       }
     ],
-    "mysteryLevel": 0
+    "mysteryLevel": 0,
+    "lifeStatus": "extinct"
   },
   {
     "id": "quetzalcoatlus",
@@ -1318,7 +1359,8 @@ export const seedCreatures = [
         "living": false
       }
     ],
-    "mysteryLevel": 0
+    "mysteryLevel": 0,
+    "lifeStatus": "extinct"
   },
   {
     "id": "pteranodon",
@@ -1348,7 +1390,8 @@ export const seedCreatures = [
         "living": false
       }
     ],
-    "mysteryLevel": 0
+    "mysteryLevel": 0,
+    "lifeStatus": "extinct"
   },
   {
     "id": "rhamphorhynchus",
@@ -1378,7 +1421,8 @@ export const seedCreatures = [
         "living": false
       }
     ],
-    "mysteryLevel": 0
+    "mysteryLevel": 0,
+    "lifeStatus": "extinct"
   },
   {
     "id": "dimorphodon",
@@ -1408,7 +1452,8 @@ export const seedCreatures = [
         "living": false
       }
     ],
-    "mysteryLevel": 0
+    "mysteryLevel": 0,
+    "lifeStatus": "extinct"
   },
   {
     "id": "megalodon",
@@ -1438,7 +1483,8 @@ export const seedCreatures = [
         "living": true
       }
     ],
-    "mysteryLevel": 0
+    "mysteryLevel": 0,
+    "lifeStatus": "extinct"
   },
   {
     "id": "dunkleosteus",
@@ -1464,7 +1510,8 @@ export const seedCreatures = [
         "living": true
       }
     ],
-    "mysteryLevel": 0
+    "mysteryLevel": 0,
+    "lifeStatus": "extinct"
   },
   {
     "id": "helicoprion",
@@ -1494,7 +1541,8 @@ export const seedCreatures = [
         "living": true
       }
     ],
-    "mysteryLevel": 0
+    "mysteryLevel": 0,
+    "lifeStatus": "extinct"
   },
   {
     "id": "leedsichthys",
@@ -1524,7 +1572,8 @@ export const seedCreatures = [
         "living": true
       }
     ],
-    "mysteryLevel": 0
+    "mysteryLevel": 0,
+    "lifeStatus": "extinct"
   },
   {
     "id": "coelacanth",
@@ -1554,7 +1603,8 @@ export const seedCreatures = [
         "living": true
       }
     ],
-    "mysteryLevel": 0
+    "mysteryLevel": 0,
+    "lifeStatus": "extant"
   },
   {
     "id": "meganeura",
@@ -1584,7 +1634,8 @@ export const seedCreatures = [
         "living": true
       }
     ],
-    "mysteryLevel": 0
+    "mysteryLevel": 0,
+    "lifeStatus": "extinct"
   },
   {
     "id": "arthropleura",
@@ -1614,7 +1665,8 @@ export const seedCreatures = [
         "living": true
       }
     ],
-    "mysteryLevel": 0
+    "mysteryLevel": 0,
+    "lifeStatus": "extinct"
   },
   {
     "id": "pulmonoscorpius",
@@ -1640,7 +1692,8 @@ export const seedCreatures = [
         "living": true
       }
     ],
-    "mysteryLevel": 0
+    "mysteryLevel": 0,
+    "lifeStatus": "extinct"
   },
   {
     "id": "jaekelopterus",
@@ -1670,7 +1723,8 @@ export const seedCreatures = [
         "living": true
       }
     ],
-    "mysteryLevel": 0
+    "mysteryLevel": 0,
+    "lifeStatus": "extinct"
   },
   {
     "id": "dimetrodon",
@@ -1700,7 +1754,8 @@ export const seedCreatures = [
         "living": false
       }
     ],
-    "mysteryLevel": 0
+    "mysteryLevel": 0,
+    "lifeStatus": "extinct"
   },
   {
     "id": "gorgonops",
@@ -1730,7 +1785,8 @@ export const seedCreatures = [
         "living": false
       }
     ],
-    "mysteryLevel": 0
+    "mysteryLevel": 0,
+    "lifeStatus": "extinct"
   },
   {
     "id": "lystrosaurus",
@@ -1760,7 +1816,8 @@ export const seedCreatures = [
         "living": false
       }
     ],
-    "mysteryLevel": 0
+    "mysteryLevel": 0,
+    "lifeStatus": "extinct"
   },
   {
     "id": "woolly-mammoth",
@@ -1794,7 +1851,8 @@ export const seedCreatures = [
         "living": false
       }
     ],
-    "mysteryLevel": 0
+    "mysteryLevel": 0,
+    "lifeStatus": "extinct"
   },
   {
     "id": "smilodon",
@@ -1828,7 +1886,8 @@ export const seedCreatures = [
         "living": true
       }
     ],
-    "mysteryLevel": 0
+    "mysteryLevel": 0,
+    "lifeStatus": "extinct"
   },
   {
     "id": "woolly-rhinoceros",
@@ -1862,7 +1921,8 @@ export const seedCreatures = [
         "living": true
       }
     ],
-    "mysteryLevel": 0
+    "mysteryLevel": 0,
+    "lifeStatus": "extinct"
   },
   {
     "id": "dire-wolf",
@@ -1896,7 +1956,8 @@ export const seedCreatures = [
         "living": true
       }
     ],
-    "mysteryLevel": 0
+    "mysteryLevel": 0,
+    "lifeStatus": "extinct"
   },
   {
     "id": "giant-ground-sloth",
@@ -1930,7 +1991,8 @@ export const seedCreatures = [
         "living": true
       }
     ],
-    "mysteryLevel": 0
+    "mysteryLevel": 0,
+    "lifeStatus": "extinct"
   },
   {
     "id": "doedicurus",
@@ -1964,7 +2026,8 @@ export const seedCreatures = [
         "living": true
       }
     ],
-    "mysteryLevel": 0
+    "mysteryLevel": 0,
+    "lifeStatus": "extinct"
   },
   {
     "id": "megaloceros",
@@ -1998,7 +2061,8 @@ export const seedCreatures = [
         "living": true
       }
     ],
-    "mysteryLevel": 0
+    "mysteryLevel": 0,
+    "lifeStatus": "extinct"
   },
   {
     "id": "paraceratherium",
@@ -2032,7 +2096,8 @@ export const seedCreatures = [
         "living": true
       }
     ],
-    "mysteryLevel": 0
+    "mysteryLevel": 0,
+    "lifeStatus": "extinct"
   },
   {
     "id": "andrewsarchus",
@@ -2066,7 +2131,8 @@ export const seedCreatures = [
         "living": true
       }
     ],
-    "mysteryLevel": 1
+    "mysteryLevel": 1,
+    "lifeStatus": "extinct"
   },
   {
     "id": "entelodon",
@@ -2100,7 +2166,8 @@ export const seedCreatures = [
         "living": true
       }
     ],
-    "mysteryLevel": 0
+    "mysteryLevel": 0,
+    "lifeStatus": "extinct"
   },
   {
     "id": "basilosaurus",
@@ -2130,7 +2197,8 @@ export const seedCreatures = [
         "living": false
       }
     ],
-    "mysteryLevel": 0
+    "mysteryLevel": 0,
+    "lifeStatus": "extinct"
   },
   {
     "id": "titanoboa",
@@ -2164,7 +2232,8 @@ export const seedCreatures = [
         "living": true
       }
     ],
-    "mysteryLevel": 0
+    "mysteryLevel": 0,
+    "lifeStatus": "extinct"
   },
   {
     "id": "terror-bird",
@@ -2194,7 +2263,8 @@ export const seedCreatures = [
         "living": true
       }
     ],
-    "mysteryLevel": 0
+    "mysteryLevel": 0,
+    "lifeStatus": "extinct"
   },
   {
     "id": "dodo",
@@ -2224,7 +2294,8 @@ export const seedCreatures = [
         "living": true
       }
     ],
-    "mysteryLevel": 0
+    "mysteryLevel": 0,
+    "lifeStatus": "extinct"
   },
   {
     "id": "thylacine",
@@ -2258,7 +2329,8 @@ export const seedCreatures = [
         "living": true
       }
     ],
-    "mysteryLevel": 0
+    "mysteryLevel": 0,
+    "lifeStatus": "extinct"
   },
   {
     "id": "passenger-pigeon",
@@ -2288,7 +2360,8 @@ export const seedCreatures = [
         "living": true
       }
     ],
-    "mysteryLevel": 0
+    "mysteryLevel": 0,
+    "lifeStatus": "extinct"
   },
   {
     "id": "stellers-sea-cow",
@@ -2322,7 +2395,8 @@ export const seedCreatures = [
         "living": true
       }
     ],
-    "mysteryLevel": 0
+    "mysteryLevel": 0,
+    "lifeStatus": "extinct"
   },
   {
     "id": "great-auk",
@@ -2352,7 +2426,8 @@ export const seedCreatures = [
         "living": true
       }
     ],
-    "mysteryLevel": 0
+    "mysteryLevel": 0,
+    "lifeStatus": "extinct"
   },
   {
     "id": "aurochs",
@@ -2386,7 +2461,8 @@ export const seedCreatures = [
         "living": true
       }
     ],
-    "mysteryLevel": 0
+    "mysteryLevel": 0,
+    "lifeStatus": "extinct"
   },
   {
     "id": "lion",
@@ -2420,7 +2496,8 @@ export const seedCreatures = [
         "living": true
       }
     ],
-    "mysteryLevel": 0
+    "mysteryLevel": 0,
+    "lifeStatus": "extant"
   },
   {
     "id": "african-elephant",
@@ -2454,7 +2531,8 @@ export const seedCreatures = [
         "living": false
       }
     ],
-    "mysteryLevel": 0
+    "mysteryLevel": 0,
+    "lifeStatus": "extant"
   },
   {
     "id": "orca",
@@ -2488,7 +2566,8 @@ export const seedCreatures = [
         "living": true
       }
     ],
-    "mysteryLevel": 0
+    "mysteryLevel": 0,
+    "lifeStatus": "extant"
   },
   {
     "id": "saltwater-crocodile",
@@ -2522,7 +2601,8 @@ export const seedCreatures = [
         "living": true
       }
     ],
-    "mysteryLevel": 0
+    "mysteryLevel": 0,
+    "lifeStatus": "extant"
   },
   {
     "id": "komodo-dragon",
@@ -2552,7 +2632,8 @@ export const seedCreatures = [
         "living": false
       }
     ],
-    "mysteryLevel": 0
+    "mysteryLevel": 0,
+    "lifeStatus": "extant"
   },
   {
     "id": "sperm-whale",
@@ -2586,7 +2667,8 @@ export const seedCreatures = [
         "living": false
       }
     ],
-    "mysteryLevel": 0
+    "mysteryLevel": 0,
+    "lifeStatus": "extant"
   },
   {
     "id": "gorilla",
@@ -2620,7 +2702,8 @@ export const seedCreatures = [
         "living": true
       }
     ],
-    "mysteryLevel": 0
+    "mysteryLevel": 0,
+    "lifeStatus": "extant"
   },
   {
     "id": "polar-bear",
@@ -2654,7 +2737,8 @@ export const seedCreatures = [
         "living": true
       }
     ],
-    "mysteryLevel": 0
+    "mysteryLevel": 0,
+    "lifeStatus": "extant"
   },
   {
     "id": "hippopotamus",
@@ -2688,7 +2772,8 @@ export const seedCreatures = [
         "living": true
       }
     ],
-    "mysteryLevel": 0
+    "mysteryLevel": 0,
+    "lifeStatus": "extant"
   },
   {
     "id": "great-white-shark",
@@ -2722,7 +2807,8 @@ export const seedCreatures = [
         "living": false
       }
     ],
-    "mysteryLevel": 0
+    "mysteryLevel": 0,
+    "lifeStatus": "extant"
   },
   {
     "id": "green-anaconda",
@@ -2756,7 +2842,8 @@ export const seedCreatures = [
         "living": false
       }
     ],
-    "mysteryLevel": 0
+    "mysteryLevel": 0,
+    "lifeStatus": "extant"
   },
   {
     "id": "mantis-shrimp",
@@ -2786,7 +2873,8 @@ export const seedCreatures = [
         "living": true
       }
     ],
-    "mysteryLevel": 0
+    "mysteryLevel": 0,
+    "lifeStatus": "extant"
   },
   {
     "id": "peregrine-falcon",
@@ -2816,7 +2904,8 @@ export const seedCreatures = [
         "living": true
       }
     ],
-    "mysteryLevel": 0
+    "mysteryLevel": 0,
+    "lifeStatus": "extant"
   },
   {
     "id": "pistol-shrimp",
@@ -2846,7 +2935,8 @@ export const seedCreatures = [
         "living": true
       }
     ],
-    "mysteryLevel": 0
+    "mysteryLevel": 0,
+    "lifeStatus": "extant"
   },
   {
     "id": "tardigrade",
@@ -2872,7 +2962,8 @@ export const seedCreatures = [
         "living": true
       }
     ],
-    "mysteryLevel": 0
+    "mysteryLevel": 0,
+    "lifeStatus": "extant"
   },
   {
     "id": "platypus",
@@ -2902,7 +2993,8 @@ export const seedCreatures = [
         "living": true
       }
     ],
-    "mysteryLevel": 0
+    "mysteryLevel": 0,
+    "lifeStatus": "extant"
   },
   {
     "id": "archerfish",
@@ -2928,7 +3020,8 @@ export const seedCreatures = [
         "living": true
       }
     ],
-    "mysteryLevel": 0
+    "mysteryLevel": 0,
+    "lifeStatus": "extant"
   },
   {
     "id": "mimic-octopus",
@@ -2958,7 +3051,8 @@ export const seedCreatures = [
         "living": true
       }
     ],
-    "mysteryLevel": 0
+    "mysteryLevel": 0,
+    "lifeStatus": "extant"
   },
   {
     "id": "mantis",
@@ -2988,7 +3082,8 @@ export const seedCreatures = [
         "living": true
       }
     ],
-    "mysteryLevel": 0
+    "mysteryLevel": 0,
+    "lifeStatus": "extant"
   },
   {
     "id": "cambrian-anomalocaris",
@@ -3014,7 +3109,8 @@ export const seedCreatures = [
         "living": true
       }
     ],
-    "mysteryLevel": 1
+    "mysteryLevel": 1,
+    "lifeStatus": "extinct"
   },
   {
     "id": "hallucigenia",
@@ -3044,7 +3140,8 @@ export const seedCreatures = [
         "living": true
       }
     ],
-    "mysteryLevel": 2
+    "mysteryLevel": 2,
+    "lifeStatus": "extinct"
   },
   {
     "id": "opabinia",
@@ -3070,7 +3167,8 @@ export const seedCreatures = [
         "living": false
       }
     ],
-    "mysteryLevel": 3
+    "mysteryLevel": 3,
+    "lifeStatus": "extinct"
   },
   {
     "id": "dickinsonia",
@@ -3096,7 +3194,8 @@ export const seedCreatures = [
         "living": false
       }
     ],
-    "mysteryLevel": 3
+    "mysteryLevel": 3,
+    "lifeStatus": "extinct"
   },
   {
     "id": "tully-monster",
@@ -3122,6 +3221,7 @@ export const seedCreatures = [
         "living": false
       }
     ],
-    "mysteryLevel": 3
+    "mysteryLevel": 3,
+    "lifeStatus": "extinct"
   }
 ];

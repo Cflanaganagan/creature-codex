@@ -15,7 +15,7 @@ Keep both values in the hosting service's Environment settings, never in GitHub 
 
 1. Sign into Render with GitHub, choose **New → Blueprint**, select **Cflanaganagan/creature-codex**, and choose **updates-test** as the Blueprint branch.
 2. Supply `DATABASE_URL` and `ANTHROPIC_API_KEY` when requested, confirm the free web service, and deploy.
-3. Open the resulting `.onrender.com` address. Tables and the initial 100 creatures are created automatically without replacing saved entries.
+3. Open the resulting `.onrender.com` address. Tables and the original founding records are created automatically without replacing saved entries. The public museum exhibits its 80 extinct founding entries; living entries are archived.
 
 Render's free web service sleeps when idle. Its free PostgreSQL product currently expires after 30 days, so choose a persistent database plan/provider for the public archive. AI usage is billed separately from hosting. The configurable `DISCOVERY_DAILY_LIMIT` defaults to 100 new generation attempts per UTC database day; viewing saved creatures does not use AI.
 
@@ -42,7 +42,7 @@ Run the API with `DATABASE_URL` and, for live generation, the AI key in its envi
 
 ## AI model and spending setup
 
-Woolly uses `claude-haiku-4-5-20251001` for both initial discovery and its optional correction request. Standard Haiku 4.5 pricing is US$1 per million input tokens and US$5 per million output tokens. At an illustrative 1,500 input and 800 output tokens, 10,000 new entries cost about US$55 before retries and taxes. Actual usage must be measured after connecting the API.
+Woolly uses `claude-haiku-4-5-20251001` for identity resolution, profile generation, and an optional profile retry. Standard Haiku 4.5 pricing is US$1 per million input tokens and US$5 per million output tokens. At an illustrative 1,500 input and 800 output tokens, 10,000 new entries cost about US$55 before retries and taxes. Actual usage must be measured after connecting the API.
 
 In the Claude Console, purchase prepaid API credits and set a US$20 monthly spend limit under Settings → Billing → Spend limits before public launch. Leave automatic credit reload disabled unless intentionally enabled. These account settings cannot be set by this repository: the existing daily discovery limit is not a monthly dollar cap.
 
@@ -50,8 +50,31 @@ In the Claude Console, purchase prepaid API credits and set a US$20 monthly spen
 
 New discoveries resolve a search into a high-confidence species, subspecies, or domestic form before generating prose. Families, genera (including new fossil-genus searches), broad names and uncertain names receive a clarification response without a new entry. Existing founding fossil entries remain available. Dog, cat and horse have explicit domestic defaults. Breeds resolve to their domestic species; the profile writer receives only the canonical identity, not the original query. Saved canonical species are reused before profile generation.
 
-Every new profile has an explicit `lifeStatus`. Living species are normalized server-side to `mya: Present` and `era: Modern`. Resolution usually adds one short Haiku call to a new search; the existing daily allowance counts discovery attempts, not individual model calls. Model-based resolution is not independent scientific verification.
+Every new profile has an explicit `lifeStatus`. The extinct-only museum now rejects extant identities before profile generation or insertion. The earlier living-date repair is retained for historical records before archiving. Resolution usually adds one short Haiku call to a new search; the existing daily allowance counts discovery attempts, not individual model calls. Model-based resolution is not independent scientific verification.
 
 A one-time startup repair preserves original records in `creature_revision_backups`, fixes reviewed living-species dates and domestic dog/rabbit copy, relabels the existing fire salamander, and withdraws Felidae and the genus-wide Sea Horse entry without deleting their records. Those withdrawn entries are excluded from public counts and the sitemap. No public database editing endpoint is added.
 
 Run `node scripts/test-discovery-validation.cjs` with a dedicated `TEST_DATABASE_URL` ending in `_test` after building. Tests use a local provider stub and verify rejected searches, breed isolation, extant/extinct handling, concurrency, persistence and reversible legacy repairs. The original collection integration test remains available separately.
+
+## Museum of the Extinct migration
+
+On startup, `prepareExtinctMuseum` runs in the same advisory-locked transaction as the existing legacy repair. Every pre-migration record is backed up under `version = 'extinct-museum-v1'` in `creature_revision_backups`. Living species and unverified legacy AI records are marked withdrawn, never deleted. All 100 original founding records remain recoverable. The 80 reviewed extinct founding records stay on display. Unknown legacy extinction status is withheld for review, not guessed from a numerical age. A restart does not repeat or overwrite backups.
+
+The API collection and sitemap include only exhibited extinct records. Discovery refuses archived/living aliases, including canonical matches, and validates extinction again before saving. Common mammoth names require specificity. Legacy fossil-genus cards are retained; new genera do not receive invented species profiles.
+
+Search typing, Enter, suggestion selection and old `?discover=1` URLs make no discovery request. Only **Discover extinct creature** triggers identification and, if eligible, creation. Known domestic animals and archived living species require no model call. An unfamiliar living species generally requires a short identification call but no profile call or database insert.
+
+The browser uses a new extinct-only cache and filters personal records. Existing local JSON is preserved; imports must explicitly declare `lifeStatus: "extinct"` and have no living date label. Imports stay private to that browser. The shared archive never trusts browser imports.
+
+To inspect recoverable originals (read-only):
+
+```sql
+SELECT creature_id, original_data, saved_at
+FROM creature_revision_backups
+WHERE version = 'extinct-museum-v1'
+ORDER BY creature_id;
+```
+
+Restoring withdrawn records to public view requires an editorial decision and matching collection-policy changes; do not delete the backup table or blindly replace current data. Earlier raw AI mistakes are also preserved under `species-validation-v2`.
+
+Reconstruction links use curated Natural History Museum pages where available and a clearly labelled Wikimedia Commons image search otherwise. No third-party reconstruction images are copied. Search results are not represented as independently verified scientific artwork.

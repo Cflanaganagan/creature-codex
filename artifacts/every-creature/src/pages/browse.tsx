@@ -1,5 +1,6 @@
+import { ReconstructionLinks } from "@/components/reconstruction-links";
 import { ImageViewer } from "@/components/image-viewer";
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef } from "react";
 import { Layout } from "@/components/layout";
 import { CreatureSearch } from "@/components/creature-search";
 import { Badge } from "@/components/ui/badge";
@@ -45,6 +46,7 @@ const FAKE_SIGNALS = [
 ];
 
 function isValidCreatureResponse(data: AIResult, _query: string): boolean {
+  if (data.lifeStatus !== "extinct") return false;
   const genus = (data.genus ?? "").trim();
   if (!genus || /^unknown$/i.test(genus)) return false;
 
@@ -129,7 +131,6 @@ export default function Browse() {
   const [query, setQuery] = useState(initialQuery);
   const queryRef = useRef(query);
   queryRef.current = query;
-  const autoDiscovered = useRef(false);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(initialCategory);
   const [aiResult, setAiResult] = useState<AIResult | null>(null);
   const [savedId, setSavedId] = useState<string | null>(null);
@@ -166,6 +167,7 @@ export default function Browse() {
   });
 
   const discoveryDetails = (discoveryError as {data?: {code?: string; error?: string; suggestions?: string[]}} | null)?.data;
+  const livingSpecies = discoveryDetails?.code === "living_species";
   const needsClarification = discoveryDetails?.code === "clarification_required";
   const filteredCreatures = creatures.filter((c) => {
     const matchesQuery = c.name.toLowerCase().includes(query.toLowerCase()) || c.genus.toLowerCase().includes(query.toLowerCase());
@@ -177,6 +179,7 @@ export default function Browse() {
   const showAISection = (filteredCreatures.length === 0 || aiResult !== null) && hasQuery && !selectedCategory;
 
   const handleDiscover = () => {
+    if (isDiscovering || collectionStatus === "loading") return;
     const term = query.trim();
     if (isObviouslyFictional(term)) {
       setInvalidResponse(true);
@@ -188,13 +191,6 @@ export default function Browse() {
     setInvalidResponse(false);
     lookupAI({ data: { name: term } });
   };
-
-  useEffect(() => {
-    if (!autoDiscovered.current && searchParams.get("discover") === "1" && collectionStatus !== "loading" && showAISection) {
-      autoDiscovered.current = true;
-      handleDiscover();
-    }
-  }, [showAISection, collectionStatus]);
 
   const mysteryLabels: Record<number, string | null> = {
     0: null,
@@ -212,7 +208,7 @@ export default function Browse() {
           <div className="relative max-w-md">
             <CreatureSearch value={query} onChange={(value) => {
               setQuery(value); setAiResult(null); setSavedId(null); setInvalidResponse(false); resetDiscovery();
-            }} onSearch={() => { if (showAISection && !isDiscovering) handleDiscover(); }}
+            }} onSearch={() => { /* Search only; the Discover button owns AI requests. */ }}
               placeholder="Search by name or genus..." testId="input-search"
               className="text-lg py-6 rounded-xl border-border bg-card/5 focus-visible:ring-primary" />
           </div>
@@ -244,8 +240,7 @@ export default function Browse() {
       {filteredCreatures.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {filteredCreatures.map((creature, i) => (
-            <motion.a
-              href={`/creature/${creature.id}`}
+            <motion.div
               key={creature.id}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -253,6 +248,7 @@ export default function Browse() {
               className="group block bg-card text-card-foreground rounded-2xl overflow-hidden border border-card-border hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
               data-testid={`card-creature-${creature.id}`}
             >
+              <a href={`/creature/${creature.id}`} className="block">
               <div className={`h-2 ${categoryColors[creature.category]}`} />
               <div className="p-6">
                 <div className="flex justify-between items-start mb-4">
@@ -269,7 +265,9 @@ export default function Browse() {
                   </Badge>
                 </div>
               </div>
-            </motion.a>
+              </a>
+              <div className="px-6 pb-5 text-card-foreground/75"><ReconstructionLinks creature={creature} compact /></div>
+            </motion.div>
           ))}
         </div>
       ) : (
@@ -288,15 +286,15 @@ export default function Browse() {
                   Not in our collection yet
                 </h3>
                 <p className="text-foreground/60 mb-6">
-                  No specimen found for <span className="font-semibold text-foreground">"{query}"</span>. Let our AI naturalist investigate.
+                  No specimen found for <span className="font-semibold text-foreground">"{query}"</span>. Choose Discover to ask our AI naturalist about this extinct creature. Searching alone never adds a card.
                 </p>
                 <Button
                   onClick={handleDiscover}
-                  disabled={isDiscovering}
+                  disabled={isDiscovering || collectionStatus === "loading"}
                   className="gap-2 px-6 py-5 text-base"
                 >
                   <Sparkles className="w-4 h-4" />
-                  {isDiscovering ? "Discovering creature..." : "Discover with AI"}
+                  {isDiscovering ? "Discovering creature..." : "Discover extinct creature"}
                 </Button>
               </div>
 
@@ -319,11 +317,11 @@ export default function Browse() {
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  className={`flex items-center gap-3 p-4 rounded-xl border ${needsClarification ? "bg-amber-50/60 border-amber-800/20 text-foreground" : "bg-destructive/10 border-destructive/30 text-destructive"}`}
+                  role="status" className={`flex items-center gap-3 p-4 rounded-xl border ${needsClarification || livingSpecies ? "bg-amber-50/60 border-amber-800/20 text-foreground" : "bg-destructive/10 border-destructive/30 text-destructive"}`}
                 >
                   <AlertCircle className="w-5 h-5 shrink-0" />
                   <div>
-                    <h3 className="font-serif text-lg font-semibold">{needsClarification ? "Which creature did you mean?" : "Discovery unavailable"}</h3>
+                    <h3 className="font-serif text-lg font-semibold">{livingSpecies ? "Still living today" : needsClarification ? "Which creature did you mean?" : "Discovery unavailable"}</h3>
                     <p>{discoveryDetails?.error || "Could not reach the AI naturalist. Please try again."}</p>
                     {needsClarification && <p className="mt-2 text-sm">No creature was added. Try a specific name{(discoveryDetails?.suggestions || []).length > 0 ? `, such as ${discoveryDetails!.suggestions!.join(" or ")}` : " or a scientific species name"}.</p>}
                   </div>
@@ -392,6 +390,7 @@ export default function Browse() {
                         <div className="p-8 md:p-10 -mt-2">
                           <div className={`h-1 rounded-full mb-8 ${categoryColors[aiResult.category]?.split(" ")[0] ?? "bg-purple-700"}`} />
 
+                          <ReconstructionLinks creature={{...aiResult, id: savedId || ""}} />
                           {/* Header */}
                           <div className="flex flex-col md:flex-row gap-8 items-start mb-8">
                             <div className="text-7xl md:text-8xl shrink-0 bg-white/5 p-5 rounded-3xl aspect-square flex items-center justify-center">

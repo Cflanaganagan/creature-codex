@@ -1,8 +1,8 @@
 import { createContext, useContext, useState, useCallback, useEffect, useMemo, useRef, type ReactNode } from "react";
-import { creatures as defaultCreatures, type Creature } from "@/data/creatures";
+import { creatures as defaultCreatures, isExtinctCreature, type Creature } from "@/data/creatures";
 
 const STORAGE_KEY = "every-creature-db";
-const SHARED_CACHE_KEY = "every-creature-shared-cache";
+const SHARED_CACHE_KEY = "woolly-extinct-shared-cache-v1";
 
 const CATEGORY_MIGRATION: Record<string, string> = {
   "Theropods":               "Reptiles",
@@ -91,7 +91,7 @@ type CreaturesContextValue = {
 };
 const CreaturesContext = createContext<CreaturesContextValue | null>(null);
 function readSharedCache(): Creature[] {
-  try { const cached = JSON.parse(localStorage.getItem(SHARED_CACHE_KEY) || "null"); if (Array.isArray(cached) && cached.length) return cached; } catch { /* optional cache */ }
+  try { const cached = JSON.parse(localStorage.getItem(SHARED_CACHE_KEY) || "null"); if (Array.isArray(cached) && cached.length) return cached.filter(isExtinctCreature); } catch { /* optional cache */ }
   return defaultCreatures;
 }
 
@@ -113,8 +113,8 @@ export function CreaturesProvider({ children }: { children: ReactNode }) {
       if (!Array.isArray(data.creatures) || !["shared", "preview"].includes(data.mode)) throw new Error("Invalid collection");
       // A discovery that completes during this fetch must not be replaced by an older snapshot.
       if (revision.current === startedAt) {
-        setShared(data.creatures);
-        if (data.mode === "shared") try { localStorage.setItem(SHARED_CACHE_KEY, JSON.stringify(data.creatures)); } catch { /* optional cache */ }
+        setShared(data.creatures.filter(isExtinctCreature));
+        if (data.mode === "shared") try { localStorage.setItem(SHARED_CACHE_KEY, JSON.stringify(data.creatures.filter(isExtinctCreature))); } catch { /* optional cache */ }
       }
       setCollectionStatus(data.mode);
     } catch { setCollectionStatus("offline"); }
@@ -130,9 +130,10 @@ export function CreaturesProvider({ children }: { children: ReactNode }) {
   }, [refreshCollection]);
   const creatures = useMemo(() => {
     const ids = new Set(shared.map(c=>c.id));
-    return [...shared, ...personal.filter(c=>!ids.has(c.id))];
+    return [...shared, ...personal.filter(c=>!ids.has(c.id))].filter(isExtinctCreature);
   }, [shared, personal]);
   const acceptDiscoveredCreature = useCallback((creature: Creature) => {
+    if (!isExtinctCreature(creature)) return;
     revision.current++;
     setShared(current => {
       const next = current.some(c=>c.id===creature.id) ? current : [...current, creature];
@@ -143,6 +144,7 @@ export function CreaturesProvider({ children }: { children: ReactNode }) {
     void refreshCollection();
   }, [refreshCollection]);
   const importCreatures = useCallback((incoming: Creature[], mode: ImportMode) => {
+    if (incoming.some(c => !isExtinctCreature(c))) throw new Error("Only confirmed extinct creatures can be imported.");
     setPersonal(current => {
       const existingIds = new Set(current.map(c=>c.id));
       const next = mode === "replace" ? incoming : [...current,...incoming.filter(c=>!existingIds.has(c.id))];

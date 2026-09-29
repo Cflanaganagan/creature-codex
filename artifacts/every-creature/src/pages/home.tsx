@@ -34,14 +34,14 @@ export default function Home() {
         <div className="museum-fossil-backdrop museum-fossil-right" aria-hidden="true"><img src={museumFossils} alt="" /></div>
         <div className="relative flex flex-col items-center text-center">
           <div className="mb-3 text-[10px] md:text-xs font-semibold uppercase tracking-[0.38em] text-foreground/45">
-            A Natural History Collection
+            Woolly · A shared archive of lost life
           </div>
           <h2 className="text-4xl sm:text-5xl lg:text-7xl font-serif font-bold mb-5 tracking-tight">
-            The Encyclopedia of Life
+            Museum of the Extinct
           </h2>
           <div className="w-20 h-px bg-foreground/25 mb-5" />
           <p className="text-lg md:text-xl text-foreground/60 max-w-2xl font-light mb-8 leading-relaxed">
-            Discover remarkable life from across Earth's history — from living species to creatures known only from the fossil record.
+            Step into Earth's lost worlds. Explore extraordinary extinct animals, from the age of dinosaurs to the last dodo.
           </p>
 
           <div className="flex flex-wrap items-center justify-center gap-3">
@@ -63,7 +63,7 @@ export default function Home() {
           </div>
         </div>
         <div className="museum-collection-note relative mt-8 flex flex-wrap justify-center gap-x-5 gap-y-2 text-[10px] uppercase tracking-[.2em] text-foreground/50">
-          <span data-testid="collection-counter">{sharedCount.toLocaleString()} creatures catalogued</span><span aria-hidden="true">✦</span><span>{categories.length} exhibition halls</span><span aria-hidden="true">✦</span><span>A world of discovery</span>
+          <span data-testid="collection-counter">{sharedCount.toLocaleString()} extinct creatures catalogued</span><span aria-hidden="true">✦</span><span>{categories.length} exhibition halls</span><span aria-hidden="true">✦</span><span>A world of discovery</span>
         </div>
       </section>
 
@@ -108,7 +108,7 @@ export default function Home() {
 
                 <div className="relative flex flex-col items-center px-5 pt-6 pb-5">
                   <div className="text-[9px] uppercase tracking-[0.28em] font-bold opacity-55 mb-2">
-                    Natural History Exhibit
+                    Extinct Life Exhibit
                   </div>
 
                   <div className="exhibit-portrait relative w-36 h-36 md:w-40 md:h-40 mb-3">
@@ -139,7 +139,7 @@ export default function Home() {
 
                     <div className="flex flex-col items-center justify-center min-w-10 h-10 rounded-full border border-current/20 bg-black/10 shadow-[inset_0_1px_3px_rgba(0,0,0,.12)]">
                       <span className="text-sm leading-none font-bold">{count}</span>
-                      <span className="text-[6px] uppercase tracking-wider opacity-60 mt-0.5">Species</span>
+                      <span className="text-[6px] uppercase tracking-wider opacity-60 mt-0.5">Entries</span>
                     </div>
                   </div>
                 </div>

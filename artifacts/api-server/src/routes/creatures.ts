@@ -5,7 +5,7 @@ import { AiCreatureLookupBody } from "@workspace/api-zod";
 
 const router: IRouter = Router();
 
-const SYSTEM_PROMPT = `You are a natural history expert. When given a resolved creature identity, respond with ONLY a valid JSON object in exactly this format with no other text:
+const SYSTEM_PROMPT = `You are the AI naturalist for Woolly — Museum of the Extinct. When given a resolved creature identity, respond with ONLY a valid JSON object in exactly this format with no other text:
 {
   "name": "",
   "genus": "",
@@ -31,18 +31,18 @@ CRITICAL RULES:
 - You receive ONLY a resolved species identity, never a raw visitor search. Write exclusively about that resolved creature.
 - Never discuss or focus on a particular domestic breed. All biography, facts, size, habitat and relatives must describe the resolved creature as a whole.
 - Do not change the resolved name, scientificName, genus, rank or lifeStatus.
-- For extant creatures use era "Modern" and mya "Present". Never use an evolutionary origin, domestication date or fossil age as an extinction date.
+- Only extinct creatures are admitted. Never use an evolutionary origin or domestication date as an extinction date.
 - For extinct creatures use their actual known geological range in millions of years, or "Extinct YEAR" for a known recent extinction. Never infer a numerical date from uncertainty.
 - For category use one of: Mammals, Reptiles, Birds, Aquatic, Amphibians, Invertebrates, Mystery Creatures.
-- Mammals: any warm-blooded furry creature, prehistoric or living (mammoths, wolves, whales that are biological mammals but not primarily water-dwellers, etc.)
-- Reptiles: all dinosaurs (theropods, sauropods, ceratopsians, armoured, hadrosaurs), pterosaurs, synapsids, prehistoric and living reptiles (crocodilians, lizards, snakes)
-- Birds: all birds prehistoric and living, including recently extinct birds (dodo, great auk, terror bird, archaeopteryx, passenger pigeon, etc.)
-- Aquatic: vertebrates and invertebrates that lived primarily in water, EXCEPT amphibians, which always belong in Amphibians (plesiosaurs, mosasaurs, prehistoric sharks, marine mammals like orca/sperm whale, sea cows, aquatic invertebrates, aquatic reptiles)
-- Amphibians: all living and extinct amphibians, including frogs, toads, salamanders, newts, caecilians, temnospondyls, and other scientifically recognized amphibian taxa.
-- Invertebrates: insects, arthropods, worms, molluscs, and all spineless creatures (prehistoric or living)
+- Mammals: any warm-blooded furry creature, extinct (mammoths, wolves, whales that are biological mammals but not primarily water-dwellers, etc.)
+- Reptiles: all dinosaurs (theropods, sauropods, ceratopsians, armoured, hadrosaurs), pterosaurs, synapsids, extinct reptiles (crocodilians, lizards, snakes)
+- Birds: extinct birds, including recently extinct birds (dodo, great auk, terror bird, archaeopteryx, passenger pigeon, etc.)
+- Aquatic: vertebrates and invertebrates that lived primarily in water, EXCEPT amphibians, which always belong in Amphibians (plesiosaurs, mosasaurs, prehistoric sharks, extinct marine mammals, sea cows, aquatic invertebrates, aquatic reptiles)
+- Amphibians: extinct amphibians, including frogs, toads, salamanders, newts, caecilians, temnospondyls, and other scientifically recognized amphibian taxa.
+- Invertebrates: insects, arthropods, worms, molluscs, and all spineless creatures (extinct)
 - Mystery Creatures: creatures with very little fossil evidence, debated classification, or so bizarre they defy easy categorisation. Use for mysteryLevel 2 or 3 creatures.
 - For the regions field: list the continents or major world regions where this creature lived or where its fossils have been found. Use these values only: "North America", "South America", "Europe", "Africa", "Asia", "Australia", "Antarctica", "Worldwide". Include all that apply. For marine/aquatic creatures that roamed globally use ["Worldwide"].
-- If the search term is not a real creature or is fictional, return a mysteryLevel 3 entry with category "Mystery Creatures", genus "Unknown", and still include exactly 5 funFacts explaining what is unknown. Set regions to [].
+- Never invent a creature. Mystery Creatures must also be real extinct animals supported by fossil evidence.
 - Set scientificName to the accepted Latin species name when known, or the recognized fossil taxon. Use the same canonical name for synonyms and breeds, so each taxon has one shared entry.
 - Respond with ONLY the JSON. No markdown, no code blocks, no explanation.`;
 
@@ -81,10 +81,11 @@ Return ONLY JSON in one of these two shapes:
 STRICT RULES:
 - Resolve only a confidently recognized species, subspecies, or domestic form of a species. The Latin name must contain a genus and species, optionally subspecies.
 - Families, orders, genera (including fossil genera), and other broad taxonomic groups require clarification. Never pick an arbitrary member. Felidae and Panthera must not resolve to a species.
-- Ambiguous names like whale, frog, shark, seahorse, rabbit, salamander or kangaroo require clarification. Suggest up to four specific species; no card is created.
+- Ambiguous names like mammoth (Woolly, Columbian, Steppe, or pygmy species), whale, frog, shark, seahorse, rabbit, salamander or kangaroo require clarification. Suggest up to four specific extinct species; no card is created.
 - Nicknames, informal names, unclear spellings, fictional names or uncertain identities require clarification. Do not guess. A well-established unambiguous species common name such as blue whale or cheetah is acceptable.
 - Dog, cat and horse resolve to Domestic Dog (Canis lupus familiaris), Domestic Cat (Felis catus) and Domestic Horse (Equus caballus).
 - Recognized domestic breeds resolve to their parent domestic species, not a breed card. Labrador Retriever resolves to Domestic Dog; Netherland Dwarf Rabbit resolves to Domestic Rabbit (Oryctolagus cuniculus). The returned name must never be the breed name.
+- This is an extinct-only museum, but honestly identify living species as extant so the server can explain their exclusion. Never reinterpret a living animal as its extinct ancestor. Extinct in the wild, locally extinct, endangered, living fossils and ancient lineages with living members are EXTANT.
 - Determine extant versus extinct explicitly. Cheetah, red kangaroo and domestic species are extant. An ancient origin or domestication date does NOT mean extinction.
 - If rank, identity or life status is uncertain, return clarification_required. Do not invent scientific precision.
 `;
@@ -133,6 +134,8 @@ router.post("/creatures/ai-lookup", async (req, res) => {
   usage.count++; recentRequests.set(ip, usage);
   try {
     const name = parsed.data.name.trim();
+    const known = knownIdentity(name);
+    if (known?.lifeStatus === "extant") throw new CollectionError(422, `${known.name} is alive today. Woolly exhibits extinct creatures only, so no card was added.`, "living_species");
     const clarification = knownClarification(name);
     if (clarification) throw new CollectionError(422,clarification.message,"clarification_required",clarification.suggestions);
     const creature = await discoverCreature(name, resolveCreature, generateCreature, anthropicConfigured);

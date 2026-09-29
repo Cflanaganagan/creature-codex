@@ -7,7 +7,7 @@ import { useCreatures } from "@/hooks/useCreatures";
 type Props = { value?: string; onChange?: (value: string) => void; onSearch?: (value: string) => void; placeholder?: string; testId?: string; className?: string };
 const normalize = (text: string) => text.trim().toLocaleLowerCase();
 
-export function CreatureSearch({ value, onChange, onSearch, placeholder = "Search creatures...", testId = "input-header-search", className = "" }: Props) {
+export function CreatureSearch({ value, onChange, onSearch, placeholder = "Search extinct creatures...", testId = "input-header-search", className = "" }: Props) {
   const { creatures } = useCreatures();
   const [, navigate] = useLocation();
   const [localValue, setLocalValue] = useState("");
@@ -28,7 +28,7 @@ export function CreatureSearch({ value, onChange, onSearch, placeholder = "Searc
       if (!term) return;
       setOpen(false);
       if (onSearch) onSearch(query.trim());
-      else window.location.assign(`/browse?q=${encodeURIComponent(query.trim())}&discover=1`);
+      else window.location.assign(`/browse?q=${encodeURIComponent(query.trim())}`);
     }}>
       <Search aria-hidden="true" className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
       <Input role="combobox" aria-label="Search creatures" aria-autocomplete="list" aria-expanded={visible} aria-controls={visible && matches.length ? `${id}-list` : undefined} aria-activedescendant={visible && active >= 0 && matches[active] ? `${id}-${active}` : undefined}
@@ -49,8 +49,8 @@ export function CreatureSearch({ value, onChange, onSearch, placeholder = "Searc
               <span className="min-w-0"><span className="block truncate text-sm font-semibold text-foreground">{creature.name}</span><span className="block truncate text-xs text-muted-foreground italic">{creature.genus} · {creature.category}</span></span>
               <ArrowUpRight aria-hidden="true" className="h-4 w-4 shrink-0 text-muted-foreground" />
             </li>)}
-          </ul> : <div className="flex gap-2 px-4 pb-4 text-sm text-muted-foreground"><Sparkles className="h-4 w-4 shrink-0 mt-0.5" /><span>No matching names yet. Press Enter to search the collection and discover a new creature.</span></div>}
-          <div className="border-t px-4 py-2 text-[10px] text-muted-foreground">{matches.length ? "↑ ↓ to explore · Enter to select · Esc to close" : "AI discovery starts only when you submit your search."}</div>
+          </ul> : <div className="flex gap-2 px-4 pb-4 text-sm text-muted-foreground"><Sparkles className="h-4 w-4 shrink-0 mt-0.5" /><span>No matching names yet. Press Enter to view results. You can then choose Discover for a specific extinct animal.</span></div>}
+          <div className="border-t px-4 py-2 text-[10px] text-muted-foreground">{matches.length ? "↑ ↓ to explore · Enter to select · Esc to close" : "Searching never adds a card. Only the Discover button starts a lookup."}</div>
         </div>
       )}
     </form>

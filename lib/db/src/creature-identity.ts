@@ -19,22 +19,25 @@ export const clarificationSchema = z.object({
 export type Clarification = z.infer<typeof clarificationSchema>;
 export const normalizeName = (name: string) => name.normalize("NFKD").replace(/\p{M}/gu, "").toLowerCase().replace(/[^\p{L}\p{N}]+/gu, " ").trim();
 const broadNames: Record<string, string[]> = {
-  felidae: ["Domestic Cat", "Lion", "Cheetah"], canidae: ["Domestic Dog", "Gray Wolf"],
-  panthera: ["Lion", "Tiger"], canis: ["Gray Wolf", "Domestic Dog"],
-  whale: ["Blue Whale", "Sperm Whale"], whales: ["Blue Whale", "Sperm Whale"],
-  dolphin: ["Common Bottlenose Dolphin", "Spinner Dolphin"],
-  frog: ["American Bullfrog", "Red-eyed Tree Frog"], shark: ["Great White Shark", "Whale Shark"],
-  beetle: ["Hercules Beetle", "Stag Beetle (Lucanus cervus)"],
-  rabbit: ["Domestic Rabbit", "European Rabbit"], kangaroo: ["Red Kangaroo", "Eastern Grey Kangaroo"],
-  seahorse: ["Lined Seahorse", "Dwarf Seahorse"], "sea horse": ["Lined Seahorse", "Dwarf Seahorse"],
-  hippocampus: ["Lined Seahorse", "Dwarf Seahorse"],
-  salamander: ["Fire Salamander", "Tiger Salamander"], salamandra: ["Fire Salamander", "Alpine Salamander"],
-  bird: [], fish: [], mammal: [], reptile: [], amphibian: [], insect: [], dinosaur: [],
+  mammoth: ["Woolly Mammoth", "Columbian Mammoth", "Steppe Mammoth", "Mammuthus exilis"],
+  mammuthus: ["Woolly Mammoth", "Columbian Mammoth", "Steppe Mammoth", "Mammuthus exilis"],
+  "pygmy mammoth": ["Mammuthus exilis", "Mammuthus creticus"],
+  smilodon: ["Smilodon fatalis", "Smilodon populator", "Smilodon gracilis"],
+  "saber toothed cat": ["Smilodon fatalis", "Homotherium latidens"],
+  "sabre toothed cat": ["Smilodon fatalis", "Homotherium latidens"],
+  felidae: ["Smilodon fatalis", "Panthera spelaea"], canidae: ["Dire Wolf"],
+  panthera: ["Panthera spelaea", "Panthera atrox"], canis: [],
+  whale: ["Basilosaurus cetoides", "Dorudon atrox"], dolphin: [],
+  frog: ["Beelzebufo ampinga"], shark: ["Otodus megalodon"], beetle: [],
+  rabbit: [], kangaroo: ["Procoptodon goliah"],
+  seahorse: [], "sea horse": [], hippocampus: [], salamander: [], salamandra: [],
+  bird: ["Dodo", "Great Auk"], fish: [], mammal: [], reptile: [], amphibian: [], insect: [],
+  dinosaur: ["Tyrannosaurus rex", "Triceratops horridus"],
 };
 export function knownClarification(query: string): Clarification | undefined {
   const key = normalizeName(query);
   const suggestions = broadNames[key] ?? broadNames[key.replace(/s$/, "")];
-  if (suggestions) return { status: "clarification_required", message: `“${query}” refers to a group of creatures. Please enter a specific species or its scientific name.`, suggestions };
+  if (suggestions) return { status: "clarification_required", message: `“${query}” refers to a group of creatures. Please enter a specific extinct species or its scientific name.`, suggestions };
   return undefined;
 }
 const domestic = (name: string, scientificName: string): ResolvedIdentity => ({status:"resolved",name,scientificName,genus:scientificName.split(" ")[0],rank:"domestic_form",lifeStatus:"extant",confidence:"high"});

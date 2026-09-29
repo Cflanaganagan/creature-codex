@@ -13,7 +13,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
             <div className="w-11 h-11 relative flex items-center justify-center overflow-hidden rounded-xl shadow-sm group-hover:scale-105 transition-transform duration-300">
               <img src={codexLogo} alt="Woolly home" className="w-full h-full object-cover" />
             </div>
-            <h1 className="text-3xl font-serif font-bold tracking-tight text-primary m-0">Woolly</h1>
+            <div><h1 className="text-3xl font-serif font-bold tracking-tight text-primary m-0">Woolly</h1><p className="text-[9px] uppercase tracking-[.18em] text-muted-foreground">Museum of the Extinct</p></div>
           </Link>
 
           <div className="flex items-center gap-1 w-full sm:w-auto">
@@ -44,7 +44,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </main>
 
       <footer className="museum-footer border-t py-12 text-center text-muted-foreground">
-        <p className="font-serif italic text-lg mb-2">A natural history museum in your pocket.</p>
+        <p className="font-serif italic text-lg mb-2">Woolly — Museum of the Extinct.</p>
         <p className="text-sm">
           Built for curiosity.{" "}
           <Link href="/import" className="underline underline-offset-2 hover:text-foreground transition-colors">

@@ -40,60 +40,79 @@ async function collection(){return (await fetch('http://127.0.0.1:5128/api/creat
 (async()=>{
  await pool.query('DROP TABLE IF EXISTS creature_revision_backups,creature_aliases,creature_collection,creature_discovery_usage');
  await new Promise(r=>stub.listen(5127,'127.0.0.1',r));await start();
- for(const name of ['Felidae','whale','Panthera','frog','seahorse','salamander','Acinonyx','sea monster']){
+ for(const name of ['Felidae','whale','Panthera','mammoth','Mammuthus','pygmy mammoth','Smilodon','frog','Acinonyx','sea monster']){
   const r=await lookup(name);assert.equal(r.status,422,name);assert.equal(r.data.code,'clarification_required',name);
  }
- assert.equal((await collection()).total,100);
- await stop();await start(); // reset per-IP request window for the next scenario
- const before=requests.length;
- const same=await Promise.all(Array.from({length:10},()=>lookup('Koala')));
- assert.ok(same.every(r=>r.status===200&&r.data.mya==='Present'&&r.data.lifeStatus==='extant'));
+ let all=await collection();assert.equal(all.total,80);assert.ok(all.creatures.every(c=>c.lifeStatus==='extinct'));
+ // Every original seed survives; living seeds have recoverable backups and cannot be retrieved as discoveries.
+ assert.equal((await pool.query('SELECT count(*) FROM creature_collection')).rows[0].count,'100');
+ assert.equal((await pool.query("SELECT original_data->>'name' AS name FROM creature_revision_backups WHERE version='extinct-museum-v1' AND creature_id='lion'")).rows[0].name,'Lion');
+ let before=requests.length;
+ for(const name of ['Lion','dog','cat','horse','Labrador Retriever','Netherland Dwarf Rabbit']){
+  const r=await lookup(name);assert.equal(r.status,422,name);assert.equal(r.data.code,'living_species',name);
+ }
+ assert.equal(requests.length,before,'known living animals need no paid calls');
+ await stop();await start();
+ for(const name of ['Cheetah','Red Kangaroo','Blue Whale','Koala','Poodle']){
+  const r=await lookup(name);assert.equal(r.status,422,name);assert.equal(r.data.code,'living_species',name);
+ }
+ assert.equal(requests.length-before,5,'living animals stop after resolution, before profile generation');
+ assert.equal((await collection()).total,80);
+ before=requests.length;
+ const same=await Promise.all(Array.from({length:10},()=>lookup('Quagga')));
+ assert.ok(same.every(r=>r.status===200&&r.data.mya==='Extinct 1883'&&r.data.lifeStatus==='extinct'));
  assert.equal(requests.length-before,2,'one resolver + one profile for concurrent search');
- assert.equal((await lookup('Australian koala')).data.id,'koala');
- assert.equal(requests.length-before,3,'resolved synonyms reuse existing profile');
- for(const name of ['Cheetah','Red Kangaroo']){const r=await lookup(name);assert.equal(r.status,200);assert.equal(r.data.mya,'Present');assert.equal(r.data.era,'Modern')}
- const dog=await lookup('Labrador Retriever');assert.equal(dog.status,200);assert.equal(dog.data.name,'Domestic Dog');assert.ok(!JSON.stringify(dog.data).includes('Labrador'));
- assert.equal((await lookup('Poodle')).data.id,dog.data.id);
- assert.equal((await lookup('dog')).data.id,dog.data.id);
- const rabbit=await lookup('Netherland Dwarf Rabbit');assert.equal(rabbit.status,200);assert.equal(rabbit.data.name,'Domestic Rabbit');assert.ok(!JSON.stringify(rabbit.data).includes('Netherland'));
+ assert.equal((await lookup('Equus quagga quagga')).data.id,'quagga');
+ const extinct=same[0].data;
+ // Simulate old production mistakes. Unknown legacy status is quarantined, never guessed from an age.
+ for(const [id,name] of [['cheetah','Cheetah'],['felidae','Felidae'],['unreviewed-old-entry','Unreviewed Old Entry']]) {
+  const data={...extinct,id,name,mya:'0.003',source:'ai'};delete data.identityVersion;delete data.lifeStatus;
+  await pool.query('INSERT INTO creature_collection(id,taxon_key,data) VALUES($1,$1,$2)',[id,JSON.stringify(data)]);
+  await pool.query('INSERT INTO creature_aliases(alias,creature_id) VALUES($1,$2)',[name.toLowerCase(),id]);
+ }
  await stop();await start();
- const extinct=await lookup('Quagga');assert.equal(extinct.status,200);assert.equal(extinct.data.lifeStatus,'extinct');assert.equal(extinct.data.mya,'Extinct 1883');
- assert.equal((await lookup('Blue Whale')).status,200);
- // Seed the historical mistakes, then verify restart migration + backups + idempotence.
- const broad={...dog.data,id:'felidae',name:'Felidae',scientificName:'Felidae',genus:'Felidae',source:'ai'};delete broad.identityVersion;
- await pool.query("INSERT INTO creature_collection(id,taxon_key,data) VALUES('felidae','felidae',$1)",[JSON.stringify(broad)]);
- await pool.query("INSERT INTO creature_aliases(alias,creature_id) VALUES('felidae','felidae')");
- await pool.query("UPDATE creature_collection SET data=data-'identityVersion' WHERE id IN ('cheetah','domestic-dog','domestic-rabbit')");
- await pool.query("DELETE FROM creature_revision_backups WHERE creature_id IN ('cheetah','domestic-dog','domestic-rabbit')");
- await pool.query(`UPDATE creature_collection SET data=jsonb_set(data,'{mya}','"0.003"') WHERE id='cheetah'`);
- await pool.query(`UPDATE creature_collection SET data=jsonb_set(data,'{description}','"Labrador Retriever biography"') WHERE id='domestic-dog'`);
- await stop();await start();
- const all=await collection();assert.ok(!all.creatures.some(c=>c.id==='felidae'));
- assert.equal(all.creatures.find(c=>c.id==='cheetah').mya,'Present');
- assert.ok(!JSON.stringify(all.creatures.find(c=>c.id==='domestic-dog')).includes('Labrador'));
- assert.ok(!JSON.stringify(all.creatures.find(c=>c.id==='domestic-rabbit')).includes('Netherland'));
- assert.equal((await pool.query("SELECT count(*) FROM creature_collection WHERE id='felidae'")).rows[0].count,'1','withdrawal preserves original row');
- const backups=await pool.query('SELECT count(*) FROM creature_revision_backups');await stop();await start();assert.equal((await pool.query('SELECT count(*) FROM creature_revision_backups')).rows[0].count,backups.rows[0].count);
+ all=await collection();assert.equal(all.total,81);
+ assert.ok(!all.creatures.some(c=>['cheetah','felidae','unreviewed-old-entry','lion'].includes(c.id)));
+ assert.equal((await lookup('Cheetah')).data.code,'living_species');
+ assert.equal((await pool.query("SELECT original_data->>'mya' AS mya FROM creature_revision_backups WHERE version='species-validation-v2' AND creature_id='cheetah'")).rows[0].mya,'0.003');
+ const backups=await pool.query('SELECT count(*) FROM creature_revision_backups');await stop();await start();
+ assert.equal((await pool.query('SELECT count(*) FROM creature_revision_backups')).rows[0].count,backups.rows[0].count,'migration is idempotent');
  if(process.env.PLAYWRIGHT_MODULE){
   const {chromium}=require(process.env.PLAYWRIGHT_MODULE);const browser=await chromium.launch({args:['--no-sandbox']});
   try {
-   const page=await browser.newPage();
+   const page=await browser.newPage({viewport:{width:1440,height:1080}});
+   let lookupRequests=0;page.on('request',r=>{if(r.url().includes('/ai-lookup'))lookupRequests++});
    await page.goto('http://127.0.0.1:5128/browse?q=Felidae&discover=1');
-   await page.getByText('Which creature did you mean?',{exact:true}).waitFor();
+   const discover=page.getByRole('button',{name:'Discover extinct creature',exact:true});
+   await discover.waitFor();await page.waitForTimeout(600);assert.equal(lookupRequests,0,'legacy URL must not auto-discover');
+   await page.getByTestId('input-search').press('Enter');await page.waitForTimeout(300);assert.equal(lookupRequests,0,'Enter must not auto-discover');
+   await discover.click();await page.getByText('Which creature did you mean?',{exact:true}).waitFor();
    await page.getByText(/No creature was added/).waitFor();
-   await page.goto('http://127.0.0.1:5128/creature/cheetah');
-   await page.getByText('Living Today',{exact:true}).waitFor();
-   await page.goto('http://127.0.0.1:5128/creature/domestic-dog');
-   await page.getByTestId('text-creature-name').filter({hasText:'Domestic Dog'}).waitFor();
-   assert.ok(!(await page.locator('main').innerText()).includes('Labrador'));
+   await page.goto('http://127.0.0.1:5128/browse?q=lion');await discover.click();
+   await page.getByText('Still living today',{exact:true}).waitFor();
+   await page.goto('http://127.0.0.1:5128/');
+   await page.getByTestId('collection-counter').filter({hasText:'81'}).waitFor();
+   assert.equal(await page.title(),'Woolly — Museum of the Extinct');
+   await page.screenshot({path:'/tmp/woolly-extinct-desktop.png',fullPage:true});
+   // Old browser records cannot reintroduce living cards or unverified dates.
+   await page.evaluate(()=>localStorage.setItem('every-creature-db',JSON.stringify([{id:'old-lion',name:'Old Lion',genus:'Panthera',lifeStatus:'extant',mya:'Present',category:'Mammals'},{id:'old-koala',name:'Old Koala',genus:'Phascolarctos',mya:'0.003',category:'Mammals'}])));
+   await page.goto('http://127.0.0.1:5128/browse?q=Old');assert.equal(await page.locator('[data-testid^="card-creature-"]').count(),0);
+   await page.goto('http://127.0.0.1:5128/creature/dodo');
+   await page.getByRole('link',{name:'View museum illustrations'}).waitFor();
+   await page.screenshot({path:'/tmp/woolly-extinct-detail.png',fullPage:true});
    await page.setViewportSize({width:390,height:844});
-   await page.goto('http://127.0.0.1:5128/browse?q=sea%20horse&discover=1');
-   await page.getByText('Which creature did you mean?',{exact:true}).waitFor();
+   await page.goto('http://127.0.0.1:5128/');await page.getByTestId('collection-counter').filter({hasText:'81'}).waitFor();
+   await page.screenshot({path:'/tmp/woolly-extinct-mobile.png',fullPage:true});
    assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
-   console.log('PASS: desktop/mobile clarification UI, no-card notice, Living Today and corrected dog biography');
+   await page.goto('http://127.0.0.1:5128/browse?q=Koala');await discover.click();
+   await page.getByText('Still living today',{exact:true}).waitFor();
+   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+   console.log('PASS: explicit discovery only, living/ambiguous notices, old cache filtering, museum branding, reconstruction links, desktop/mobile layout');
   } finally {await browser.close()}
  }
+ const sitemap=await (await fetch('http://127.0.0.1:5128/sitemap.xml')).text();
+ assert.ok(sitemap.includes('/creature/dodo'));assert.ok(!sitemap.includes('/creature/lion'));
  await pool.query('UPDATE creature_discovery_usage SET requests=100 WHERE day=CURRENT_DATE');
- assert.equal((await lookup('New species')).status,429);assert.equal((await lookup('Koala')).status,200);
- console.log('PASS: ambiguity rejection, invalid rank, no insertion on clarification, concurrency, canonical reuse, breed isolation, extant normalization, extinct retention, backed-up legacy repairs, idempotence, budget and persistence');
+ assert.equal((await lookup('New species')).status,429);assert.equal((await lookup('Quagga')).status,200);
+ console.log('PASS: extinct-only admission, no profile calls for extant species, ambiguity/species checks, archived records/backups, migration idempotence, concurrency, aliases, sitemap, budget and persistence');
 })().catch(e=>{console.error(e);process.exitCode=1}).finally(async()=>{await stop();await new Promise(r=>stub.close(r));await pool.end()});
