@@ -241,10 +241,6 @@ export default function Browse() {
         </div>
       </div>
 
-      {filteredCreatures.length > 0 && query.trim().length >= 2 && (reference.data?.matches.length || 0) > 0 && <div className="mb-6 rounded-xl border p-4">
-        <p className="mb-2 text-sm text-muted-foreground">Looking for a particular species? Choose a reference name to search:</p>
-        <div className="flex flex-wrap gap-2">{reference.data!.matches.map(c => <Button key={c.taxonId} className="max-w-full whitespace-normal h-auto min-h-9 py-2" variant="outline" size="sm" onClick={()=>{setQuery(c.scientificName);setAiResult(null);setSavedId(null);resetDiscovery();}}>{c.name}</Button>)}</div>
-      </div>}
       {filteredCreatures.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {filteredCreatures.map((creature, i) => (
@@ -304,12 +300,15 @@ export default function Browse() {
                   <Sparkles className="w-4 h-4" />
                   {isDiscovering ? "Discovering creature..." : "Discover extinct creature"}
                 </Button>
+                {verdict && verdict.status !== "resolved" && <div className="mt-5 text-sm text-muted-foreground" role="status">
+                  <p>No card was added and no AI request was made.</p>
+                  {(verdict.suggestions || []).length > 0 && <>
+                    <p className="mt-4 font-semibold">Were you thinking of…</p>
+                    <div className="mt-3 flex flex-wrap justify-center gap-2">{verdict.suggestions!.map(name => <Button key={name} className="max-w-full whitespace-normal h-auto min-h-9 py-2" variant="outline" onClick={() => {setQuery(name);setAiResult(null);setSavedId(null);resetDiscovery();}}>{name}</Button>)}</div>
+                  </>}
+                </div>}
               </div>
 
-              {verdict && verdict.status !== "resolved" && <div className="text-center text-sm text-muted-foreground" role="status">
-                <p>No card was added and no AI request was made.</p>
-                {(verdict.suggestions || []).length > 0 && <div className="mt-3 flex flex-wrap justify-center gap-2">{verdict.suggestions!.map(name => <Button key={name} className="max-w-full whitespace-normal h-auto min-h-9 py-2" variant="outline" onClick={() => {setQuery(name);setAiResult(null);setSavedId(null);resetDiscovery();}}>{name}</Button>)}</div>}
-              </div>}
               <p className="text-center text-xs text-muted-foreground">Names checked against the <a href="https://paleobiodb.org" target="_blank" rel="noopener noreferrer" className="underline">Paleobiology Database</a>. Searching is free of AI usage; only Discover writes a card.</p>
               {/* Loading state — natural-history archive animation */}
               <AnimatePresence>

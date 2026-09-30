@@ -66,7 +66,7 @@ export const categoryColors: Record<string, string> = {
   "Mammals": "bg-[#934B2B] text-white",
   "Reptiles": "bg-[#456850] text-white",
   "Birds": "bg-[#C19B5F] text-[#251c10]",
-  "Aquatic": "bg-[#203545] text-white",
+  "Aquatic": "bg-teal-800 text-white",
   "Amphibians": "bg-[#66293C] text-white",
   "Invertebrates": "bg-slate-700 text-white",
   "Mystery Creatures": "bg-[#4C3759] text-white",
@@ -75,14 +75,14 @@ export const categoryBgColors: Record<string, string> = {
   "Mammals": "from-[#934B2B]/80 to-stone-950",
   "Reptiles": "from-[#456850]/80 to-stone-950",
   "Birds": "from-[#C19B5F]/80 to-stone-950",
-  "Aquatic": "from-[#203545]/80 to-slate-950",
+  "Aquatic": "from-teal-900/80 to-teal-950",
   "Amphibians": "from-[#66293C]/80 to-stone-950",
   "Invertebrates": "from-slate-700/80 to-slate-950",
   "Mystery Creatures": "from-[#4C3759]/80 to-slate-950",
 };
 export const categoryGlowColors: Record<string, string> = {
   "Mammals": "#934B2B", "Reptiles": "#456850", "Birds": "#C19B5F",
-  "Aquatic": "#203545", "Amphibians": "#66293C", "Invertebrates": "#708699",
+  "Aquatic": "#218f87", "Amphibians": "#66293C", "Invertebrates": "#708699",
   "Mystery Creatures": "#4C3759",
 };
 

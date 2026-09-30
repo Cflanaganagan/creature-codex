@@ -1,4 +1,3 @@
-import { useTaxonReference } from "@/hooks/useTaxonReference";
 import { useId, useState } from "react";
 import { useLocation } from "wouter";
 import { Search, ArrowUpRight, Sparkles } from "lucide-react";
@@ -17,18 +16,11 @@ export function CreatureSearch({ value, onChange, onSearch, placeholder = "Searc
   const id = useId();
   const query = value ?? localValue;
   const term = normalize(query);
-  const reference = useTaxonReference(query);
   const savedMatches = term ? creatures.filter(c => normalize(c.name).startsWith(term) || normalize(c.genus).startsWith(term))
     .sort((a, b) => Number(normalize(b.name).startsWith(term)) - Number(normalize(a.name).startsWith(term)) || a.name.localeCompare(b.name)).slice(0, 5) : [];
-  const savedNames = new Set(creatures.flatMap(c => [normalize(c.name), normalize(c.scientificName || "")]));
-  const matches = [
-    ...savedMatches.map(c => ({key:c.id, id:c.id, name:c.name, detail:`${c.genus} · In the museum`, scientificName:c.scientificName || ""})),
-    ...(reference.data?.matches || []).filter(c => !savedNames.has(normalize(c.name)) && !savedNames.has(normalize(c.scientificName))).map(c => ({key:c.taxonId, id:null, name:c.name, detail:`${c.scientificName} · Available to discover`, scientificName:c.scientificName})),
-  ].slice(0,8);
+  const matches = savedMatches.map(c => ({key:c.id, id:c.id, name:c.name, detail:`${c.genus} · In the museum`}));
   const visible = open && term.length > 0;
-  const choose = (index: number) => { const creature = matches[index]; if (creature) { setOpen(false); if(creature.id) navigate(`/creature/${creature.id}`);
-      else if(onChange) { onChange(creature.scientificName); setActive(-1); }
-      else window.location.assign(`/browse?q=${encodeURIComponent(creature.scientificName)}`); } };
+  const choose = (index: number) => { const creature = matches[index]; if (creature) { setOpen(false); navigate(`/creature/${creature.id}`); } };
 
   return (
     <form className="relative w-full" role="search" onBlur={e => { if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setOpen(false); }} onSubmit={e => {
