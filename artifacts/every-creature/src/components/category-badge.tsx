@@ -3,11 +3,12 @@ import { motion, useReducedMotion } from "framer-motion";
 interface CategoryBadgeProps {
   src: string;
   alt: string;
+  panel?: 0 | 1 | 2;
   glowColor?: string;
   className?: string;
 }
 
-export function CategoryBadge({ src, alt, glowColor, className = "" }: CategoryBadgeProps) {
+export function CategoryBadge({ src, alt, panel, glowColor, className = "" }: CategoryBadgeProps) {
   const reducedMotion = useReducedMotion();
   return (
     <div className={`relative flex items-center justify-center ${className}`}>
@@ -22,7 +23,13 @@ export function CategoryBadge({ src, alt, glowColor, className = "" }: CategoryB
         />
       )}
 
-      <img
+      {panel !== undefined ? (
+        <svg viewBox={`${panel * 724} 0 724 724`} role="img" aria-label={alt}
+          className="w-full h-full relative z-10 overflow-hidden"
+          style={{ filter: "drop-shadow(0 5px 5px rgba(0,0,0,.22))" }}>
+          <image href={src} width="2172" height="724" />
+        </svg>
+      ) : <img
         src={src}
         alt={alt}
         draggable={false}
@@ -31,7 +38,7 @@ export function CategoryBadge({ src, alt, glowColor, className = "" }: CategoryB
           mixBlendMode: "screen",
           filter: "drop-shadow(0 5px 5px rgba(0,0,0,.22))"
         }}
-      />
+      />}
     </div>
   );
 }

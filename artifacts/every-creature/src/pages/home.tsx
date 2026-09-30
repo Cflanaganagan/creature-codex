@@ -8,7 +8,7 @@ import { categories, categoryColors, categoryGlowColors } from "@/data/creatures
 import { useCreatures } from "@/hooks/useCreatures";
 import { motion, useReducedMotion } from "framer-motion";
 import { CategoryPortrait } from "@/components/category-portrait";
-import { categoryBadges } from "@/data/category-badges";
+import { categoryBadges, categoryBadgePanels } from "@/data/category-badges";
 import { CategoryBadge } from "@/components/category-badge";
 
 export default function Home() {
@@ -116,6 +116,7 @@ export default function Home() {
                     {categoryBadges[category] ? (
                       <CategoryBadge
                         src={categoryBadges[category]}
+                        panel={categoryBadgePanels[category]}
                         alt={category}
                         glowColor={categoryGlowColors[category]}
                         className="w-full h-full"
