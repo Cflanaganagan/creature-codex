@@ -344,11 +344,11 @@ export default function Timeline() {
       })}
 
       {/* Footer scale */}
-      <div className="mt-8 p-6 rounded-2xl bg-card border text-center">
+      <div data-testid="timeline-scale" className="mt-8 p-6 rounded-2xl bg-card text-card-foreground border text-center">
         <p className="text-3xl font-serif font-bold mb-1">
           {(635).toLocaleString()} million years
         </p>
-        <p className="text-muted-foreground text-sm">
+        <p className="text-[#d6cec1] text-sm">
           The span of animal life on Earth — compressed into a single scroll.
         </p>
       </div>

@@ -50,8 +50,8 @@ export function CreatureSearch({ value, onChange, onSearch, placeholder = "Searc
               <span className="min-w-0"><span className="block truncate text-sm font-semibold text-foreground">{creature.name}</span><span className="block truncate text-xs text-muted-foreground italic">{creature.detail}</span></span>
               <ArrowUpRight aria-hidden="true" className="h-4 w-4 shrink-0 text-muted-foreground" />
             </li>)}
-          </ul> : <div className="flex gap-2 px-4 pb-4 text-sm text-muted-foreground"><Sparkles className="h-4 w-4 shrink-0 mt-0.5" /><span>No matching names yet. Press Enter to view results. You can then choose Discover for a specific extinct animal.</span></div>}
-          <div className="border-t px-4 py-2 text-[10px] text-muted-foreground">{matches.length ? "↑ ↓ to explore · Enter to select · Esc to close" : "Searching never adds a card. Only the Discover button starts a lookup."}</div>
+          </ul> : <div className="flex gap-2 px-4 pb-4 text-sm text-muted-foreground"><Sparkles className="h-4 w-4 shrink-0 mt-0.5" /><span>No matching creatures in the museum yet. Press Enter to search the archives.</span></div>}
+          {matches.length > 0 && <div className="border-t px-4 py-2 text-[10px] text-muted-foreground">↑ ↓ to explore · Enter to select · Esc to close</div>}
         </div>
       )}
     </form>

@@ -290,7 +290,7 @@ export default function Browse() {
                   {verdict?.status === "living_species" ? "Still living today" : verdict?.status === "clarification_required" ? "Which creature did you mean?" : verdict?.status === "unverified_name" ? "Name not verified yet" : "Not in our collection yet"}
                 </h3>
                 <p className="text-foreground/60 mb-6">
-                  {verdict?.status === "resolved" ? <>Our reference identifies <strong>{verdict.identity?.name}</strong> ({verdict.identity?.scientificName}). Choose Discover to create its card for everyone.</> : verdict?.message || (reference.failed ? "The reference check is temporarily unavailable. Please try again shortly." : "Checking the reference list…")}
+                  {verdict?.status === "resolved" ? <>Meet <strong>{verdict.identity?.name}</strong>. Discover its story and add it to the museum.</> : verdict?.status === "unverified_name" ? <>Our palaeontologists couldn’t locate <strong>“{query}”</strong> in the archives. It may be fictional, misspelled, or simply lost to deep time.</> : verdict?.status === "clarification_required" ? <>Which creature did you have in mind? Try a specific species name.</> : verdict?.status === "living_species" ? <>This creature is still with us today. Explore an extinct animal instead.</> : (reference.failed ? "We couldn’t search the archives right now. Please try again shortly." : "Searching the archives…")}
                 </p>
                 <Button
                   onClick={handleDiscover}
@@ -301,7 +301,6 @@ export default function Browse() {
                   {isDiscovering ? "Discovering creature..." : "Discover extinct creature"}
                 </Button>
                 {verdict && verdict.status !== "resolved" && <div className="mt-5 text-sm text-muted-foreground" role="status">
-                  <p>No card was added and no AI request was made.</p>
                   {(verdict.suggestions || []).length > 0 && <>
                     <p className="mt-4 font-semibold">Were you thinking of…</p>
                     <div className="mt-3 flex flex-wrap justify-center gap-2">{verdict.suggestions!.map(name => <Button key={name} className="max-w-full whitespace-normal h-auto min-h-9 py-2" variant="outline" onClick={() => {setQuery(name);setAiResult(null);setSavedId(null);resetDiscovery();}}>{name}</Button>)}</div>
@@ -309,7 +308,6 @@ export default function Browse() {
                 </div>}
               </div>
 
-              <p className="text-center text-xs text-muted-foreground">Names checked against the <a href="https://paleobiodb.org" target="_blank" rel="noopener noreferrer" className="underline">Paleobiology Database</a>. Searching is free of AI usage; only Discover writes a card.</p>
               {/* Loading state — natural-history archive animation */}
               <AnimatePresence>
                 {isDiscovering && (
@@ -334,8 +332,8 @@ export default function Browse() {
                   <AlertCircle className="w-5 h-5 shrink-0" />
                   <div>
                     <h3 className="font-serif text-lg font-semibold">{livingSpecies ? "Still living today" : needsReview ? "Extinction status needs review" : needsClarification ? "Which creature did you mean?" : "Discovery unavailable"}</h3>
-                    <p>{discoveryDetails?.error || "Could not reach the AI naturalist. Please try again."}</p>
-                    {needsClarification && <p className="mt-2 text-sm">No creature was added. Try a specific name{(discoveryDetails?.suggestions || []).length > 0 ? `, such as ${discoveryDetails!.suggestions!.join(" or ")}` : " or a scientific species name"}.</p>}
+                    <p>{livingSpecies ? "This creature is still with us today. Explore an extinct animal instead." : needsReview ? "We couldn’t confirm this creature’s place in the museum yet. Try another species." : needsClarification ? "Which creature did you have in mind?" : "Our AI naturalist is unavailable right now. Please try again shortly."}</p>
+                    {needsClarification && <p className="mt-2 text-sm">Try a specific name{(discoveryDetails?.suggestions || []).length > 0 ? `, such as ${discoveryDetails!.suggestions!.join(" or ")}` : " or a scientific species name"}.</p>}
                   </div>
                 </motion.div>
               )}

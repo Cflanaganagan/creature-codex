@@ -41,12 +41,15 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'/tmp/codex-browser/node
   await page.getByTestId('input-header-search').press('Enter');
   await page.getByText('Were you thinking of…',{exact:true}).waitFor();
   await page.getByRole('button',{name:/Columbian Mammoth|Mammuthus columbi/}).first().click();
-  await page.getByText('Our reference identifies',{exact:false}).waitFor();
+  await page.getByText('Discover its story and add it to the museum.',{exact:false}).waitFor();
   assert.equal(paidRequests,0,'choosing a reference suggestion must not start paid discovery');
   await page.goto('http://127.0.0.1:5130/browse?q=not-a-creature-xyz');
   await page.getByText('Name not verified yet',{exact:true}).waitFor();
   assert.ok(await page.getByRole('button',{name:'Discover extinct creature',exact:true}).isDisabled());
   assert.equal(paidRequests,0);
+  await page.getByText('Our palaeontologists couldn’t locate',{exact:false}).waitFor();
+  assert.equal(await page.getByText('Names checked against the',{exact:false}).count(),0);
+  assert.equal(await page.getByText('No card was added and no AI request was made.',{exact:true}).count(),0);
   // Deterministic photograph fixture isolates image-viewer behavior from Wikipedia availability.
   await context.route('https://en.wikipedia.org/api/rest_v1/page/summary/**',route=>route.fulfill({json:{thumbnail:{source:'https://images.test/dodo.svg'},originalimage:{source:'https://images.test/dodo.svg'},content_urls:{desktop:{page:'https://en.wikipedia.org/wiki/Dodo'}}}}));
   await context.route('https://images.test/**',route=>route.fulfill({contentType:'image/svg+xml',body:'<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600"><rect width="800" height="600" fill="#456850"/></svg>'}));
@@ -60,6 +63,15 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'/tmp/codex-browser/node
   await phone.goto('http://127.0.0.1:5130/');await phone.waitForLoadState('networkidle');await phone.screenshot({path:'/tmp/woolly-reference-mobile.png',fullPage:true});
   await phone.goto('http://127.0.0.1:5130/browse?q=Mammuthus%20columb');await phone.getByText('Which creature did you mean?',{exact:true}).waitFor();
   assert.ok(await phone.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+  await page.goto('http://127.0.0.1:5130/timeline');
+  const scale=page.getByTestId('timeline-scale');await scale.scrollIntoViewIfNeeded();
+  const contrast=await scale.evaluate(el=>{
+    const rgb=s=>s.match(/[\d.]+/g).map(Number);
+    const luminance=c=>c.slice(0,3).map(v=>{v/=255;return v<=.04045?v/12.92:((v+.055)/1.055)**2.4}).reduce((s,v,i)=>s+v*[.2126,.7152,.0722][i],0);
+    const bg=rgb(getComputedStyle(el).backgroundColor);
+    return [...el.querySelectorAll('p')].map(p=>{const fg=rgb(getComputedStyle(p).color);const a=fg[3]??1;const blended=fg.slice(0,3).map((v,i)=>v*a+bg[i]*(1-a));const l1=luminance(blended),l2=luminance(bg);return (Math.max(l1,l2)+.05)/(Math.min(l1,l2)+.05)});
+  });assert.ok(contrast.every(c=>c>=4.5),`Timeline contrast: ${contrast}`);
+  await page.screenshot({path:'/tmp/woolly-timeline-contrast.png'});
   console.log('PASS: local taxonomy snapshot, source provenance, living/unknown/ambiguous rejection, synonym/typo handling, reference autocomplete without AI, palette/artwork, hover magnifier and modal dismissal, mobile layout');
  } finally {if(browser)await browser.close();server.kill();}
 })().catch(e=>{console.error(e);process.exitCode=1});

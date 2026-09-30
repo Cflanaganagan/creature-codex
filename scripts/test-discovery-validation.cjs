@@ -96,7 +96,7 @@ async function collection(){return (await fetch('http://127.0.0.1:5128/api/creat
    await discover.waitFor();await page.waitForTimeout(600);assert.equal(lookupRequests,0,'legacy URL must not auto-discover');
    await page.getByTestId('input-search').press('Enter');await page.waitForTimeout(300);assert.equal(lookupRequests,0,'Enter must not auto-discover');
    await page.getByText('Which creature did you mean?',{exact:true}).waitFor();assert.ok(await discover.isDisabled());
-   await page.getByText(/No card was added and no AI request/).waitFor();
+   await page.getByText('Which creature did you have in mind? Try a specific species name.',{exact:true}).waitFor();
    await page.goto('http://127.0.0.1:5128/browse?q=lion');
    await page.getByText('Still living today',{exact:true}).waitFor();
    await page.goto('http://127.0.0.1:5128/');
