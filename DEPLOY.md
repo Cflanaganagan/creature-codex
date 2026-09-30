@@ -42,7 +42,7 @@ Run the API with `DATABASE_URL` and, for live generation, the AI key in its envi
 
 ## AI model and spending setup
 
-Woolly uses `claude-haiku-4-5-20251001` for identity resolution, profile generation, and an optional profile retry. Standard Haiku 4.5 pricing is US$1 per million input tokens and US$5 per million output tokens. At an illustrative 1,500 input and 800 output tokens, 10,000 new entries cost about US$55 before retries and taxes. Actual usage must be measured after connecting the API.
+Woolly uses `claude-haiku-4-5-20251001` for profile generation and an optional profile retry. Identity checks now use reference data, not Claude. Standard Haiku 4.5 pricing is US$1 per million input tokens and US$5 per million output tokens. At an illustrative 1,500 input and 800 output tokens, 10,000 new entries cost about US$55 before retries and taxes. Actual usage must be measured after connecting the API.
 
 In the Claude Console, purchase prepaid API credits and set a US$20 monthly spend limit under Settings → Billing → Spend limits before public launch. Leave automatic credit reload disabled unless intentionally enabled. These account settings cannot be set by this repository: the existing daily discovery limit is not a monthly dollar cap.
 
@@ -50,7 +50,7 @@ In the Claude Console, purchase prepaid API credits and set a US$20 monthly spen
 
 New discoveries resolve a search into a high-confidence species, subspecies, or domestic form before generating prose. Families, genera (including new fossil-genus searches), broad names and uncertain names receive a clarification response without a new entry. Existing founding fossil entries remain available. Dog, cat and horse have explicit domestic defaults. Breeds resolve to their domestic species; the profile writer receives only the canonical identity, not the original query. Saved canonical species are reused before profile generation.
 
-Every new profile has an explicit `lifeStatus`. The extinct-only museum now rejects extant identities before profile generation or insertion. The earlier living-date repair is retained for historical records before archiving. Resolution usually adds one short Haiku call to a new search; the existing daily allowance counts discovery attempts, not individual model calls. Model-based resolution is not independent scientific verification.
+Every new profile has an explicit `lifeStatus`. The extinct-only museum now rejects extant identities before profile generation or insertion. The earlier living-date repair is retained for historical records before archiving. The earlier paid resolution step has been replaced by the source-backed reference gate below. The daily allowance now counts profile-generation attempts, not rejected reference lookups or individual retry calls. Model-based resolution is not independent scientific verification.
 
 A one-time startup repair preserves original records in `creature_revision_backups`, fixes reviewed living-species dates and domestic dog/rabbit copy, relabels the existing fire salamander, and withdraws Felidae and the genus-wide Sea Horse entry without deleting their records. Those withdrawn entries are excluded from public counts and the sitemap. No public database editing endpoint is added.
 
@@ -62,7 +62,7 @@ On startup, `prepareExtinctMuseum` runs in the same advisory-locked transaction 
 
 The API collection and sitemap include only exhibited extinct records. Discovery refuses archived/living aliases, including canonical matches, and validates extinction again before saving. Common mammoth names require specificity. Legacy fossil-genus cards are retained; new genera do not receive invented species profiles.
 
-Search typing, Enter, suggestion selection and old `?discover=1` URLs make no discovery request. Only **Discover extinct creature** triggers identification and, if eligible, creation. Known domestic animals and archived living species require no model call. An unfamiliar living species generally requires a short identification call but no profile call or database insert.
+Search typing, Enter, suggestion selection and old `?discover=1` URLs make no discovery request. Only **Discover extinct creature** triggers identification and, if eligible, creation. Known domestic animals and archived living species require no model call. Unfamiliar names now pass through the free reference gate described below; rejected names use no Claude calls or database inserts.
 
 The browser uses a new extinct-only cache and filters personal records. Existing local JSON is preserved; imports must explicitly declare `lifeStatus: "extinct"` and have no living date label. Imports stay private to that browser. The shared archive never trusts browser imports.
 
@@ -78,3 +78,23 @@ ORDER BY creature_id;
 Restoring withdrawn records to public view requires an editorial decision and matching collection-policy changes; do not delete the backup table or blindly replace current data. Earlier raw AI mistakes are also preserved under `species-validation-v2`.
 
 Reconstruction links use curated Natural History Museum pages where available and a clearly labelled Wikimedia Commons image search otherwise. No third-party reconstruction images are copied. Search results are not represented as independently verified scientific artwork.
+
+## Reference-gated discovery
+
+`lib/db/src/taxon-reference.json` is a checked-in Paleobiology Database snapshot of accepted Animalia species/subspecies with explicit source living/extinct flags. It contains 179,206 accepted names (163,414 marked extinct) and 17,190 scientific synonyms, with source IDs, original authorship, bibliography reference IDs, retrieval time, URL and CC BY 4.0 attribution. The local quagga correction adds one extinct subspecies to the working index. These names are a lookup reference, not pre-generated museum cards.
+
+`creature-reference.ts` performs exact normalized scientific-name and synonym matching, rejects known broad groups, and offers bounded prefix/near-name suggestions. Unreviewed source common names require the visitor to choose a scientific species rather than automatically treating one source match as globally unambiguous. Reviewed common-name bridges cover mammoth species and other familiar names. No fuzzy match can initiate generation. Unknown names remain unverified; they are not called nonexistent.
+
+Before writing a new profile, `check-reference-status.ts` makes free GBIF data requests: an exact Animalia species/subspecies match, species profiles and IUCN category. Living conservation categories (including EW) override fossil flags; conflicting, incomplete, unavailable, or ambiguous results stop the request before Claude. GBIF can aggregate PBDB data, so this is a conflict/status check, not two wholly independent scientific opinions. Successful checks are cached for a day, other verdicts for an hour, with bounded memory and in-flight deduplication. `GBIF_API_BASE_URL` exists for local protocol-stub tests; production uses the public GBIF API and needs no new key.
+
+Documented editorial exception: the PBDB snapshot flags `Equus quagga quagga` as living, while the [UCL Grant Museum quagga record](https://www.ucl.ac.uk/engage/museums-collections/grant-museum-zoology/top-ten-specimens-grant-museum/quagga-skeleton) explicitly records extinction in 1883. Only this exact subspecies is corrected; its living parent, `Equus quagga`, remains excluded.
+
+Free reference checks occur before the daily generation budget. Canonical species locks prevent simultaneous synonyms from generating multiple paid profiles. Newly written cards retain their source reference and corroborating GBIF URL. Existing saved cards still reuse the database without a profile call.
+
+`GET /api/creatures/reference?q=...` returns local matches/verdicts without contacting Claude. Autocomplete separates existing museum cards from reference names. A reference selection changes the search only; the visitor still clicks Discover. The full data file stays server-side and is copied beside the bundled server at build time; visitor browsers do not download the 14 MB snapshot.
+
+Refresh manually with `python3 scripts/refresh-taxon-reference.py`, review the diff and source-status conflicts, then rebuild/test. This is never run on ordinary Render builds or visitor requests. The source record inclusion rules and editorial overrides are preserved in code. Source coverage and classifications can change; retaining a dated snapshot makes changes reviewable.
+
+Validation: the PostgreSQL integration suites use local Anthropic/GBIF protocol stubs. They assert zero paid calls for rejected names, no paid resolver, source-conflict/outage rejection, generation-budget preservation, one profile call for concurrent synonyms, shared persistence and browser behavior. `node scripts/test-reference-and-design.cjs` additionally checks the reference, suggestions, palette, supplied aquatic artwork, magnifier/modal and phone layout without paid AI calls.
+
+Sources: [PBDB taxon API](https://paleobiodb.org/data1.2/taxa/list_doc.html), [PBDB data-service publication and license](https://doi.org/10.1017/PAB.2015.39), [GBIF extinct-species limitations](https://data-blog.gbif.org/post/2024-02-06-working-with-extinct-species-on-gbif/).

@@ -1,3 +1,4 @@
+import { useTaxonReference } from "@/hooks/useTaxonReference";
 import { ReconstructionLinks } from "@/components/reconstruction-links";
 import { ImageViewer } from "@/components/image-viewer";
 import { useState, useRef } from "react";
@@ -6,7 +7,7 @@ import { CreatureSearch } from "@/components/creature-search";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Search, Sparkles, AlertCircle, Clock, Utensils, Ruler, MapPin, ExternalLink, CheckCircle2, Maximize2 } from "lucide-react";
+import { Search, Sparkles, AlertCircle, Clock, Utensils, Ruler, MapPin, ExternalLink, CheckCircle2, ZoomIn } from "lucide-react";
 import { categories, categoryEmojis, categoryColors, categoryBgColors, type Creature } from "@/data/creatures";
 import { useCreatures } from "@/hooks/useCreatures";
 import { useAiCreatureLookup } from "@workspace/api-client-react";
@@ -98,10 +99,10 @@ function AIHeroImage({ name, category, genus }: { name: string; category: string
       )}
       {imgState.status === "found" && (
         <ImageViewer image={imgState} name={name}>
-          <button type="button" className="group/image relative h-full w-full cursor-zoom-in" aria-label={`View full image of ${name}`}>
+          <button type="button" className="group/image image-expand-trigger relative h-full w-full cursor-zoom-in" aria-label={`View full image of ${name}`}>
             <motion.img src={imgState.url} onError={e => { if (imgState.originalUrl && e.currentTarget.src !== imgState.originalUrl) e.currentTarget.src = imgState.originalUrl; }} alt={name} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }} className="w-full h-full object-contain" />
-            <span className="absolute left-4 top-4 flex items-center gap-1.5 rounded-full bg-black/55 px-3 py-1.5 text-xs text-white opacity-100 md:opacity-0 md:group-hover/image:opacity-100 md:group-focus-visible/image:opacity-100 transition-opacity">
-              <Maximize2 className="h-3.5 w-3.5" /> View full image
+            <span className="absolute left-4 top-4 flex items-center gap-1.5 rounded-full bg-black/55 px-3 py-1.5 text-xs text-white image-expand-cue transition-opacity">
+              <ZoomIn className="h-5 w-5" /> View full image
             </span>
           </button>
         </ImageViewer>
@@ -129,6 +130,8 @@ export default function Browse() {
   const initialQuery = searchParams.get("q") || "";
 
   const [query, setQuery] = useState(initialQuery);
+  const reference = useTaxonReference(query);
+  const verdict = reference.data?.verdict;
   const queryRef = useRef(query);
   queryRef.current = query;
   const [selectedCategory, setSelectedCategory] = useState<string | null>(initialCategory);
@@ -169,8 +172,9 @@ export default function Browse() {
   const discoveryDetails = (discoveryError as {data?: {code?: string; error?: string; suggestions?: string[]}} | null)?.data;
   const livingSpecies = discoveryDetails?.code === "living_species";
   const needsClarification = discoveryDetails?.code === "clarification_required";
+  const needsReview = discoveryDetails?.code === "unverified_name";
   const filteredCreatures = creatures.filter((c) => {
-    const matchesQuery = c.name.toLowerCase().includes(query.toLowerCase()) || c.genus.toLowerCase().includes(query.toLowerCase());
+    const matchesQuery = c.name.toLowerCase().includes(query.toLowerCase()) || c.genus.toLowerCase().includes(query.toLowerCase()) || (c.scientificName || "").toLowerCase().includes(query.toLowerCase());
     const matchesCategory = selectedCategory ? c.category === selectedCategory : true;
     return matchesQuery && matchesCategory;
   });
@@ -179,7 +183,7 @@ export default function Browse() {
   const showAISection = (filteredCreatures.length === 0 || aiResult !== null) && hasQuery && !selectedCategory;
 
   const handleDiscover = () => {
-    if (isDiscovering || collectionStatus === "loading") return;
+    if (isDiscovering || collectionStatus === "loading" || verdict?.status !== "resolved") return;
     const term = query.trim();
     if (isObviouslyFictional(term)) {
       setInvalidResponse(true);
@@ -237,6 +241,10 @@ export default function Browse() {
         </div>
       </div>
 
+      {filteredCreatures.length > 0 && query.trim().length >= 2 && (reference.data?.matches.length || 0) > 0 && <div className="mb-6 rounded-xl border p-4">
+        <p className="mb-2 text-sm text-muted-foreground">Looking for a particular species? Choose a reference name to search:</p>
+        <div className="flex flex-wrap gap-2">{reference.data!.matches.map(c => <Button key={c.taxonId} className="max-w-full whitespace-normal h-auto min-h-9 py-2" variant="outline" size="sm" onClick={()=>{setQuery(c.scientificName);setAiResult(null);setSavedId(null);resetDiscovery();}}>{c.name}</Button>)}</div>
+      </div>}
       {filteredCreatures.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {filteredCreatures.map((creature, i) => (
@@ -283,14 +291,14 @@ export default function Browse() {
               {/* No results prompt */}
               <div className="text-center py-10 bg-muted/30 rounded-2xl border border-dashed">
                 <h3 className="text-2xl font-serif text-foreground/70 mb-2">
-                  Not in our collection yet
+                  {verdict?.status === "living_species" ? "Still living today" : verdict?.status === "clarification_required" ? "Which creature did you mean?" : verdict?.status === "unverified_name" ? "Name not verified yet" : "Not in our collection yet"}
                 </h3>
                 <p className="text-foreground/60 mb-6">
-                  No specimen found for <span className="font-semibold text-foreground">"{query}"</span>. Choose Discover to ask our AI naturalist about this extinct creature. Searching alone never adds a card.
+                  {verdict?.status === "resolved" ? <>Our reference identifies <strong>{verdict.identity?.name}</strong> ({verdict.identity?.scientificName}). Choose Discover to create its card for everyone.</> : verdict?.message || (reference.failed ? "The reference check is temporarily unavailable. Please try again shortly." : "Checking the reference list…")}
                 </p>
                 <Button
                   onClick={handleDiscover}
-                  disabled={isDiscovering || collectionStatus === "loading"}
+                  disabled={isDiscovering || collectionStatus === "loading" || verdict?.status !== "resolved"}
                   className="gap-2 px-6 py-5 text-base"
                 >
                   <Sparkles className="w-4 h-4" />
@@ -298,6 +306,11 @@ export default function Browse() {
                 </Button>
               </div>
 
+              {verdict && verdict.status !== "resolved" && <div className="text-center text-sm text-muted-foreground" role="status">
+                <p>No card was added and no AI request was made.</p>
+                {(verdict.suggestions || []).length > 0 && <div className="mt-3 flex flex-wrap justify-center gap-2">{verdict.suggestions!.map(name => <Button key={name} className="max-w-full whitespace-normal h-auto min-h-9 py-2" variant="outline" onClick={() => {setQuery(name);setAiResult(null);setSavedId(null);resetDiscovery();}}>{name}</Button>)}</div>}
+              </div>}
+              <p className="text-center text-xs text-muted-foreground">Names checked against the <a href="https://paleobiodb.org" target="_blank" rel="noopener noreferrer" className="underline">Paleobiology Database</a>. Searching is free of AI usage; only Discover writes a card.</p>
               {/* Loading state — natural-history archive animation */}
               <AnimatePresence>
                 {isDiscovering && (
@@ -317,11 +330,11 @@ export default function Browse() {
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  role="status" className={`flex items-center gap-3 p-4 rounded-xl border ${needsClarification || livingSpecies ? "bg-amber-50/60 border-amber-800/20 text-foreground" : "bg-destructive/10 border-destructive/30 text-destructive"}`}
+                  role="status" className={`flex items-center gap-3 p-4 rounded-xl border ${needsClarification || livingSpecies || needsReview ? "bg-amber-50/60 border-amber-800/20 text-foreground" : "bg-destructive/10 border-destructive/30 text-destructive"}`}
                 >
                   <AlertCircle className="w-5 h-5 shrink-0" />
                   <div>
-                    <h3 className="font-serif text-lg font-semibold">{livingSpecies ? "Still living today" : needsClarification ? "Which creature did you mean?" : "Discovery unavailable"}</h3>
+                    <h3 className="font-serif text-lg font-semibold">{livingSpecies ? "Still living today" : needsReview ? "Extinction status needs review" : needsClarification ? "Which creature did you mean?" : "Discovery unavailable"}</h3>
                     <p>{discoveryDetails?.error || "Could not reach the AI naturalist. Please try again."}</p>
                     {needsClarification && <p className="mt-2 text-sm">No creature was added. Try a specific name{(discoveryDetails?.suggestions || []).length > 0 ? `, such as ${discoveryDetails!.suggestions!.join(" or ")}` : " or a scientific species name"}.</p>}
                   </div>

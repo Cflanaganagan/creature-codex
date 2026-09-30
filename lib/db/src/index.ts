@@ -9,3 +9,7 @@ export const db = drizzle(pool, { schema });
 export * from "./schema";
 
 export * from "./creature-identity";
+
+export * from "./creature-reference";
+
+export * from "./check-reference-status";

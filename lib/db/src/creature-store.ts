@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { z } from "zod";
 import { pool, usagePool, databaseConfigured } from "./pool";
-import { type ResolvedIdentity } from "./creature-identity";
+import { resolvedIdentitySchema, type ResolvedIdentity } from "./creature-identity";
 import { prepareExtinctMuseum } from "./extinct-museum";
 import { repairLegacyCreatures } from "./repair-legacy-creatures";
 import { seedCreatures } from "./seed-creatures";
@@ -11,6 +11,7 @@ export const discoveredCreatureSchema = z.object({
   name: text.max(160), scientificName: text.max(160), genus: text.max(160),
   category: z.enum(["Mammals", "Reptiles", "Birds", "Aquatic", "Amphibians", "Invertebrates", "Mystery Creatures"]),
   lifeStatus: z.literal("extinct"), taxonRank: z.enum(["species", "subspecies", "domestic_form"]), identityVersion: z.literal(2),
+  reference: resolvedIdentitySchema.innerType().shape.reference,
   era: text, mya: text, diet: text, size: text, habitat: text, description: text,
   funFacts: z.array(text).length(5), family: z.array(z.object({ name: text, living: z.boolean() })).max(50),
   mysteryLevel: z.union([z.literal(0), z.literal(1), z.literal(2), z.literal(3)]),
@@ -79,18 +80,13 @@ export async function discoverCreature(query: string, resolve: (query: string) =
     await client.query("SELECT pg_advisory_xact_lock(hashtext($1))", [key]);
     const found = await client.query<{data:StoredCreature}>("SELECT c.data FROM creature_aliases a JOIN creature_collection c ON c.id=a.creature_id WHERE a.alias=$1",[key]);
     if (found.rows[0]) { requireExhibited(found.rows[0].data); await client.query("COMMIT"); return found.rows[0].data; }
-    if (!canGenerate) throw new CollectionError(503, "AI discovery is not configured yet. The shared collection is still available.");
-    // This budget counts generation attempts, even if validation/provider calls fail.
-    const limit = Math.max(1, Number(process.env.DISCOVERY_DAILY_LIMIT) || 100);
-    const budget = await usagePool.query(`INSERT INTO creature_discovery_usage(day,requests) VALUES(CURRENT_DATE,1)
-      ON CONFLICT(day) DO UPDATE SET requests=creature_discovery_usage.requests+1
-      WHERE creature_discovery_usage.requests<$1 RETURNING requests`,[limit]);
-    if (!budget.rowCount) throw new CollectionError(429,"Today's discovery allowance has been reached. Please explore the existing collection and try again tomorrow.");
     const identity = await resolve(query);
     requireExhibited(identity);
     // Reuse a resolved species before generating prose. Never forward the raw query.
     const identityKey = normalizeCreatureName(identity.scientificName);
     const resolvedName = normalizeCreatureName(identity.name);
+    // Serialize different names for the same species before billing a profile call.
+    await client.query("SELECT pg_advisory_xact_lock(hashtext($1))", [`species:${identityKey}`]);
     const canonical = await client.query<{data:StoredCreature}>(`SELECT c.data FROM creature_collection c LEFT JOIN creature_aliases a ON a.creature_id=c.id
       WHERE (c.taxon_key=$1 OR a.alias=$1 OR a.alias=$2) LIMIT 1`,[identityKey,resolvedName]);
     if (canonical.rows[0]) {
@@ -99,6 +95,13 @@ export async function discoverCreature(query: string, resolve: (query: string) =
       await client.query("INSERT INTO creature_aliases(alias,creature_id) VALUES($1,$2) ON CONFLICT DO NOTHING",[key,saved.id]);
       await client.query("COMMIT"); return saved;
     }
+    if (!canGenerate) throw new CollectionError(503, "AI discovery is not configured yet. The shared collection is still available.");
+    // This budget counts generation attempts, even if validation/provider calls fail.
+    const limit = Math.max(1, Number(process.env.DISCOVERY_DAILY_LIMIT) || 100);
+    const budget = await usagePool.query(`INSERT INTO creature_discovery_usage(day,requests) VALUES(CURRENT_DATE,1)
+      ON CONFLICT(day) DO UPDATE SET requests=creature_discovery_usage.requests+1
+      WHERE creature_discovery_usage.requests<$1 RETURNING requests`,[limit]);
+    if (!budget.rowCount) throw new CollectionError(429,"Today's discovery allowance has been reached. Please explore the existing collection and try again tomorrow.");
     const parsed = discoveredCreatureSchema.safeParse(await generate(identity));
     if (!parsed.success) throw new CollectionError(422,"We couldn't verify a complete entry for that creature. Try its common or scientific name.");
     const creature = parsed.data;

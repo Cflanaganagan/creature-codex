@@ -12,7 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
-import { Info, Clock, MapPin, Utensils, Ruler, ExternalLink, Shuffle, Maximize2 } from "lucide-react";
+import { Info, Clock, MapPin, Utensils, Ruler, ExternalLink, Shuffle, ZoomIn } from "lucide-react";
 import NotFound from "./not-found";
 import { motion } from "framer-motion";
 import { WorldMap } from "@/components/world-map";
@@ -77,12 +77,12 @@ function HeroImage({ creature }: { creature: Creature }) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.7 }}
-          className="absolute inset-0 w-full h-full group/image cursor-zoom-in text-left"
+          className="absolute inset-0 w-full h-full group/image image-expand-trigger cursor-zoom-in text-left"
           aria-label={`View full image of ${creature.name}`}
         >
           <img src={imgState.url} onError={e => { if (imgState.originalUrl && e.currentTarget.src !== imgState.originalUrl) e.currentTarget.src = imgState.originalUrl; }} alt={creature.name} className="w-full h-full object-cover object-center" />
-          <span className="absolute left-4 top-4 z-20 inline-flex items-center gap-1.5 rounded-full bg-black/45 px-3 py-1.5 text-xs font-medium text-white/85 opacity-100 md:opacity-0 md:group-hover/image:opacity-100 md:group-focus-visible/image:opacity-100 transition-opacity backdrop-blur-sm">
-            <Maximize2 className="w-3.5 h-3.5" /> View full image
+          <span className="absolute left-4 top-4 z-20 inline-flex items-center gap-1.5 rounded-full bg-black/45 px-3 py-1.5 text-xs font-medium text-white/85 image-expand-cue transition-opacity backdrop-blur-sm">
+            <ZoomIn className="w-5 h-5" /> View full image
           </span>
         </motion.button>
         </ImageViewer>

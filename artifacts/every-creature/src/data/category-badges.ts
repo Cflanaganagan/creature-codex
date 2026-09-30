@@ -4,7 +4,7 @@
  */
 import amphibiansImg from "@/assets/amphibian-badge.png";
 import extinctBadges from "@/assets/extinct-exhibit-badges.png";
-import aquaticImg from "@assets/aquatic_1777771643969.png";
+import aquaticImg from "@/assets/dunkleosteus-badge.png";
 import invertebratesImg from "@assets/invertebrates_1777771621097.png";
 import mysteryImg from "@assets/mysterycreatures_1777749545365.png";
 

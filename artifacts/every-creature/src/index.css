@@ -274,3 +274,11 @@
 @media (max-width: 640px) {
   .museum-fossil-backdrop { opacity: .09; width: 38%; }
 }
+
+/* Persistent cue on touch; reveal on pointer hover or keyboard focus. */
+.image-expand-cue { opacity: 1; pointer-events: none; }
+@media (hover: hover) and (pointer: fine) {
+  .image-expand-cue { opacity: 0; }
+  .image-expand-trigger:hover .image-expand-cue,
+  .image-expand-trigger:focus-visible .image-expand-cue { opacity: 1; }
+}

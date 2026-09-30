@@ -41,7 +41,7 @@ export default function Home() {
           </h2>
           <div className="w-20 h-px bg-foreground/25 mb-5" />
           <p className="text-lg md:text-xl text-foreground/60 max-w-2xl font-light mb-8 leading-relaxed">
-            Step into Earth's lost worlds. Explore extraordinary extinct animals, from the age of dinosaurs to the last dodo.
+            Meet the remarkable creatures that came before us. A museum of ancient giants, forgotten species, and discoveries waiting to be made.
           </p>
 
           <div className="flex flex-wrap items-center justify-center gap-3">
