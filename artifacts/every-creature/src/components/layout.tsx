@@ -45,12 +45,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
       <footer className="museum-footer border-t py-12 text-center text-muted-foreground">
         <p className="font-serif italic text-lg mb-2">Woolly — Museum of the Extinct.</p>
-        <p className="text-sm">
-          Built for curiosity.{" "}
-          <Link href="/import" className="underline underline-offset-2 hover:text-foreground transition-colors">
-            Manage database
-          </Link>
-        </p>
+        <p className="text-sm">Built for curiosity.</p>
       </footer>
     </div>
   );

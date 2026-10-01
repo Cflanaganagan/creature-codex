@@ -8,7 +8,6 @@ import Home from "@/pages/home";
 import Browse from "@/pages/browse";
 import Mystery from "@/pages/mystery";
 import CreatureDetail from "@/pages/creature";
-import Import from "@/pages/import";
 import About from "@/pages/about";
 import Timeline from "@/pages/timeline";
 
@@ -22,7 +21,6 @@ function Router() {
       <Route path="/mystery" component={Mystery} />
       <Route path="/about" component={About} />
       <Route path="/timeline" component={Timeline} />
-      <Route path="/import" component={Import} />
       <Route path="/creature/:id" component={CreatureDetail} />
       <Route component={NotFound} />
     </Switch>
