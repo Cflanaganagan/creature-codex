@@ -118,7 +118,7 @@ async function collection(){return (await fetch('http://127.0.0.1:5128/api/creat
    await page.evaluate(()=>localStorage.setItem('every-creature-db',JSON.stringify([{id:'old-lion',name:'Old Lion',genus:'Panthera',lifeStatus:'extant',mya:'Present',category:'Mammals'},{id:'old-koala',name:'Old Koala',genus:'Phascolarctos',mya:'0.003',category:'Mammals'}])));
    await page.goto('http://127.0.0.1:5128/browse?q=Old');assert.equal(await page.locator('[data-testid^="card-creature-"]').count(),0);
    await page.goto('http://127.0.0.1:5128/creature/dodo');
-   await page.getByRole('link',{name:'View museum illustrations'}).waitFor();
+   await page.getByRole('link',{name:'Museum illustrations'}).waitFor();
    await page.screenshot({path:'/tmp/woolly-extinct-detail.png',fullPage:true});
    await page.setViewportSize({width:390,height:844});
    await page.goto('http://127.0.0.1:5128/');await page.getByTestId('collection-counter').filter({hasText:'81'}).waitFor();

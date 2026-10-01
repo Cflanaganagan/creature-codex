@@ -37,7 +37,7 @@ const lookup=async name=>{const r=await fetch(`http://127.0.0.1:${apiPort}/api/c
   await a.goto(`http://127.0.0.1:${apiPort}/`);await b.goto(`http://127.0.0.1:${apiPort}/`);
   await a.getByTestId('collection-counter').filter({hasText:'80'}).waitFor();await b.getByTestId('collection-counter').filter({hasText:'80'}).waitFor();
   await a.getByTestId('input-header-search').fill('Quagga');await a.getByTestId('input-header-search').press('Enter');await a.getByRole('button',{name:'Discover extinct creature',exact:true}).click();await a.getByTestId('card-creature-quagga').waitFor();
-  await b.reload();await b.getByTestId('collection-counter').filter({hasText:'81'}).waitFor();
+  await b.getByTestId('collection-counter').filter({hasText:'81'}).waitFor({timeout:22000}); // Updates without a reload.
   await a.getByTestId('input-header-search').fill('quag');await a.getByRole('option').filter({hasText:'Quagga'}).click();await a.waitForURL('**/creature/quagga');
   await b.goto(`http://127.0.0.1:${apiPort}/creature/quagga`);await b.getByTestId('text-creature-name').filter({hasText:'Quagga'}).waitFor();assert.equal(providerCalls,2);
   await b.getByTestId('link-about').click();await b.getByText('Built by curiosity.',{exact:true}).waitFor();assert.equal(await b.getByTestId('about-counter').textContent(),'81');

@@ -30,8 +30,10 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'/tmp/codex-browser/node
   const context=await browser.newContext({viewport:{width:1440,height:1080},reducedMotion:'reduce'});
   const page=await context.newPage();let paidRequests=0;page.on('request',r=>{if(r.url().includes('/ai-lookup'))paidRequests++});
   await page.goto('http://127.0.0.1:5130/');await page.waitForLoadState('networkidle');
-  assert.ok(await page.getByTestId('tile-category-Fish').evaluate(el=>el.classList.contains('bg-teal-800')));
-  for(const [name,rgb] of [['Mammals','rgb(147, 75, 43)'],['Dinosaurs','rgb(69, 104, 80)'],['Reptiles','rgb(32, 53, 69)'],['Synapsids','rgb(122, 98, 61)'],['Birds','rgb(193, 155, 95)'],['Amphibians & Early Tetrapods','rgb(102, 41, 60)'],['Mystery Creatures','rgb(76, 55, 89)']])assert.equal(await page.getByTestId('tile-category-'+name).evaluate(el=>getComputedStyle(el).backgroundColor),rgb,name);
+  const palette={"Mammals": "rgb(101, 36, 14)", "Dinosaurs": "rgb(78, 91, 33)", "Fish": "rgb(24, 70, 72)", "Synapsids": "rgb(105, 59, 26)", "Reptiles": "rgb(26, 57, 45)", "Birds": "rgb(141, 116, 25)", "Amphibians & Early Tetrapods": "rgb(96, 16, 50)", "Invertebrates": "rgb(31, 50, 62)", "Mystery Creatures": "rgb(69, 29, 44)"};
+  for(const [name,rgb] of Object.entries(palette))assert.equal(await page.getByTestId('tile-category-'+name).evaluate(el=>getComputedStyle(el).backgroundColor),rgb,name);
+  assert.deepEqual(await page.locator('[data-testid^=tile-category-]').evaluateAll(els=>els.map(el=>el.dataset.testid.replace('tile-category-',''))),Object.keys(palette));
+  assert.ok((await page.getByTestId('tile-category-Dinosaurs').locator('img').getAttribute('src')).includes('triceratops-badge'));
   assert.ok((await page.getByTestId('tile-category-Fish').locator('img').getAttribute('src')).includes('shark-badge'));
   assert.equal(await page.locator('[data-testid^=tile-category-]').count(),9);
   assert.ok((await page.getByTestId('tile-category-Synapsids').locator('img').getAttribute('src')).includes('dimetrodon-badge'));
@@ -70,6 +72,8 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'/tmp/codex-browser/node
   await context.route('https://en.wikipedia.org/api/rest_v1/page/summary/**',route=>route.fulfill({json:{thumbnail:{source:'https://images.test/dodo.svg'},originalimage:{source:'https://images.test/dodo.svg'},content_urls:{desktop:{page:'https://en.wikipedia.org/wiki/Dodo'}}}}));
   await context.route('https://images.test/**',route=>route.fulfill({contentType:'image/svg+xml',body:'<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600"><rect width="800" height="600" fill="#456850"/></svg>'}));
   await page.goto('http://127.0.0.1:5130/creature/dodo');
+  assert.equal(await page.getByTestId('creature-facts').evaluate(el=>getComputedStyle(el).gridTemplateColumns.split(' ').length),2);
+  await page.screenshot({path:'/tmp/woolly-detail-polished.png',fullPage:true});
   const button=page.getByRole('button',{name:'View full image of Dodo'});await button.waitFor();await button.hover();
   const cue=button.locator('.image-expand-cue');await page.waitForFunction(()=>getComputedStyle(document.querySelector('.image-expand-cue')).opacity==='1');
   assert.ok(await cue.locator('svg.lucide-zoom-in').count());

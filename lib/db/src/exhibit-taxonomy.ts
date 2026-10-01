@@ -1,6 +1,6 @@
 import { exhibitLineages } from "./exhibit-lineages";
 
-export const EXHIBITS = ["Invertebrates", "Fish", "Amphibians & Early Tetrapods", "Synapsids", "Mammals", "Reptiles", "Dinosaurs", "Birds", "Mystery Creatures"] as const;
+export const EXHIBITS = ["Mammals", "Dinosaurs", "Fish", "Synapsids", "Reptiles", "Birds", "Amphibians & Early Tetrapods", "Invertebrates", "Mystery Creatures"] as const;
 export type Exhibit = typeof EXHIBITS[number];
 export type Classification = {group:Exhibit;lineage:string[];source:string;sourceUrl?:string;version:1};
 export type Classifiable = {genus?:string;scientificName?:string;category:string;mysteryLevel?:number;mysteryExhibit?:boolean;classification?:Classification;exhibitVersion?:number};

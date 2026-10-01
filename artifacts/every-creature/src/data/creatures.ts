@@ -55,23 +55,23 @@ export const creatureSchema: z.ZodType<Creature> = z.object({
 export const categories = [...EXHIBITS];
 export const categoryEmojis: Record<string,string> = {"Invertebrates":"🦟","Fish":"🦈","Amphibians & Early Tetrapods":"🐸","Synapsids":"🦎","Mammals":"🦣","Reptiles":"🐊","Dinosaurs":"🦖","Birds":"🦤","Mystery Creatures":"❓"};
 export const categoryColors: Record<string,string> = {
-  "Invertebrates":"bg-slate-700 text-white", "Fish":"bg-teal-800 text-white",
-  "Amphibians & Early Tetrapods":"bg-[#66293C] text-white", "Synapsids":"bg-[#7A623D] text-white",
-  "Mammals":"bg-[#934B2B] text-white", "Reptiles":"bg-[#203545] text-white",
-  "Dinosaurs":"bg-[#456850] text-white", "Birds":"bg-[#C19B5F] text-[#251c10]",
-  "Mystery Creatures":"bg-[#4C3759] text-white",
+  "Invertebrates":"bg-[#1F323E] text-white", "Fish":"bg-[#184648] text-white",
+  "Amphibians & Early Tetrapods":"bg-[#601032] text-white", "Synapsids":"bg-[#693B1A] text-white",
+  "Mammals":"bg-[#65240E] text-white", "Reptiles":"bg-[#1A392D] text-white",
+  "Dinosaurs":"bg-[#4E5B21] text-white", "Birds":"bg-[#8D7419] text-white",
+  "Mystery Creatures":"bg-[#451D2C] text-white",
 };
 export const categoryBgColors: Record<string,string> = {
-  "Invertebrates":"from-slate-700/80 to-slate-950", "Fish":"from-teal-900/80 to-teal-950",
-  "Amphibians & Early Tetrapods":"from-[#66293C]/80 to-stone-950", "Synapsids":"from-[#7A623D]/80 to-stone-950",
-  "Mammals":"from-[#934B2B]/80 to-stone-950", "Reptiles":"from-[#203545]/80 to-slate-950",
-  "Dinosaurs":"from-[#456850]/80 to-stone-950", "Birds":"from-[#C19B5F]/80 to-stone-950",
-  "Mystery Creatures":"from-[#4C3759]/80 to-slate-950",
+  "Invertebrates":"from-[#1F323E]/80 to-slate-950", "Fish":"from-[#184648]/80 to-stone-950",
+  "Amphibians & Early Tetrapods":"from-[#601032]/80 to-stone-950", "Synapsids":"from-[#693B1A]/80 to-stone-950",
+  "Mammals":"from-[#65240E]/80 to-stone-950", "Reptiles":"from-[#1A392D]/80 to-slate-950",
+  "Dinosaurs":"from-[#4E5B21]/80 to-stone-950", "Birds":"from-[#8D7419]/80 to-stone-950",
+  "Mystery Creatures":"from-[#451D2C]/80 to-slate-950",
 };
 export const categoryGlowColors: Record<string,string> = {
-  "Invertebrates":"#708699", "Fish":"#218f87", "Amphibians & Early Tetrapods":"#66293C",
-  "Synapsids":"#7A623D", "Mammals":"#934B2B", "Reptiles":"#203545", "Dinosaurs":"#456850",
-  "Birds":"#C19B5F", "Mystery Creatures":"#4C3759",
+  "Invertebrates":"#1F323E", "Fish":"#184648", "Amphibians & Early Tetrapods":"#601032",
+  "Synapsids":"#693B1A", "Mammals":"#65240E", "Reptiles":"#1A392D", "Dinosaurs":"#4E5B21",
+  "Birds":"#8D7419", "Mystery Creatures":"#451D2C",
 };
 
 const foundingCreatures: Creature[] = [

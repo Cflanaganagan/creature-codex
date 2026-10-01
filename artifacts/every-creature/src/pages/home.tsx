@@ -63,7 +63,7 @@ export default function Home() {
           </div>
         </div>
         <div className="museum-collection-note relative mt-8 flex flex-wrap justify-center gap-x-5 gap-y-2 text-[10px] uppercase tracking-[.2em] text-foreground/50">
-          <span data-testid="collection-counter">{sharedCount.toLocaleString()} extinct creatures catalogued</span><span aria-hidden="true">✦</span><span>{categories.length} exhibition halls</span><span aria-hidden="true">✦</span><span>A world of discovery</span>
+          <span data-testid="collection-counter" aria-live="polite" aria-atomic="true">{sharedCount.toLocaleString()} extinct creatures catalogued</span><span aria-hidden="true">✦</span><span>{categories.length} exhibition halls</span><span aria-hidden="true">✦</span><span>A world of discovery</span>
         </div>
       </section>
 

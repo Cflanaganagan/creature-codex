@@ -197,9 +197,7 @@ export default function CreatureDetail() {
 
             <Separator className="my-8 opacity-20" />
 
-            <div className="grid md:grid-cols-3 gap-12">
-              {/* Left column */}
-              <div className="md:col-span-2 space-y-8">
+            <div className="space-y-8">
                 <section>
                   <h2 className="text-2xl font-serif font-bold mb-4 flex items-center gap-2 text-card-foreground">
                     <Info className="w-6 h-6 text-card-foreground/50" /> Overview
@@ -211,23 +209,10 @@ export default function CreatureDetail() {
                 </section>
 
                 <section>
-                  <h2 className="text-2xl font-serif font-bold mb-4 text-card-foreground">Where it lived</h2>
-                  <WorldMap
-                    regions={creature.regions}
-                    habitat={creature.habitat}
-                    glowColor={glowColor}
-                    mya={creature.mya}
-                  />
-                </section>
-              </div>
-
-              {/* Right column */}
-              <div className="space-y-8">
-                <section>
                   <h2 className="text-xl font-serif font-bold mb-4 text-card-foreground">Fun Facts</h2>
-                  <ul className="space-y-3">
+                  <ul className="grid md:grid-cols-2 gap-x-8 gap-y-4" data-testid="creature-facts">
                     {creature.funFacts.map((fact, i) => (
-                      <li key={i} className="flex gap-3">
+                      <li key={i} className={`flex gap-3 rounded-xl border border-white/10 bg-white/[0.03] p-4 ${i === creature.funFacts.length - 1 && creature.funFacts.length % 2 === 1 ? "md:col-span-2" : ""}`}>
                         <span className={`shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-xs ${categoryColors[creature.category]}`}>
                           {i + 1}
                         </span>
@@ -236,17 +221,26 @@ export default function CreatureDetail() {
                     ))}
                   </ul>
                 </section>
-
+              <div className="grid md:grid-cols-2 gap-8 items-start">
                 <section>
+                  <h2 className="text-2xl font-serif font-bold mb-4 text-card-foreground">Where it lived</h2>
+                  <WorldMap
+                    regions={creature.regions}
+                    habitat={creature.habitat}
+                    glowColor={glowColor}
+                    mya={creature.mya}
+                  />
+                </section>
+                <section data-testid="related-lineages">
                   <h2 className="text-xl font-serif font-bold mb-4 text-card-foreground">
                     Related lineages
                   </h2>
                   <p className="mb-3 text-xs text-card-foreground/60">Living relatives are shown for comparison; they are not part of the museum collection.</p>
                   <div className="space-y-2">
                     {creature.family.map((relative, i) => (
-                      <div key={i} className="flex items-center justify-between p-3 rounded-lg bg-white/5 border border-white/10">
-                        <span className="font-medium text-card-foreground">{relative.name}</span>
-                        <span className="flex items-center gap-1.5 text-xs text-card-foreground/60 uppercase tracking-wider font-semibold">
+                      <div key={i} className="flex items-start justify-between gap-3 p-3 rounded-lg bg-white/5 border border-white/10">
+                        <span className="min-w-0 break-words text-sm font-medium text-card-foreground">{relative.name}</span>
+                        <span className="flex shrink-0 items-center gap-1.5 text-xs text-card-foreground/60 uppercase tracking-wider font-semibold">
                           {relative.living ? (
                             <><span className="w-2 h-2 rounded-full bg-green-400" />Living</>
                           ) : (

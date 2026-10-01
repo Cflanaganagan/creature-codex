@@ -81,9 +81,10 @@ export function CreaturesProvider({ children }: { children: ReactNode }) {
     void refreshCollection();
     const refreshWhenVisible = () => { if (document.visibilityState === "visible") void refreshCollection(); };
     const interval = window.setInterval(refreshWhenVisible, 15000);
+    document.addEventListener("visibilitychange", refreshWhenVisible);
     window.addEventListener("focus", refreshWhenVisible);
     window.addEventListener("online", refreshWhenVisible);
-    return () => { clearInterval(interval); window.removeEventListener("focus", refreshWhenVisible); window.removeEventListener("online", refreshWhenVisible); };
+    return () => { clearInterval(interval); document.removeEventListener("visibilitychange", refreshWhenVisible); window.removeEventListener("focus", refreshWhenVisible); window.removeEventListener("online", refreshWhenVisible); };
   }, [refreshCollection]);
   const creatures = useMemo(() => {
     const ids = new Set(shared.map(c=>c.id));
