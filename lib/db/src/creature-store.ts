@@ -72,7 +72,7 @@ export async function readCollection() {
   }
   await initializeCollection();
   const result = await pool.query<{data:StoredCreature}>("SELECT data FROM creature_collection WHERE data->>'lifeStatus'='extinct' AND COALESCE(data->>'reviewStatus','') <> 'withdrawn' ORDER BY created_at, id");
-  return { mode: "shared" as const, creatures: result.rows.map(row=>row.data), total:result.rowCount || 0 };
+  return { mode: "shared" as const, creatures: result.rows.map(row=>applyExhibitClassification(row.data)), total:result.rowCount || 0 };
 }
 
 /** Lock per search across processes; unique taxon keys protect concurrent aliases. */

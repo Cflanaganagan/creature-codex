@@ -1,5 +1,5 @@
 import { Layout } from "@/components/layout";
-import { categoryEmojis, categoryColors, isInExhibit } from "@/data/creatures";
+import { categoryEmojis, categoryColors, isInExhibit, mysterySelection } from "@/data/creatures";
 import { useCreatures } from "@/hooks/useCreatures";
 import { Badge } from "@/components/ui/badge";
 import { motion } from "framer-motion";
@@ -22,7 +22,7 @@ export default function Mystery() {
       {mysteryCreatures.length === 0 ? (
         <div className="text-center py-20 bg-muted/30 rounded-2xl border border-dashed">
           <h3 className="text-2xl font-serif text-muted-foreground mb-2">No mystery creatures yet</h3>
-          <p className="text-muted-foreground">Import your creature database to populate this section.</p>
+          <p className="text-muted-foreground">Explore the collection while new mysteries await discovery.</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -42,7 +42,7 @@ export default function Mystery() {
                 <div className="flex justify-between items-start mb-6">
                   <span className="text-6xl opacity-80 group-hover:opacity-100 transition-opacity blur-[1px] group-hover:blur-none">{categoryEmojis[creature.category]}</span>
                   <Badge className={`${creature.mysteryLevel === 3 ? 'bg-purple-900' : 'bg-amber-700'} text-white border-0 px-3 py-1 text-xs font-bold uppercase tracking-wider`}>
-                    Level {creature.mysteryLevel} Mystery
+                    Museum Mystery
                   </Badge>
                 </div>
                 
@@ -52,6 +52,7 @@ export default function Mystery() {
                   <p className="text-sm text-gray-300 line-clamp-3 mb-6">
                     {creature.description}
                   </p>
+                  {mysterySelection(creature) && <p className="text-sm text-purple-100/80 mb-5">{mysterySelection(creature)!.reason}</p>}
                   <div className="flex items-center justify-between">
                     <span className="text-xs text-purple-300/50 uppercase tracking-widest font-semibold">{creature.era}</span>
                     <span className="text-purple-400 group-hover:translate-x-2 transition-transform">→</span>

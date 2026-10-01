@@ -29,6 +29,11 @@ for(const [lineage,group] of [
 for(const [genus,group] of Object.entries({Inostrancevia:'Synapsids',Koolasuchus:'Amphibians & Early Tetrapods',Mastodonsaurus:'Amphibians & Early Tetrapods',Scutosaurus:'Reptiles',Basilosaurus:'Mammals',Tullimonstrum:'Mystery Creatures'}))assert.equal(knownClassification({genus}).group,group);
 const card=applyExhibitClassification({genus:'Hallucigenia',category:'Mystery Creatures',description:'Preserve this',mysteryLevel:2});
 assert.equal(card.category,'Invertebrates');assert.ok(isInExhibit(card,'Mystery Creatures'));assert.equal(card.description,'Preserve this');assert.deepEqual(applyExhibitClassification(card),card);
+for(const genus of ['Hallucigenia','Andrewsarchus','Helicoprion','Anomalocaris']){
+ const card=applyExhibitClassification({genus,category:'Mammals',mysteryLevel:0});
+ assert.ok(isInExhibit(card,'Mystery Creatures'),genus);
+ assert.notEqual(card.category,'Mystery Creatures','curation preserves biological exhibit');
+}
 (async()=>{
  const {classifyExhibit}=load('classify-exhibit');
  let calls=0;

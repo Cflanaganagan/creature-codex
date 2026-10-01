@@ -99,9 +99,13 @@ export default function Home() {
               <Link
                 href={`/browse?category=${encodeURIComponent(category)}`}
                 data-testid={`tile-category-${category}`}
-                className={`exhibit-tile block h-full group rounded-[1.4rem] ${colorClass}`}
+                className={`exhibit-tile block h-full group rounded-[1.4rem] ${colorClass} ${category === "Mystery Creatures" ? "mystery-exhibit" : ""}`}
                 style={{ "--exhibit-glow": categoryGlowColors[category] || "#9874ba" } as CSSProperties}
               >
+                {category === "Mystery Creatures" && <div className="mystery-atmosphere" aria-hidden="true">
+                  <svg className="mystery-honeycomb" width="100%" height="100%"><defs><pattern id="mystery-hexagons" width="90" height="51.961524" patternUnits="userSpaceOnUse"><path d="M0 0H15L30 25.980762L15 51.961524 M30 25.980762H60L75 0H90 M60 25.980762L75 51.961524" fill="none" stroke="currentColor" strokeWidth="0.7" /></pattern></defs><rect width="100%" height="100%" fill="url(#mystery-hexagons)" /></svg>
+                  <span className="mystery-spark mystery-spark-one">✦</span><span className="mystery-spark mystery-spark-two">✧</span><span className="mystery-spark mystery-spark-three">✦</span>
+                </div>}
                 <div className="pointer-events-none absolute inset-[7px] rounded-[1.05rem] border border-white/15" />
                 <div className="pointer-events-none absolute left-5 right-5 top-3 h-px bg-white/20" />
                 <div className="pointer-events-none absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-black/15 to-transparent" />

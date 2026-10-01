@@ -9,7 +9,7 @@ import synapsidsImg from "@/assets/dimetrodon-badge.png";
 import reptilesImg from "@/assets/deinosuchus-badge.png";
 import aquaticImg from "@/assets/shark-badge.png";
 import invertebratesImg from "@assets/invertebrates_1777771621097.png";
-import mysteryImg from "@assets/mysterycreatures_1777749545365.png";
+import mysteryImg from "@/assets/mystery-badge.png";
 
 export const categoryBadges: Partial<Record<string, string>> = {
   "Mammals": extinctBadges,

@@ -1,5 +1,5 @@
 import { EXHIBITS, applyExhibitClassification, type Classification } from "../../../../lib/db/src/exhibit-taxonomy";
-export { isInExhibit, normalizeExhibitLink, applyExhibitClassification } from "../../../../lib/db/src/exhibit-taxonomy";
+export { mysterySelection, isInExhibit, normalizeExhibitLink, applyExhibitClassification } from "../../../../lib/db/src/exhibit-taxonomy";
 import { z } from "zod";
 
 export const mysteryLevelSchema = z.union([z.literal(0), z.literal(1), z.literal(2), z.literal(3)]);
