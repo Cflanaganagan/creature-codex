@@ -7,6 +7,7 @@ const snapshot = JSON.parse(readFileSync(new URL("./taxon-reference.json", impor
 if (!Array.isArray(snapshot.records) || snapshot.records.length < 10000) throw new Error("Taxonomy reference is missing or incomplete");
 const byId = new Map<string, Row>();
 const names = new Map<string, Set<string>>();
+const genera = new Map<string, Row[]>();
 const preferred = new Map<string, string>();
 const scientificNames = new Set<string>();
 const reviewedCommonNames = new Set<string>();
@@ -18,6 +19,8 @@ function addName(name: string, id: string) {
 }
 for (const row of snapshot.records) {
   byId.set(row[0], row);
+  const genus=normalizeName(row[1].split(" ")[0]);
+  const members=genera.get(genus) || []; members.push(row); genera.set(genus,members);
   addName(row[1],row[0]); scientificNames.add(normalizeName(row[1]));
   if (row[3]) {addName(row[3],row[0]);commonKeys.add(normalizeName(row[3]));}
 }
@@ -88,7 +91,7 @@ function nearName(a:string,b:string):boolean {
   }
   return prev[b.length]<=2;
 }
-type Verdict = {status:"resolved"; identity:ResolvedIdentity} | {status:"living_species"|"clarification_required"|"unverified_name"; message:string; suggestions:string[]};
+type Verdict = {status:"resolved"; identity:ResolvedIdentity} | {status:"living_species"|"clarification_required"|"unverified_name"; message:string; suggestions:string[]; researchAllowed?:boolean};
 export function resolveReference(query:string): Verdict {
   const known=knownIdentity(query);
   if(known) return {status:"living_species",message:`${known.name} is alive today. Woolly exhibits extinct creatures only.`,suggestions:[]};
@@ -111,5 +114,15 @@ export function resolveReference(query:string): Verdict {
     for(const k of prefixKeys(key.slice(0,3)))if(nearName(k,key))for(const id of names.get(k)||[])if(byId.get(id)?.[2])nearIds.add(id);
     suggestions=[...nearIds].slice(0,4).map(id=>byId.get(id)![1]);
   }
-  return {status:suggestions.length?"clarification_required":"unverified_name",message:suggestions.length?"Please select a specific species from the reference list. We won't guess which creature you mean.":"We couldn't verify this name in our reference list. Try another spelling or a scientific species name. Missing from the list does not mean it never existed.",suggestions};
+  return {status:suggestions.length?"clarification_required":"unverified_name",message:suggestions.length?"Please select a specific species from the reference list. We won't guess which creature you mean.":"We couldn't verify this name in our reference list. Try another spelling or a scientific species name. Missing from the list does not mean it never existed.",suggestions,researchAllowed:!!getResearchCandidate(query)};
+}
+
+/** Only exact source-backed genera qualify, never arbitrary prefixes or fuzzy matches.
+ * A single snapshot row is merely a research candidate, not proof of monotypy. */
+export function getResearchCandidate(query: string): ResolvedIdentity | undefined {
+  if(knownClarification(query) || knownIdentity(query)) return undefined;
+  const rows=genera.get(normalizeName(query));
+  if(rows?.length!==1 || !rows[0][2]) return undefined;
+  const verdict=resolveReference(rows[0][1]);
+  return verdict.status==="resolved"?verdict.identity:undefined;
 }

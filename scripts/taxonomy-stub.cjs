@@ -5,6 +5,7 @@ module.exports=function taxonomyStub(req,res){
  if(url.pathname.endsWith('/species/match')){
   const name=url.searchParams.get('name');
   const keys={'Mammuthus columbi':1,'Aetobatus narinari':2,'Mammuthus creticus':3,'Mammuthus exilis':4};
+  if(['Scutosaurus karpinskii','Mammuthus trogontherii','Mammuthus meridionalis','Mammuthus africanavus','Mammuthus subplanifrons','Mammuthus rumanus'].includes(name)){res.writeHead(200,{'content-type':'application/json'});res.end(JSON.stringify({matchType:'NONE',confidence:100}));return true;}
   data={usageKey:keys[name]||5,canonicalName:name,rank:name.split(' ').length===3?'SUBSPECIES':'SPECIES',kingdom:'Animalia',confidence:100,matchType:'EXACT'};
  }else if(url.pathname.includes('/species/4/')){
   res.writeHead(503,{'content-type':'application/json'});res.end('{}');return true;

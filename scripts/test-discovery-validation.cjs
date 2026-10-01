@@ -1,6 +1,7 @@
 /* Dedicated *_test database only. No real AI calls or live collection changes. */
 const assert=require('node:assert/strict');
 const taxonomyStub=require('./taxonomy-stub.cjs');
+const researchStub=require('./research-stub.cjs');
 const http=require('node:http');
 const {spawn}=require('node:child_process');
 const {createRequire}=require('node:module');
@@ -22,7 +23,8 @@ const fixtures={
 const stub=http.createServer(async(req,res)=>{if(taxonomyStub(req,res))return;
  let body='';for await(const c of req)body+=c;
  const p=JSON.parse(body);requests.push(p);assert.equal(p.model,'claude-haiku-4-5-20251001');
- let result;const input=JSON.parse(p.messages[0].content);assert.ok(!input.search,'no AI resolution is allowed');
+ let result;const input=JSON.parse(p.messages[0].content);
+ if(input.search){res.writeHead(200,{'content-type':'application/json'});res.end(JSON.stringify({id:'msg_research',type:'message',role:'assistant',content:researchStub(p),model:p.model,stop_reason:'end_turn',usage:{input_tokens:20,output_tokens:20}}));return;}
  if(input.search){
   const f=fixtures[input.search.toLowerCase()];
   result=f?{status:'resolved',name:f[0],scientificName:f[1],genus:f[1].split(' ')[0],rank:'species',lifeStatus:f[2],confidence:'high'}:{status:'clarification_required',message:'Please enter a specific species.',suggestions:['Blue Whale']};
@@ -39,7 +41,7 @@ async function stop(){if(server&&server.exitCode===null){const done=new Promise(
 async function lookup(name){const r=await fetch('http://127.0.0.1:5128/api/creatures/ai-lookup',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name})});return {status:r.status,data:await r.json()}}
 async function collection(){return (await fetch('http://127.0.0.1:5128/api/creatures')).json()}
 (async()=>{
- await pool.query('DROP TABLE IF EXISTS creature_revision_backups,creature_aliases,creature_collection,creature_discovery_usage');
+ await pool.query('DROP TABLE IF EXISTS creature_resolution_cache,creature_revision_backups,creature_aliases,creature_collection,creature_discovery_usage');
  await new Promise(r=>stub.listen(5127,'127.0.0.1',r));await start();
  for(const name of ['Felidae','whale','Panthera','mammoth','Mammuthus','pygmy mammoth','Smilodon','frog','Acinonyx','sea monster']){
   const r=await lookup(name);assert.equal(r.status,422,name);assert.ok(['clarification_required','unverified_name'].includes(r.data.code),name);
@@ -61,8 +63,9 @@ async function collection(){return (await fetch('http://127.0.0.1:5128/api/creat
  assert.equal((await collection()).total,80);
  assert.equal((await lookup('Aetobatus narinari')).data.code,'living_species','IUCN living status overrides incorrect fossil flags');
  assert.equal((await lookup('Mammuthus creticus')).data.code,'unverified_name','conflicting references block generation');
- assert.equal((await lookup('Mammuthus exilis')).data.code,'reference_unavailable','free-service outage cannot fall back to paid AI');
- assert.equal(requests.length,before,'all free reference failures must use zero AI');
+ assert.equal((await lookup('Mammuthus exilis')).data.code,'reference_unavailable','outages must not trigger paid research');
+ assert.equal(requests.length,before+1,'only the reference conflict receives paid research');
+ const rejectedUsage=(await pool.query('SELECT requests FROM creature_discovery_usage WHERE day=CURRENT_DATE')).rows[0].requests;
  await stop();await start();
  before=requests.length;
  const same=await Promise.all(Array.from({length:10},(_,i)=>lookup(i%2?'Quagga':'Equus quagga quagga')));
@@ -72,7 +75,7 @@ async function collection(){return (await fetch('http://127.0.0.1:5128/api/creat
  const extinct=same[0].data;
  assert.equal(extinct.reference.taxonId,'txn:236287');
  assert.ok(extinct.reference.source.includes('UCL'));
- assert.equal((await pool.query('SELECT requests FROM creature_discovery_usage WHERE day=CURRENT_DATE')).rows[0].requests,1,'rejected searches do not consume the discovery allowance');
+ assert.equal((await pool.query('SELECT requests FROM creature_discovery_usage WHERE day=CURRENT_DATE')).rows[0].requests,rejectedUsage+1,'paid research rejections count; profile-only discovery counts once');
  // Simulate old production mistakes. Unknown legacy status is quarantined, never guessed from an age.
  for(const [id,name] of [['cheetah','Cheetah'],['felidae','Felidae'],['unreviewed-old-entry','Unreviewed Old Entry']]) {
   const data={...extinct,id,name,mya:'0.003',source:'ai'};delete data.identityVersion;delete data.lifeStatus;
@@ -116,9 +119,44 @@ async function collection(){return (await fetch('http://127.0.0.1:5128/api/creat
    await page.goto('http://127.0.0.1:5128/browse?q=Koala');
    await page.getByText('Still living today',{exact:true}).waitFor();
    assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
-   console.log('PASS: explicit discovery only, living/ambiguous notices, old cache filtering, museum branding, reconstruction links, desktop/mobile layout');
+ console.log('PASS: explicit discovery only, living/ambiguous notices, old cache filtering, museum branding, reconstruction links, desktop/mobile layout');
   } finally {await browser.close()}
  }
+   await pool.query("UPDATE creature_discovery_usage SET requests=0 WHERE day=CURRENT_DATE");
+ await stop();await start();
+ before=requests.length;
+ const scuto=await Promise.all(Array.from({length:5},()=>lookup('Scutosaurus')));
+ assert.ok(scuto.every(r=>r.status===200),JSON.stringify(scuto));
+ assert.equal(scuto[0].data.name,'Scutosaurus');assert.equal(scuto[0].data.scientificName,'Scutosaurus karpinskii');
+ assert.equal(scuto[0].data.reference.evidence.length,1);
+ assert.equal(requests.length-before,2,'one research + one profile for simultaneous genus lookups');
+ assert.equal((await pool.query('SELECT requests FROM creature_discovery_usage WHERE day=CURRENT_DATE')).rows[0].requests,1,'research+profile use one discovery allowance');
+ assert.equal((await lookup('Scutosaurus karpinskii')).data.id,scuto[0].data.id);
+ assert.equal(requests.length-before,2,'scientific alias reuses the card');
+ for(const name of ['Mammuthus trogontherii','Adalatherium'])assert.equal((await lookup(name)).data.code,'unverified_name',name);
+ assert.equal((await lookup('Mammuthus meridionalis')).data.code,'living_species');
+ assert.equal((await lookup('Mammuthus africanavus')).data.code,'clarification_required');
+ assert.equal((await lookup('Mammuthus subplanifrons')).data.code,'research_unavailable');
+ const researchCount=requests.length;
+ await stop();await start();
+ assert.equal((await lookup('Mammuthus trogontherii')).data.code,'unverified_name');assert.equal(requests.length,researchCount,'negative research cache survives restart');
+ // Removing this dedicated test card exercises positive research-cache reuse after a profile failure/removal.
+ await pool.query("DELETE FROM creature_aliases WHERE creature_id=$1",[scuto[0].data.id]);
+ await pool.query("DELETE FROM creature_collection WHERE id=$1",[scuto[0].data.id]);
+ assert.equal((await lookup('Scutosaurus')).status,200);assert.equal(requests.length,researchCount+1,'cached research only needs a new profile');
+ await pool.query("DELETE FROM creature_aliases WHERE creature_id=$1",[scuto[0].data.id]);
+ await pool.query("DELETE FROM creature_collection WHERE id=$1",[scuto[0].data.id]);
+ before=requests.length;const spellingConflict=await lookup('Scutosaurus karpinskii');
+ assert.equal(spellingConflict.status,200,JSON.stringify(spellingConflict));assert.equal(spellingConflict.data.name,'Scutosaurus');
+ assert.equal(requests.length-before,2,'GBIF name mismatch can be resolved by cited research');
+ await pool.query("UPDATE creature_discovery_usage SET requests=100 WHERE day=CURRENT_DATE");
+ before=requests.length;assert.equal((await lookup('Mammuthus rumanus')).status,429);assert.equal(requests.length,before,'budget stops research before any paid call');
+ await stop();await start();
+ before=requests.length;
+ const usageBeforeSpam=(await pool.query('SELECT requests FROM creature_discovery_usage WHERE day=CURRENT_DATE')).rows[0].requests;
+ for(let i=0;i<12;i++)assert.equal((await lookup(`fabricated beast xyz ${i}`)).status,422);
+ assert.equal(requests.length,before,'different invented names never reach Claude');
+ assert.equal((await pool.query('SELECT requests FROM creature_discovery_usage WHERE day=CURRENT_DATE')).rows[0].requests,usageBeforeSpam,'unmatched-name spam uses no paid allowance');
  const sitemap=await (await fetch('http://127.0.0.1:5128/sitemap.xml')).text();
  assert.ok(sitemap.includes('/creature/dodo'));assert.ok(!sitemap.includes('/creature/lion'));
  await pool.query('UPDATE creature_discovery_usage SET requests=100 WHERE day=CURRENT_DATE');

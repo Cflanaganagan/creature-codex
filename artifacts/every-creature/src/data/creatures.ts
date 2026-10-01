@@ -13,6 +13,7 @@ export type Creature = {
   mya: string;
   scientificName?: string;
   lifeStatus?: "extant" | "extinct";
+  reference?: {evidence?: {url:string;title:string;quote:string}[]};
   diet: string;
   size: string;
   habitat: string;
@@ -32,6 +33,7 @@ export const creatureSchema: z.ZodType<Creature> = z.object({
   mya: z.string().min(1, "mya is required"),
   scientificName: z.string().optional(),
   lifeStatus: z.enum(["extant", "extinct"]).optional(),
+  reference: z.object({evidence:z.array(z.object({url:z.string().url(),title:z.string(),quote:z.string()})).optional()}).optional(),
   diet: z.string().min(1, "diet is required"),
   size: z.string().min(1, "size is required"),
   habitat: z.string().min(1, "habitat is required"),

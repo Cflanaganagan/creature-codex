@@ -46,6 +46,9 @@ async function initialize() {
     await client.query(`CREATE TABLE IF NOT EXISTS creature_discovery_usage (
       day date PRIMARY KEY, requests integer NOT NULL DEFAULT 0
     )`);
+    await client.query(`CREATE TABLE IF NOT EXISTS creature_resolution_cache (
+      query text PRIMARY KEY, data jsonb NOT NULL, expires_at timestamptz NOT NULL
+    )`);
     for (const creature of seedCreatures) {
       const key = normalizeCreatureName(creature.name);
       await client.query("INSERT INTO creature_collection(id,taxon_key,data) VALUES($1,$2,$3) ON CONFLICT DO NOTHING", [creature.id,key,JSON.stringify({...creature,source:"seed"})]);
@@ -68,7 +71,7 @@ export async function readCollection() {
 }
 
 /** Lock per search across processes; unique taxon keys protect concurrent aliases. */
-export async function discoverCreature(query: string, resolve: (query: string) => Promise<ResolvedIdentity>, generate: (identity: ResolvedIdentity) => Promise<unknown>, canGenerate = true): Promise<StoredCreature> {
+export async function discoverCreature(query: string, resolve: (query: string, reserve: () => Promise<void>) => Promise<ResolvedIdentity>, generate: (identity: ResolvedIdentity) => Promise<unknown>, canGenerate = true): Promise<StoredCreature> {
   if (!databaseConfigured) throw new CollectionError(503, "The shared collection is not connected yet. Existing creatures are still available.");
   await initializeCollection();
   const key = normalizeCreatureName(query);
@@ -76,11 +79,23 @@ export async function discoverCreature(query: string, resolve: (query: string) =
   const client = await pool.connect();
   try {
     await client.query("BEGIN");
-    await client.query("SET LOCAL lock_timeout = '65s'");
+    await client.query("SET LOCAL lock_timeout = '180s'");
     await client.query("SELECT pg_advisory_xact_lock(hashtext($1))", [key]);
     const found = await client.query<{data:StoredCreature}>("SELECT c.data FROM creature_aliases a JOIN creature_collection c ON c.id=a.creature_id WHERE a.alias=$1",[key]);
     if (found.rows[0]) { requireExhibited(found.rows[0].data); await client.query("COMMIT"); return found.rows[0].data; }
-    const identity = await resolve(query);
+    let reserved = false;
+    const reserve = async () => {
+      if (reserved) return;
+      if (!canGenerate) throw new CollectionError(503, "AI discovery is not configured yet. The shared collection is still available.");
+      // Count each paid discovery attempt once, including failed research, before any AI call.
+      const limit = Math.max(1, Number(process.env.DISCOVERY_DAILY_LIMIT) || 100);
+      const budget = await usagePool.query(`INSERT INTO creature_discovery_usage(day,requests) VALUES(CURRENT_DATE,1)
+        ON CONFLICT(day) DO UPDATE SET requests=creature_discovery_usage.requests+1
+        WHERE creature_discovery_usage.requests<$1 RETURNING requests`,[limit]);
+      if (!budget.rowCount) throw new CollectionError(429,"Today's discovery allowance has been reached. Please explore the existing collection and try again tomorrow.");
+      reserved = true;
+    };
+    const identity = await resolve(query, reserve);
     requireExhibited(identity);
     // Reuse a resolved species before generating prose. Never forward the raw query.
     const identityKey = normalizeCreatureName(identity.scientificName);
@@ -95,13 +110,7 @@ export async function discoverCreature(query: string, resolve: (query: string) =
       await client.query("INSERT INTO creature_aliases(alias,creature_id) VALUES($1,$2) ON CONFLICT DO NOTHING",[key,saved.id]);
       await client.query("COMMIT"); return saved;
     }
-    if (!canGenerate) throw new CollectionError(503, "AI discovery is not configured yet. The shared collection is still available.");
-    // This budget counts generation attempts, even if validation/provider calls fail.
-    const limit = Math.max(1, Number(process.env.DISCOVERY_DAILY_LIMIT) || 100);
-    const budget = await usagePool.query(`INSERT INTO creature_discovery_usage(day,requests) VALUES(CURRENT_DATE,1)
-      ON CONFLICT(day) DO UPDATE SET requests=creature_discovery_usage.requests+1
-      WHERE creature_discovery_usage.requests<$1 RETURNING requests`,[limit]);
-    if (!budget.rowCount) throw new CollectionError(429,"Today's discovery allowance has been reached. Please explore the existing collection and try again tomorrow.");
+    await reserve();
     const parsed = discoveredCreatureSchema.safeParse(await generate(identity));
     if (!parsed.success) throw new CollectionError(422,"We couldn't verify a complete entry for that creature. Try its common or scientific name.");
     const creature = parsed.data;
@@ -130,4 +139,15 @@ export async function discoverCreature(query: string, resolve: (query: string) =
     return saved;
   } catch(error) { await client.query("ROLLBACK"); throw error; }
   finally { client.release(); }
+}
+
+/** Shared cache survives failed discovery transactions and service restarts. */
+export async function readResolutionCache(query: string): Promise<unknown> {
+  const result=await usagePool.query("SELECT data FROM creature_resolution_cache WHERE query=$1 AND expires_at>now()",[normalizeCreatureName(query)]);
+  return result.rows[0]?.data;
+}
+export async function writeResolutionCache(query: string, data: unknown, days: number): Promise<void> {
+  await usagePool.query("DELETE FROM creature_resolution_cache WHERE expires_at<now()");
+  await usagePool.query(`INSERT INTO creature_resolution_cache(query,data,expires_at) VALUES($1,$2,now()+$3*interval '1 day')
+    ON CONFLICT(query) DO UPDATE SET data=EXCLUDED.data,expires_at=EXCLUDED.expires_at`,[normalizeCreatureName(query),JSON.stringify(data),days]);
 }

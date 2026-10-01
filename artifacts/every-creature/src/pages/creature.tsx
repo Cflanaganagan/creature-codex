@@ -207,6 +207,7 @@ export default function CreatureDetail() {
                   <p className="text-lg leading-relaxed text-card-foreground/80">
                     {creature.description}
                   </p>
+                  {!!creature.reference?.evidence?.length && <p className="mt-4 text-sm text-card-foreground/70">Identity sources: {Array.from(new Map(creature.reference.evidence.map(e=>[e.url,e])).values()).map((e,i)=><span key={e.url}>{i>0?" · ":""}<a className="underline" href={e.url} target="_blank" rel="noopener noreferrer">{e.title}</a></span>)}</p>}
                 </section>
 
                 <section>

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 export type ReferenceMatch = {taxonId:string;name:string;scientificName:string};
-type ReferenceData = {matches:ReferenceMatch[];verdict:null|{status:"resolved"|"living_species"|"clarification_required"|"unverified_name";message?:string;suggestions?:string[];identity?:{name:string;scientificName:string}};reference:{extinctCount:number;retrievedAt:string}};
+type ReferenceData = {matches:ReferenceMatch[];verdict:null|{status:"resolved"|"living_species"|"clarification_required"|"unverified_name";message?:string;researchAllowed?:boolean;suggestions?:string[];identity?:{name:string;scientificName:string}};reference:{extinctCount:number;retrievedAt:string}};
 export function useTaxonReference(query:string) {
   const [state,setState]=useState<{query:string;data?:ReferenceData;failed?:boolean}>({query:""});
   useEffect(()=>{

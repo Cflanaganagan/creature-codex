@@ -1,4 +1,5 @@
-import { readCollection, discoverCreature, CollectionError, knownClarification, knownIdentity, checkReferenceStatus, resolveReference, suggestReference, referenceMetadata, type ResolvedIdentity } from "@workspace/db";
+import { researchCreature } from "../research-creature";
+import { readCollection, discoverCreature, CollectionError, knownClarification, knownIdentity, checkReferenceStatus, resolveReference, getResearchCandidate, suggestReference, referenceMetadata, type ResolvedIdentity } from "@workspace/db";
 import { Router, type IRouter } from "express";
 import { anthropic, anthropicConfigured } from "@workspace/integrations-anthropic-ai";
 import { AiCreatureLookupBody } from "@workspace/api-zod";
@@ -74,10 +75,19 @@ function hasFiveFunFacts(data: unknown): boolean {
     d.funFacts.every((f) => typeof f === "string" && f.trim().length > 5);
 }
 
-async function resolveCreature(name: string): Promise<ResolvedIdentity> {
+async function resolveCreature(name: string, reserve: () => Promise<void>): Promise<ResolvedIdentity> {
   const verdict = resolveReference(name);
-  if (verdict.status !== "resolved") throw new CollectionError(422, verdict.message, verdict.status, verdict.suggestions);
-  return checkReferenceStatus(verdict.identity);
+  if (verdict.status !== "resolved") {
+    const candidate = verdict.researchAllowed ? getResearchCandidate(name) : undefined;
+    if (candidate) return researchCreature(name, reserve, candidate);
+    throw new CollectionError(422, verdict.message, verdict.status, verdict.suggestions);
+  }
+  try { return await checkReferenceStatus(verdict.identity); }
+  catch (error) {
+    if (error instanceof CollectionError && error.code === "unverified_name")
+      return researchCreature(name, reserve, verdict.identity);
+    throw error;
+  }
 }
 async function generateCreature(identity: ResolvedIdentity): Promise<unknown> {
   let creature = await callClaude(identity);

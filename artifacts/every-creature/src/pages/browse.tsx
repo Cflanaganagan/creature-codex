@@ -183,7 +183,7 @@ export default function Browse() {
   const showAISection = (filteredCreatures.length === 0 || aiResult !== null) && hasQuery && !selectedCategory;
 
   const handleDiscover = () => {
-    if (isDiscovering || collectionStatus === "loading" || verdict?.status !== "resolved") return;
+    if (isDiscovering || collectionStatus === "loading" || (verdict?.status !== "resolved" && !verdict?.researchAllowed)) return;
     const term = query.trim();
     if (isObviouslyFictional(term)) {
       setInvalidResponse(true);
@@ -287,14 +287,14 @@ export default function Browse() {
               {/* No results prompt */}
               <div className="text-center py-10 bg-muted/30 rounded-2xl border border-dashed">
                 <h3 className="text-2xl font-serif text-foreground/70 mb-2">
-                  {verdict?.status === "living_species" ? "Still living today" : verdict?.status === "clarification_required" ? "Which creature did you mean?" : verdict?.status === "unverified_name" ? "Name not verified yet" : "Not in our collection yet"}
+                  {verdict?.status === "living_species" ? "Still living today" : verdict?.status === "clarification_required" && !verdict.researchAllowed ? "Which creature did you mean?" : verdict?.status === "unverified_name" ? "Name not verified yet" : "Not in our collection yet"}
                 </h3>
                 <p className="text-foreground/60 mb-6">
-                  {verdict?.status === "resolved" ? <>Meet <strong>{verdict.identity?.name}</strong>. Discover its story and add it to the museum.</> : verdict?.status === "unverified_name" ? <>Our palaeontologists couldn’t locate <strong>“{query}”</strong> in the archives. It may be fictional, misspelled, or simply lost to deep time.</> : verdict?.status === "clarification_required" ? <>Which creature did you have in mind? Try a specific species name.</> : verdict?.status === "living_species" ? <>This creature is still with us today. Explore an extinct animal instead.</> : (reference.failed ? "We couldn’t search the archives right now. Please try again shortly." : "Searching the archives…")}
+                  {verdict?.status === "resolved" ? <>Meet <strong>{verdict.identity?.name}</strong>. Discover its story and add it to the museum.</> : verdict?.status === "unverified_name" ? <>Our palaeontologists couldn’t locate <strong>“{query}”</strong> in the archives. It may be fictional, misspelled, or simply lost to deep time.</> : verdict?.status === "clarification_required" ? (verdict.researchAllowed ? <>Let our AI naturalist explore the story behind <strong>“{query}”</strong>.</> : <>Which creature did you have in mind? Try a specific species name.</>) : verdict?.status === "living_species" ? <>This creature is still with us today. Explore an extinct animal instead.</> : (reference.failed ? "We couldn’t search the archives right now. Please try again shortly." : "Searching the archives…")}
                 </p>
                 <Button
                   onClick={handleDiscover}
-                  disabled={isDiscovering || collectionStatus === "loading" || verdict?.status !== "resolved"}
+                  disabled={isDiscovering || collectionStatus === "loading" || (verdict?.status !== "resolved" && !verdict?.researchAllowed)}
                   className="gap-2 px-6 py-5 text-base"
                 >
                   <Sparkles className="w-4 h-4" />

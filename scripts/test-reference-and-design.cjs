@@ -45,11 +45,24 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'/tmp/codex-browser/node
   assert.equal(paidRequests,0,'choosing a reference suggestion must not start paid discovery');
   await page.goto('http://127.0.0.1:5130/browse?q=not-a-creature-xyz');
   await page.getByText('Name not verified yet',{exact:true}).waitFor();
-  assert.ok(await page.getByRole('button',{name:'Discover extinct creature',exact:true}).isDisabled());
+  assert.ok(await page.getByRole('button',{name:'Discover extinct creature',exact:true}).isDisabled(),'unmatched names cannot request paid research');
   assert.equal(paidRequests,0);
   await page.getByText('Our palaeontologists couldn’t locate',{exact:false}).waitFor();
   assert.equal(await page.getByText('Names checked against the',{exact:false}).count(),0);
   assert.equal(await page.getByText('No card was added and no AI request was made.',{exact:true}).count(),0);
+  await page.goto('http://127.0.0.1:5130/browse?q=Scutosaurus');
+  await page.getByText('Let our AI naturalist explore the story behind',{exact:false}).waitFor();
+  assert.ok(await page.getByRole('button',{name:'Discover extinct creature',exact:true}).isEnabled());
+  await page.goto('http://127.0.0.1:5130/browse?q=Felidae');
+  await page.getByText('Which creature did you mean?',{exact:true}).waitFor();
+  assert.ok(await page.getByRole('button',{name:'Discover extinct creature',exact:true}).isDisabled());
+  assert.equal(paidRequests,0,'typing, Enter and page loads never start research');
+  await page.route('**/api/creatures/ai-lookup',route=>route.fulfill({status:422,json:{code:'unverified_name',error:'Test-only research verdict'}}));
+  await page.goto('http://127.0.0.1:5130/browse?q=Scutosaurus');
+  await page.getByText('Let our AI naturalist explore the story behind',{exact:false}).waitFor();
+  await page.getByRole('button',{name:'Discover extinct creature',exact:true}).click();
+  await page.getByText('Extinction status needs review',{exact:true}).waitFor();
+  assert.equal(paidRequests,1,'only the explicit Discover click requests research');
   // Deterministic photograph fixture isolates image-viewer behavior from Wikipedia availability.
   await context.route('https://en.wikipedia.org/api/rest_v1/page/summary/**',route=>route.fulfill({json:{thumbnail:{source:'https://images.test/dodo.svg'},originalimage:{source:'https://images.test/dodo.svg'},content_urls:{desktop:{page:'https://en.wikipedia.org/wiki/Dodo'}}}}));
   await context.route('https://images.test/**',route=>route.fulfill({contentType:'image/svg+xml',body:'<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600"><rect width="800" height="600" fill="#456850"/></svg>'}));
