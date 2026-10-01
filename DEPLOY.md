@@ -113,3 +113,9 @@ The existing discovery allowance is reserved BEFORE the first paid research/prof
 Typing, autocomplete, Enter and reference suggestion selection never invoke research. The Discover button permits only source-backed research candidates while keeping unmatched, clearly living and broad queries disabled. PostgreSQL protocol-stub tests cover fallback, citations, monotypy, shared caching, concurrency and budget enforcement without spending real Anthropic credits.
 
 Spam protection: arbitrary invented names cannot enter the paid fallback, including when POSTed directly to the API. Existing per-IP throttling, daily paid-attempt allowance, and shared positive/negative caching also apply. Valid reference names can still be abused; these controls bound that exposure rather than promising that abuse is impossible. A genuine species wholly missing from the source list requires an editorial reference addition before discovery.
+
+
+### Nine-exhibit classification
+The nine exhibits are based on ancestry, with birds and non-avian dinosaurs displayed separately and Synapsids reserved for non-mammalian synapsids. Mystery is an overlapping thematic exhibit. Existing cards are backed up under `nine-exhibits-v1` in `creature_revision_backups` before only their exhibit metadata is changed. No cards or biographies are deleted.
+
+The bundled Paleobiology Database lineage snapshot (CC BY 4.0, attribution in the source) covers the current collection. New discoveries use that snapshot or a free PBDB ancestor lookup; the AI profile writer cannot override the resulting exhibit. Unresolved ancestry retains the card in Mystery for review. This classification adds no Claude calls.

@@ -47,6 +47,14 @@ async function collection(){return (await fetch('http://127.0.0.1:5128/api/creat
   const r=await lookup(name);assert.equal(r.status,422,name);assert.ok(['clarification_required','unverified_name'].includes(r.data.code),name);
  }
  let all=await collection();assert.equal(all.total,80);assert.ok(all.creatures.every(c=>c.lifeStatus==='extinct'));
+
+ const expectedExhibits={dimetrodon:'Synapsids',gorgonops:'Synapsids',lystrosaurus:'Synapsids',basilosaurus:'Mammals',mosasaurus:'Reptiles',tyrannosaurus:'Dinosaurs',raphus:'Birds',dunkleosteus:'Fish',hallucigenia:'Invertebrates'};
+ for(const [genus,category] of Object.entries(expectedExhibits)){
+  const card=all.creatures.find(c=>c.genus.toLowerCase()===genus);assert.ok(card,genus);assert.equal(card.category,category,genus);
+  const original=(await pool.query("SELECT original_data FROM creature_revision_backups WHERE version='nine-exhibits-v1' AND creature_id=$1",[card.id])).rows[0].original_data;
+  for(const key of Object.keys(original).filter(k=>!['category','classification','exhibitVersion','mysteryExhibit'].includes(k)))assert.deepEqual(card[key],original[key],`${genus}: preserved ${key}`);
+ }
+ assert.ok(all.creatures.find(c=>c.genus==='Hallucigenia').mysteryExhibit,'mystery membership survives biological reclassification');
  // Every original seed survives; living seeds have recoverable backups and cannot be retrieved as discoveries.
  assert.equal((await pool.query('SELECT count(*) FROM creature_collection')).rows[0].count,'100');
  assert.equal((await pool.query("SELECT original_data->>'name' AS name FROM creature_revision_backups WHERE version='extinct-museum-v1' AND creature_id='lion'")).rows[0].name,'Lion');

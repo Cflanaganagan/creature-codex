@@ -1,53 +1,10 @@
 import { createContext, useContext, useState, useCallback, useEffect, useMemo, useRef, type ReactNode } from "react";
-import { creatures as defaultCreatures, isExtinctCreature, type Creature } from "@/data/creatures";
+import { creatures as defaultCreatures, applyExhibitClassification, isExtinctCreature, type Creature } from "@/data/creatures";
 
 const STORAGE_KEY = "every-creature-db";
 const SHARED_CACHE_KEY = "woolly-extinct-shared-cache-v1";
 
-const CATEGORY_MIGRATION: Record<string, string> = {
-  "Theropods":               "Reptiles",
-  "Sauropods":               "Reptiles",
-  "Ceratopsians":            "Reptiles",
-  "Armoured Dinosaurs":      "Reptiles",
-  "Pterosaurs":              "Reptiles",
-  "Synapsids":               "Reptiles",
-  "Marine Reptiles":         "Aquatic",
-  "Prehistoric Fish":        "Aquatic",
-  "Giant Prehistoric Insects":"Invertebrates",
-  "Ice Age Megafauna":       "Mammals",
-  "Prehistoric Mammals":     "Mammals",
-  "Living Animals":          "Mammals",
-  "Recently Extinct":        "Mammals",
-};
-
-const AQUATIC_IDS = new Set([
-  "mosasaurus","elasmosaurus","ichthyosaurus","plesiosaurus","kronosaurus",
-  "liopleurodon","megalodon","dunkleosteus","helicoprion","leedsichthys",
-  "coelacanth","basilosaurus","stellers-sea-cow","orca","sperm-whale",
-  "great-white-shark","green-anaconda","mantis-shrimp","pistol-shrimp",
-  "archerfish","mimic-octopus",
-]);
-const BIRDS_IDS = new Set([
-  "terror-bird","dodo","passenger-pigeon","great-auk","peregrine-falcon",
-]);
-const REPTILE_IDS = new Set([
-  "sarcosuchus","deinosuchus","titanoboa","saltwater-crocodile","komodo-dragon",
-]);
-const INVERTEBRATE_IDS = new Set([
-  "meganeura","arthropleura","pulmonoscorpius","jaekelopterus","tardigrade",
-  "mantis","cambrian-anomalocaris",
-]);
-
-function migrateCreature(c: Creature): Creature {
-  const oldCat = c.category;
-  if (AQUATIC_IDS.has(c.id)) return { ...c, category: "Aquatic" };
-  if (BIRDS_IDS.has(c.id)) return { ...c, category: "Birds" };
-  if (REPTILE_IDS.has(c.id)) return { ...c, category: "Reptiles" };
-  if (INVERTEBRATE_IDS.has(c.id)) return { ...c, category: "Invertebrates" };
-  const mapped = CATEGORY_MIGRATION[oldCat];
-  if (mapped) return { ...c, category: mapped };
-  return c;
-}
+const migrateCreature = (c:Creature):Creature => applyExhibitClassification(c);
 
 function loadFromStorage(): Creature[] | null {
   try {
@@ -130,7 +87,7 @@ export function CreaturesProvider({ children }: { children: ReactNode }) {
   }, [refreshCollection]);
   const creatures = useMemo(() => {
     const ids = new Set(shared.map(c=>c.id));
-    return [...shared, ...personal.filter(c=>!ids.has(c.id))].filter(isExtinctCreature);
+    return [...shared, ...personal.filter(c=>!ids.has(c.id))].filter(isExtinctCreature).map(migrateCreature);
   }, [shared, personal]);
   const acceptDiscoveredCreature = useCallback((creature: Creature) => {
     if (!isExtinctCreature(creature)) return;

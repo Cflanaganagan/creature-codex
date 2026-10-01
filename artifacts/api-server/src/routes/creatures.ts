@@ -1,5 +1,5 @@
 import { researchCreature } from "../research-creature";
-import { readCollection, discoverCreature, CollectionError, knownClarification, knownIdentity, checkReferenceStatus, resolveReference, getResearchCandidate, suggestReference, referenceMetadata, type ResolvedIdentity } from "@workspace/db";
+import { readCollection, discoverCreature, classifyExhibit, applyExhibitClassification, type Classification, CollectionError, knownClarification, knownIdentity, checkReferenceStatus, resolveReference, getResearchCandidate, suggestReference, referenceMetadata, type ResolvedIdentity } from "@workspace/db";
 import { Router, type IRouter } from "express";
 import { anthropic, anthropicConfigured } from "@workspace/integrations-anthropic-ai";
 import { AiCreatureLookupBody } from "@workspace/api-zod";
@@ -34,25 +34,21 @@ CRITICAL RULES:
 - Do not change the resolved name, scientificName, genus, rank or lifeStatus.
 - Only extinct creatures are admitted. Never use an evolutionary origin or domestication date as an extinction date.
 - For extinct creatures use their actual known geological range in millions of years, or "Extinct YEAR" for a known recent extinction. Never infer a numerical date from uncertainty.
-- For category use one of: Mammals, Reptiles, Birds, Aquatic, Amphibians, Invertebrates, Mystery Creatures.
-- Mammals: any warm-blooded furry creature, extinct (mammoths, wolves, whales that are biological mammals but not primarily water-dwellers, etc.)
-- Reptiles: all dinosaurs (theropods, sauropods, ceratopsians, armoured, hadrosaurs), pterosaurs, synapsids, extinct reptiles (crocodilians, lizards, snakes)
-- Birds: extinct birds, including recently extinct birds (dodo, great auk, terror bird, archaeopteryx, passenger pigeon, etc.)
-- Aquatic: vertebrates and invertebrates that lived primarily in water, EXCEPT amphibians, which always belong in Amphibians (plesiosaurs, mosasaurs, prehistoric sharks, extinct marine mammals, sea cows, aquatic invertebrates, aquatic reptiles)
-- Amphibians: extinct amphibians, including frogs, toads, salamanders, newts, caecilians, temnospondyls, and other scientifically recognized amphibian taxa.
-- Invertebrates: insects, arthropods, worms, molluscs, and all spineless creatures (extinct)
-- Mystery Creatures: creatures with very little fossil evidence, debated classification, or so bizarre they defy easy categorisation. Use for mysteryLevel 2 or 3 creatures.
+- The server supplies the category. Use that category exactly; do not classify by habitat or appearance.
+- Exhibit groups: Invertebrates; Fish; Amphibians & Early Tetrapods; Synapsids (NON-mammalian only); Mammals; Reptiles (excluding dinosaurs and birds for exhibit purposes); Dinosaurs (NON-avian only); Birds; Mystery Creatures (unresolved placement).
+- Mammals belong in Mammals even if aquatic. Dimetrodon, gorgonopsians and dicynodonts are non-mammalian synapsids, not reptiles or mammals. Pterosaurs, mosasaurs, plesiosaurs and crocodile relatives are Reptiles, not dinosaurs or fish. Birds are avian dinosaurs but have their own exhibit. Sharks and bony fishes belong in Fish. Arthropods, ammonites and other invertebrates stay in Invertebrates regardless of aquatic habitat.
+- Do not change a biological group because mysteryLevel is high. Mystery is also a separate overlapping exhibit.
 - For the regions field: list the continents or major world regions where this creature lived or where its fossils have been found. Use these values only: "North America", "South America", "Europe", "Africa", "Asia", "Australia", "Antarctica", "Worldwide". Include all that apply. For marine/aquatic creatures that roamed globally use ["Worldwide"].
 - Never invent a creature. Mystery Creatures must also be real extinct animals supported by fossil evidence.
 - Set scientificName to the accepted Latin species name when known, or the recognized fossil taxon. Use the same canonical name for synonyms and breeds, so each taxon has one shared entry.
 - Respond with ONLY the JSON. No markdown, no code blocks, no explanation.`;
 
-async function callClaude(identity: ResolvedIdentity): Promise<unknown> {
+async function callClaude(identity: ResolvedIdentity, classification:Classification): Promise<unknown> {
   const message = await anthropic.messages.create({
     model: "claude-haiku-4-5-20251001",
     max_tokens: 1200,
     system: SYSTEM_PROMPT,
-    messages: [{ role: "user", content: JSON.stringify(identity) }],
+    messages: [{ role: "user", content: JSON.stringify({...identity,category:classification.group}) }],
   });
 
   const block = message.content[0];
@@ -90,10 +86,11 @@ async function resolveCreature(name: string, reserve: () => Promise<void>): Prom
   }
 }
 async function generateCreature(identity: ResolvedIdentity): Promise<unknown> {
-  let creature = await callClaude(identity);
-  if (!hasFiveFunFacts(creature)) creature = await callClaude(identity);
+  const classification=await classifyExhibit(identity);
+  let creature = await callClaude(identity, classification);
+  if (!hasFiveFunFacts(creature)) creature = await callClaude(identity, classification);
   if (!creature || typeof creature !== "object") return creature;
-  return { ...creature, name:identity.name, scientificName:identity.scientificName, genus:identity.genus,
+  return { ...creature, ...applyExhibitClassification({genus:identity.genus,category:classification.group,mysteryLevel:Number((creature as Record<string,unknown>).mysteryLevel) || 0},classification), name:identity.name, scientificName:identity.scientificName, genus:identity.genus,
     lifeStatus:identity.lifeStatus, taxonRank:identity.rank, identityVersion:2, reference:identity.reference,
     ...(identity.lifeStatus === "extant" ? {era:"Modern",mya:"Present"} : {}) };
 }

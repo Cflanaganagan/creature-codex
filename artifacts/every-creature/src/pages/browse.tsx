@@ -1,3 +1,4 @@
+import { isInExhibit, normalizeExhibitLink } from "@/data/creatures";
 import { useTaxonReference } from "@/hooks/useTaxonReference";
 import { ReconstructionLinks } from "@/components/reconstruction-links";
 import { ImageViewer } from "@/components/image-viewer";
@@ -126,7 +127,7 @@ function AIHeroImage({ name, category, genus }: { name: string; category: string
 export default function Browse() {
   const { creatures, acceptDiscoveredCreature, collectionStatus } = useCreatures();
   const searchParams = new URLSearchParams(window.location.search);
-  const initialCategory = searchParams.get("category") || null;
+  const initialCategory = normalizeExhibitLink(searchParams.get("category"));
   const initialQuery = searchParams.get("q") || "";
 
   const [query, setQuery] = useState(initialQuery);
@@ -175,7 +176,7 @@ export default function Browse() {
   const needsReview = discoveryDetails?.code === "unverified_name";
   const filteredCreatures = creatures.filter((c) => {
     const matchesQuery = c.name.toLowerCase().includes(query.toLowerCase()) || c.genus.toLowerCase().includes(query.toLowerCase()) || (c.scientificName || "").toLowerCase().includes(query.toLowerCase());
-    const matchesCategory = selectedCategory ? c.category === selectedCategory : true;
+    const matchesCategory = selectedCategory ? isInExhibit(c, selectedCategory) : true;
     return matchesQuery && matchesCategory;
   });
 

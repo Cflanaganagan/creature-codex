@@ -4,13 +4,17 @@ import { pool, usagePool, databaseConfigured } from "./pool";
 import { resolvedIdentitySchema, type ResolvedIdentity } from "./creature-identity";
 import { prepareExtinctMuseum } from "./extinct-museum";
 import { repairLegacyCreatures } from "./repair-legacy-creatures";
+import { EXHIBITS, applyExhibitClassification } from "./exhibit-taxonomy";
+import { migrateExhibits } from "./classify-exhibit";
 import { seedCreatures } from "./seed-creatures";
 
 const text = z.string().trim().min(1).max(2000);
 export const discoveredCreatureSchema = z.object({
   name: text.max(160), scientificName: text.max(160), genus: text.max(160),
-  category: z.enum(["Mammals", "Reptiles", "Birds", "Aquatic", "Amphibians", "Invertebrates", "Mystery Creatures"]),
+  category: z.enum(EXHIBITS),
   lifeStatus: z.literal("extinct"), taxonRank: z.enum(["species", "subspecies", "domestic_form"]), identityVersion: z.literal(2),
+  classification: z.object({group:z.enum(EXHIBITS),lineage:z.array(z.string()).max(150),source:z.string(),sourceUrl:z.string().url().optional(),version:z.literal(1)}),
+  exhibitVersion:z.literal(1), mysteryExhibit:z.boolean().optional(),
   reference: resolvedIdentitySchema.innerType().shape.reference,
   era: text, mya: text, diet: text, size: text, habitat: text, description: text,
   funFacts: z.array(text).length(5), family: z.array(z.object({ name: text, living: z.boolean() })).max(50),
@@ -56,13 +60,14 @@ async function initialize() {
     }
     await repairLegacyCreatures(client);
     await prepareExtinctMuseum(client);
+    await migrateExhibits(client);
     await client.query("COMMIT");
   } catch(error) { await client.query("ROLLBACK"); throw error; }
   finally { client.release(); }
 }
 export async function readCollection() {
   if (!databaseConfigured) {
-    const creatures = seedCreatures.filter(c => c.lifeStatus === "extinct");
+    const creatures = seedCreatures.filter(c => c.lifeStatus === "extinct").map(c=>applyExhibitClassification(c));
     return { mode: "preview" as const, creatures, total: creatures.length };
   }
   await initializeCollection();

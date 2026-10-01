@@ -13,3 +13,6 @@ export * from "./creature-identity";
 export * from "./creature-reference";
 
 export * from "./check-reference-status";
+
+export * from "./exhibit-taxonomy";
+export * from "./classify-exhibit";

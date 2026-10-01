@@ -30,9 +30,12 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'/tmp/codex-browser/node
   const context=await browser.newContext({viewport:{width:1440,height:1080},reducedMotion:'reduce'});
   const page=await context.newPage();let paidRequests=0;page.on('request',r=>{if(r.url().includes('/ai-lookup'))paidRequests++});
   await page.goto('http://127.0.0.1:5130/');await page.waitForLoadState('networkidle');
-  assert.ok(await page.getByTestId('tile-category-Aquatic').evaluate(el=>el.classList.contains('bg-teal-800')));
-  for(const [name,rgb] of [['Mammals','rgb(147, 75, 43)'],['Reptiles','rgb(69, 104, 80)'],['Birds','rgb(193, 155, 95)'],['Amphibians','rgb(102, 41, 60)'],['Mystery Creatures','rgb(76, 55, 89)']])assert.equal(await page.getByTestId('tile-category-'+name).evaluate(el=>getComputedStyle(el).backgroundColor),rgb,name);
-  assert.ok((await page.getByTestId('tile-category-Aquatic').locator('img').getAttribute('src')).includes('shark-badge'));
+  assert.ok(await page.getByTestId('tile-category-Fish').evaluate(el=>el.classList.contains('bg-teal-800')));
+  for(const [name,rgb] of [['Mammals','rgb(147, 75, 43)'],['Dinosaurs','rgb(69, 104, 80)'],['Reptiles','rgb(32, 53, 69)'],['Synapsids','rgb(122, 98, 61)'],['Birds','rgb(193, 155, 95)'],['Amphibians & Early Tetrapods','rgb(102, 41, 60)'],['Mystery Creatures','rgb(76, 55, 89)']])assert.equal(await page.getByTestId('tile-category-'+name).evaluate(el=>getComputedStyle(el).backgroundColor),rgb,name);
+  assert.ok((await page.getByTestId('tile-category-Fish').locator('img').getAttribute('src')).includes('shark-badge'));
+  assert.equal(await page.locator('[data-testid^=tile-category-]').count(),9);
+  assert.ok((await page.getByTestId('tile-category-Synapsids').locator('img').getAttribute('src')).includes('dimetrodon-badge'));
+  assert.ok((await page.getByTestId('tile-category-Reptiles').locator('img').getAttribute('src')).includes('deinosuchus-badge'));
   await page.screenshot({path:'/tmp/woolly-reference-home.png',fullPage:true});
   await page.getByTestId('input-header-search').fill('Dodo');
   await page.getByRole('option').filter({hasText:'Dodo'}).waitFor();

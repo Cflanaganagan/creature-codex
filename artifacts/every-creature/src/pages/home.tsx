@@ -4,7 +4,7 @@ import { Link, useLocation } from "wouter";
 import { Layout } from "@/components/layout";
 import { Button } from "@/components/ui/button";
 import { Dices } from "lucide-react";
-import { categories, categoryColors, categoryGlowColors } from "@/data/creatures";
+import { categories, isInExhibit, categoryColors, categoryGlowColors } from "@/data/creatures";
 import { useCreatures } from "@/hooks/useCreatures";
 import { motion, useReducedMotion } from "framer-motion";
 import { CategoryPortrait } from "@/components/category-portrait";
@@ -83,9 +83,9 @@ export default function Home() {
         </Link>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-5">
         {categories.map((category, index) => {
-          const count = creatures.filter(c => c.category === category).length;
+          const count = creatures.filter(c => isInExhibit(c, category)).length;
           const colorClass = categoryColors[category] || "bg-card text-card-foreground";
 
           return (
@@ -128,17 +128,17 @@ export default function Home() {
 
                   <div className="w-10 h-px bg-current opacity-25 mb-3" />
 
-                  <div className="w-full flex items-end justify-between gap-3">
+                  <div className="w-full min-h-14 flex items-end justify-between gap-3">
                     <div>
                       <div className="text-[9px] uppercase tracking-[0.22em] font-semibold opacity-45 mb-0.5">
                         Hall of
                       </div>
-                      <h4 className="text-xl font-bold font-serif leading-none tracking-tight">
+                      <h4 className="text-xl font-bold font-serif leading-tight tracking-tight">
                         {category}
                       </h4>
                     </div>
 
-                    <div className="flex flex-col items-center justify-center min-w-10 h-10 rounded-full border border-current/20 bg-black/10 shadow-[inset_0_1px_3px_rgba(0,0,0,.12)]">
+                    <div className="flex flex-col items-center justify-center min-w-10 shrink-0 h-10 rounded-full border border-current/20 bg-black/10 shadow-[inset_0_1px_3px_rgba(0,0,0,.12)]">
                       <span className="text-sm leading-none font-bold">{count}</span>
                       <span className="text-[6px] uppercase tracking-wider opacity-60 mt-0.5">Entries</span>
                     </div>

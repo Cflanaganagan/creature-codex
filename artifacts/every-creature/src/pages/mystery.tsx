@@ -1,5 +1,5 @@
 import { Layout } from "@/components/layout";
-import { categoryEmojis, categoryColors } from "@/data/creatures";
+import { categoryEmojis, categoryColors, isInExhibit } from "@/data/creatures";
 import { useCreatures } from "@/hooks/useCreatures";
 import { Badge } from "@/components/ui/badge";
 import { motion } from "framer-motion";
@@ -7,7 +7,7 @@ import { motion } from "framer-motion";
 export default function Mystery() {
   const { creatures } = useCreatures();
   const mysteryCreatures = creatures
-    .filter((c) => c.mysteryLevel >= 2)
+    .filter((c) => isInExhibit(c,"Mystery Creatures"))
     .sort((a, b) => b.mysteryLevel - a.mysteryLevel);
 
   return (

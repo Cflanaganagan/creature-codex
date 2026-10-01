@@ -1,3 +1,5 @@
+import { EXHIBITS, applyExhibitClassification, type Classification } from "../../../../lib/db/src/exhibit-taxonomy";
+export { isInExhibit, normalizeExhibitLink, applyExhibitClassification } from "../../../../lib/db/src/exhibit-taxonomy";
 import { z } from "zod";
 
 export const mysteryLevelSchema = z.union([z.literal(0), z.literal(1), z.literal(2), z.literal(3)]);
@@ -9,6 +11,9 @@ export type Creature = {
   name: string;
   genus: string;
   category: string;
+  classification?: Classification;
+  exhibitVersion?:number;
+  mysteryExhibit?:boolean;
   era: string;
   mya: string;
   scientificName?: string;
@@ -29,6 +34,9 @@ export const creatureSchema: z.ZodType<Creature> = z.object({
   name: z.string().min(1, "name is required"),
   genus: z.string().min(1, "genus is required"),
   category: z.string().min(1, "category is required"),
+  classification: z.object({group:z.enum(EXHIBITS),lineage:z.array(z.string()),source:z.string(),sourceUrl:z.string().url().optional(),version:z.literal(1)}).optional(),
+  exhibitVersion:z.number().optional(),
+  mysteryExhibit:z.boolean().optional(),
   era: z.string().min(1, "era is required"),
   mya: z.string().min(1, "mya is required"),
   scientificName: z.string().optional(),
@@ -44,48 +52,26 @@ export const creatureSchema: z.ZodType<Creature> = z.object({
   regions: z.array(z.string()).optional(),
 });
 
-export const categories = [
-  "Mammals",
-  "Reptiles",
-  "Birds",
-  "Aquatic",
-  "Amphibians",
-  "Invertebrates",
-  "Mystery Creatures",
-];
-
-export const categoryEmojis: Record<string, string> = {
-  "Mammals": "🦣",
-  "Reptiles": "🦖",
-  "Birds": "🦤",
-  "Aquatic": "🦈",
-  "Amphibians": "🐸",
-  "Invertebrates": "🦟",
-  "Mystery Creatures": "❓",
+export const categories = [...EXHIBITS];
+export const categoryEmojis: Record<string,string> = {"Invertebrates":"🦟","Fish":"🦈","Amphibians & Early Tetrapods":"🐸","Synapsids":"🦎","Mammals":"🦣","Reptiles":"🐊","Dinosaurs":"🦖","Birds":"🦤","Mystery Creatures":"❓"};
+export const categoryColors: Record<string,string> = {
+  "Invertebrates":"bg-slate-700 text-white", "Fish":"bg-teal-800 text-white",
+  "Amphibians & Early Tetrapods":"bg-[#66293C] text-white", "Synapsids":"bg-[#7A623D] text-white",
+  "Mammals":"bg-[#934B2B] text-white", "Reptiles":"bg-[#203545] text-white",
+  "Dinosaurs":"bg-[#456850] text-white", "Birds":"bg-[#C19B5F] text-[#251c10]",
+  "Mystery Creatures":"bg-[#4C3759] text-white",
 };
-
-export const categoryColors: Record<string, string> = {
-  "Mammals": "bg-[#934B2B] text-white",
-  "Reptiles": "bg-[#456850] text-white",
-  "Birds": "bg-[#C19B5F] text-[#251c10]",
-  "Aquatic": "bg-teal-800 text-white",
-  "Amphibians": "bg-[#66293C] text-white",
-  "Invertebrates": "bg-slate-700 text-white",
-  "Mystery Creatures": "bg-[#4C3759] text-white",
+export const categoryBgColors: Record<string,string> = {
+  "Invertebrates":"from-slate-700/80 to-slate-950", "Fish":"from-teal-900/80 to-teal-950",
+  "Amphibians & Early Tetrapods":"from-[#66293C]/80 to-stone-950", "Synapsids":"from-[#7A623D]/80 to-stone-950",
+  "Mammals":"from-[#934B2B]/80 to-stone-950", "Reptiles":"from-[#203545]/80 to-slate-950",
+  "Dinosaurs":"from-[#456850]/80 to-stone-950", "Birds":"from-[#C19B5F]/80 to-stone-950",
+  "Mystery Creatures":"from-[#4C3759]/80 to-slate-950",
 };
-export const categoryBgColors: Record<string, string> = {
-  "Mammals": "from-[#934B2B]/80 to-stone-950",
-  "Reptiles": "from-[#456850]/80 to-stone-950",
-  "Birds": "from-[#C19B5F]/80 to-stone-950",
-  "Aquatic": "from-teal-900/80 to-teal-950",
-  "Amphibians": "from-[#66293C]/80 to-stone-950",
-  "Invertebrates": "from-slate-700/80 to-slate-950",
-  "Mystery Creatures": "from-[#4C3759]/80 to-slate-950",
-};
-export const categoryGlowColors: Record<string, string> = {
-  "Mammals": "#934B2B", "Reptiles": "#456850", "Birds": "#C19B5F",
-  "Aquatic": "#218f87", "Amphibians": "#66293C", "Invertebrates": "#708699",
-  "Mystery Creatures": "#4C3759",
+export const categoryGlowColors: Record<string,string> = {
+  "Invertebrates":"#708699", "Fish":"#218f87", "Amphibians & Early Tetrapods":"#66293C",
+  "Synapsids":"#7A623D", "Mammals":"#934B2B", "Reptiles":"#203545", "Dinosaurs":"#456850",
+  "Birds":"#C19B5F", "Mystery Creatures":"#4C3759",
 };
 
 const foundingCreatures: Creature[] = [
@@ -1894,4 +1880,4 @@ const foundingCreatures: Creature[] = [
 
 // Keep the original data above recoverable, but never exhibit living entries.
 export const isExtinctCreature = (c: Creature) => c.lifeStatus === "extinct" && !/present|extant|living|ongoing/i.test(c.mya);
-export const creatures = foundingCreatures.filter(isExtinctCreature);
+export const creatures = foundingCreatures.filter(isExtinctCreature).map(c=>applyExhibitClassification(c));
