@@ -1,3 +1,4 @@
+import { scientificLabel } from "@/data/creatures";
 import { useId, useState } from "react";
 import { useLocation } from "wouter";
 import { Search, ArrowUpRight, Sparkles } from "lucide-react";
@@ -18,7 +19,7 @@ export function CreatureSearch({ value, onChange, onSearch, placeholder = "Searc
   const term = normalize(query);
   const savedMatches = term ? creatures.filter(c => normalize(c.name).startsWith(term) || normalize(c.genus).startsWith(term))
     .sort((a, b) => Number(normalize(b.name).startsWith(term)) - Number(normalize(a.name).startsWith(term)) || a.name.localeCompare(b.name)).slice(0, 5) : [];
-  const matches = savedMatches.map(c => ({key:c.id, id:c.id, name:c.name, detail:`${c.genus} · In the museum`}));
+  const matches = savedMatches.map(c => ({key:c.id, id:c.id, name:c.name, detail:`${scientificLabel(c)} · In the museum`}));
   const visible = open && term.length > 0;
   const choose = (index: number) => { const creature = matches[index]; if (creature) { setOpen(false); navigate(`/creature/${creature.id}`); } };
 

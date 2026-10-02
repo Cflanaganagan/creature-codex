@@ -1,3 +1,4 @@
+import { applyCreatureNames } from "./creature-names";
 import { randomUUID } from "node:crypto";
 import { z } from "zod";
 import { pool, usagePool, databaseConfigured } from "./pool";
@@ -11,7 +12,7 @@ import { seedCreatures } from "./seed-creatures";
 const text = z.string().trim().min(1).max(2000);
 export const discoveredCreatureSchema = z.object({
   name: text.max(160), scientificName: text.max(160), genus: text.max(160),
-  category: z.enum(EXHIBITS),
+  category: z.enum(EXHIBITS), monotypic:z.boolean().optional(),
   lifeStatus: z.literal("extinct"), taxonRank: z.enum(["species", "subspecies", "domestic_form"]), identityVersion: z.literal(2),
   classification: z.object({group:z.enum(EXHIBITS),lineage:z.array(z.string()).max(150),source:z.string(),sourceUrl:z.string().url().optional(),version:z.literal(1)}),
   exhibitVersion:z.literal(1), mysteryExhibit:z.boolean().optional(),
@@ -67,12 +68,12 @@ async function initialize() {
 }
 export async function readCollection() {
   if (!databaseConfigured) {
-    const creatures = seedCreatures.filter(c => c.lifeStatus === "extinct").map(c=>applyExhibitClassification(c));
+    const creatures = seedCreatures.filter(c => c.lifeStatus === "extinct").map(c=>applyCreatureNames(applyExhibitClassification(c)));
     return { mode: "preview" as const, creatures, total: creatures.length };
   }
   await initializeCollection();
   const result = await pool.query<{data:StoredCreature}>("SELECT data FROM creature_collection WHERE data->>'lifeStatus'='extinct' AND COALESCE(data->>'reviewStatus','') <> 'withdrawn' ORDER BY created_at, id");
-  return { mode: "shared" as const, creatures: result.rows.map(row=>applyExhibitClassification(row.data)), total:result.rowCount || 0 };
+  return { mode: "shared" as const, creatures: result.rows.map(row=>applyCreatureNames(applyExhibitClassification(row.data))), total:result.rowCount || 0 };
 }
 
 /** Lock per search across processes; unique taxon keys protect concurrent aliases. */

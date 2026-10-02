@@ -1,3 +1,4 @@
+import { scientificLabel } from "@/data/creatures";
 import { Layout } from "@/components/layout";
 import { categoryEmojis, categoryColors, isInExhibit, mysterySelection } from "@/data/creatures";
 import { useCreatures } from "@/hooks/useCreatures";
@@ -48,7 +49,7 @@ export default function Mystery() {
                 
                 <div className="mt-auto">
                   <h3 className="text-3xl font-serif font-bold mb-2 text-white">{creature.name}</h3>
-                  <p className="italic text-purple-200/70 mb-4 font-serif">{creature.genus}</p>
+                  <p className="italic text-purple-200/70 mb-4 font-serif">{scientificLabel(creature)}</p>
                   <p className="text-sm text-gray-300 line-clamp-3 mb-6">
                     {creature.description}
                   </p>

@@ -34,6 +34,17 @@ for(const genus of ['Hallucigenia','Andrewsarchus','Helicoprion','Anomalocaris']
  assert.ok(isInExhibit(card,'Mystery Creatures'),genus);
  assert.notEqual(card.category,'Mystery Creatures','curation preserves biological exhibit');
 }
+const {applyCreatureNames,scientificLabel}=load('creature-names');
+for(const [input,title,subtitle] of [
+ [{name:'Suchomimus',genus:'Suchomimus',scientificName:'Suchomimus tenerensis'},'Suchomimus','Suchomimus tenerensis'],
+ [{name:'Koolasuchus cleelandi',genus:'Koolasuchus',scientificName:'Koolasuchus cleelandi'},'Koolasuchus','Koolasuchus cleelandi'],
+ [{name:'Beipiaosaurus inexpectus',genus:'Beipiaosaurus',scientificName:'Beipiaosaurus inexpectus'},'Beipiaosaurus','Beipiaosaurus inexpectus'],
+ [{name:'Falcatus falcatus',genus:'Falcatus',scientificName:'Falcatus falcatus'},'Falcatus','Falcatus falcatus'],
+ [{name:'Cotylorhynchus bransoni',genus:'Cotylorhynchus',scientificName:'Cotylorhynchus bransoni'},'Cotylorhynchus bransoni','Cotylorhynchus bransoni'],
+ [{name:'Inostrancevia',genus:'Inostrancevia',scientificName:'Inostrancevia latifrons'},'Inostrancevia latifrons','Inostrancevia latifrons'],
+ [{name:'Dodo',genus:'Raphus'},'Dodo','Raphus cucullatus'],
+ [{name:'Smilodon',genus:'Smilodon'},'Smilodon','Smilodon'],
+]){const result=applyCreatureNames(input);assert.equal(result.name,title);assert.equal(scientificLabel(result),subtitle);assert.deepEqual(applyCreatureNames(result),result);}
 (async()=>{
  const {classifyExhibit}=load('classify-exhibit');
  let calls=0;

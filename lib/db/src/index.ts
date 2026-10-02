@@ -16,3 +16,5 @@ export * from "./check-reference-status";
 
 export * from "./exhibit-taxonomy";
 export * from "./classify-exhibit";
+
+export * from "./creature-names";

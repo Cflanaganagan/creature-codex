@@ -1,3 +1,4 @@
+import { scientificLabel } from "@/data/creatures";
 import { useRef } from "react";
 import { Layout } from "@/components/layout";
 import { categoryEmojis, categoryColors } from "@/data/creatures";
@@ -146,7 +147,7 @@ function CreatureChip({
         <p className="font-serif font-bold text-white leading-tight truncate">
           {creature.name}
         </p>
-        <p className="text-xs text-white/50 italic truncate">{creature.genus}</p>
+        <p className="text-xs text-white/50 italic truncate">{scientificLabel(creature)}</p>
       </div>
       <Badge
         variant="outline"

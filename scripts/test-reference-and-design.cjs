@@ -99,6 +99,17 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'/tmp/codex-browser/node
     return [...el.querySelectorAll('p')].map(p=>{const fg=rgb(getComputedStyle(p).color);const a=fg[3]??1;const blended=fg.slice(0,3).map((v,i)=>v*a+bg[i]*(1-a));const l1=luminance(blended),l2=luminance(bg);return (Math.max(l1,l2)+.05)/(Math.min(l1,l2)+.05)});
   });assert.ok(contrast.every(c=>c>=4.5),`Timeline contrast: ${contrast}`);
   await page.screenshot({path:'/tmp/woolly-timeline-contrast.png'});
+  await page.route('**/api/creatures',async route=>{
+    const response=await route.fetch();const data=await response.json();const template=data.creatures.find(c=>c.id==='dodo');
+    for(const [id,name,genus,scientificName] of [['name-test-sucho','Suchomimus','Suchomimus','Suchomimus tenerensis'],['name-test-coty','Cotylorhynchus bransoni','Cotylorhynchus','Cotylorhynchus bransoni'],['name-test-koola','Koolasuchus cleelandi','Koolasuchus','Koolasuchus cleelandi']])data.creatures.push({...template,id,name,genus,scientificName});
+    await route.fulfill({json:data});
+  });
+  for(const [id,query,title,scientific] of [['name-test-sucho','Suchomimus','Suchomimus','Suchomimus tenerensis'],['name-test-coty','Cotylorhynchus','Cotylorhynchus bransoni','Cotylorhynchus bransoni'],['name-test-koola','Koolasuchus','Koolasuchus','Koolasuchus cleelandi']]){
+    await page.goto('http://127.0.0.1:5130/browse?q='+query);const card=page.getByTestId('card-creature-'+id);await card.waitFor();
+    await card.getByRole('heading',{name:title,exact:true}).waitFor();assert.equal(await card.locator('p.italic').textContent(),scientific);
+    await page.goto('http://127.0.0.1:5130/creature/'+id);await page.getByTestId('text-creature-name').filter({hasText:title}).waitFor();
+    await page.getByText(scientific,{exact:true}).last().waitFor();
+  }
   console.log('PASS: local taxonomy snapshot, source provenance, living/unknown/ambiguous rejection, synonym/typo handling, reference autocomplete without AI, palette/artwork, hover magnifier and modal dismissal, mobile layout');
  } finally {if(browser)await browser.close();server.kill();}
 })().catch(e=>{console.error(e);process.exitCode=1});

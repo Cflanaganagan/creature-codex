@@ -9,6 +9,7 @@ export const resolvedIdentitySchema = z.object({
   rank: z.enum(["species", "subspecies", "domestic_form"]),
   lifeStatus: z.enum(["extant", "extinct"]),
   confidence: z.literal("high"),
+  monotypic:z.boolean().optional(),
   reference: z.object({source:label,taxonId:label,url:z.string().url(),checkedAt:z.string(),corroboratingUrl:z.string().url().optional(),evidence:z.array(z.object({url:z.string().url(),title:z.string().max(500),quote:z.string().max(1000)})).max(5).optional()}).optional(),
 }).refine(c => c.scientificName.split(" ")[0] === c.genus, "Genus must match the resolved species");
 export type ResolvedIdentity = z.infer<typeof resolvedIdentitySchema>;

@@ -1,3 +1,4 @@
+import { scientificLabel } from "@/data/creatures";
 import { ReconstructionLinks } from "@/components/reconstruction-links";
 import { ImageViewer } from "@/components/image-viewer";
 import { useRoute } from "wouter";
@@ -120,7 +121,7 @@ function HeroImage({ creature }: { creature: Creature }) {
           {creature.name}
         </h1>
         <p className="text-xl text-white/60 italic font-serif mt-1 drop-shadow">
-          {creature.genus}
+          {scientificLabel(creature)}
         </p>
         <p className="text-sm text-white/40 font-serif italic mt-1">
           {creature.lifeStatus === "extant" ? "Living Today" : myaToSentence(creature.mya)}

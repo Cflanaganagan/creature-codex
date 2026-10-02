@@ -1,3 +1,5 @@
+import { applyCreatureNames } from "../../../../lib/db/src/creature-names";
+export { applyCreatureNames, scientificLabel } from "../../../../lib/db/src/creature-names";
 import { EXHIBITS, applyExhibitClassification, type Classification } from "../../../../lib/db/src/exhibit-taxonomy";
 export { mysterySelection, isInExhibit, normalizeExhibitLink, applyExhibitClassification } from "../../../../lib/db/src/exhibit-taxonomy";
 import { z } from "zod";
@@ -17,6 +19,7 @@ export type Creature = {
   era: string;
   mya: string;
   scientificName?: string;
+  monotypic?:boolean;
   lifeStatus?: "extant" | "extinct";
   reference?: {evidence?: {url:string;title:string;quote:string}[]};
   diet: string;
@@ -40,6 +43,7 @@ export const creatureSchema: z.ZodType<Creature> = z.object({
   era: z.string().min(1, "era is required"),
   mya: z.string().min(1, "mya is required"),
   scientificName: z.string().optional(),
+  monotypic:z.boolean().optional(),
   lifeStatus: z.enum(["extant", "extinct"]).optional(),
   reference: z.object({evidence:z.array(z.object({url:z.string().url(),title:z.string(),quote:z.string()})).optional()}).optional(),
   diet: z.string().min(1, "diet is required"),
@@ -1880,4 +1884,4 @@ const foundingCreatures: Creature[] = [
 
 // Keep the original data above recoverable, but never exhibit living entries.
 export const isExtinctCreature = (c: Creature) => c.lifeStatus === "extinct" && !/present|extant|living|ongoing/i.test(c.mya);
-export const creatures = foundingCreatures.filter(isExtinctCreature).map(c=>applyExhibitClassification(c));
+export const creatures = foundingCreatures.filter(isExtinctCreature).map(c=>applyCreatureNames(applyExhibitClassification(c)));

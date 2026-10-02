@@ -1,10 +1,10 @@
 import { createContext, useContext, useState, useCallback, useEffect, useMemo, useRef, type ReactNode } from "react";
-import { creatures as defaultCreatures, applyExhibitClassification, isExtinctCreature, type Creature } from "@/data/creatures";
+import { creatures as defaultCreatures, applyCreatureNames, applyExhibitClassification, isExtinctCreature, type Creature } from "@/data/creatures";
 
 const STORAGE_KEY = "every-creature-db";
 const SHARED_CACHE_KEY = "woolly-extinct-shared-cache-v1";
 
-const migrateCreature = (c:Creature):Creature => applyExhibitClassification(c);
+const migrateCreature = (c:Creature):Creature => applyCreatureNames(applyExhibitClassification(c));
 
 function loadFromStorage(): Creature[] | null {
   try {

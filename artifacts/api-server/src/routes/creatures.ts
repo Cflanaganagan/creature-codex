@@ -1,5 +1,5 @@
 import { researchCreature } from "../research-creature";
-import { readCollection, discoverCreature, classifyExhibit, applyExhibitClassification, type Classification, CollectionError, knownClarification, knownIdentity, checkReferenceStatus, resolveReference, getResearchCandidate, suggestReference, referenceMetadata, type ResolvedIdentity } from "@workspace/db";
+import { applyCreatureNames, readCollection, discoverCreature, classifyExhibit, applyExhibitClassification, type Classification, CollectionError, knownClarification, knownIdentity, checkReferenceStatus, resolveReference, getResearchCandidate, suggestReference, referenceMetadata, type ResolvedIdentity } from "@workspace/db";
 import { Router, type IRouter } from "express";
 import { anthropic, anthropicConfigured } from "@workspace/integrations-anthropic-ai";
 import { AiCreatureLookupBody } from "@workspace/api-zod";
@@ -91,7 +91,7 @@ async function generateCreature(identity: ResolvedIdentity): Promise<unknown> {
   if (!hasFiveFunFacts(creature)) creature = await callClaude(identity, classification);
   if (!creature || typeof creature !== "object") return creature;
   return { ...creature, ...applyExhibitClassification({genus:identity.genus,category:classification.group,mysteryLevel:Number((creature as Record<string,unknown>).mysteryLevel) || 0},classification), name:identity.name, scientificName:identity.scientificName, genus:identity.genus,
-    lifeStatus:identity.lifeStatus, taxonRank:identity.rank, identityVersion:2, reference:identity.reference,
+    lifeStatus:identity.lifeStatus, taxonRank:identity.rank, identityVersion:2, reference:identity.reference, monotypic:identity.monotypic,
     ...(identity.lifeStatus === "extant" ? {era:"Modern",mya:"Present"} : {}) };
 }
 
@@ -127,7 +127,7 @@ router.post("/creatures/ai-lookup", async (req, res) => {
     const clarification = knownClarification(name);
     if (clarification) throw new CollectionError(422,clarification.message,"clarification_required",clarification.suggestions);
     const creature = await discoverCreature(name, resolveCreature, generateCreature, anthropicConfigured);
-    res.json(creature);
+    res.json(applyCreatureNames(creature));
   } catch (error) {
     if (error instanceof CollectionError) { res.status(error.status).json({error:error.message,code:error.code,suggestions:error.suggestions}); return; }
     req.log.error({err:error}, "Creature discovery failed");

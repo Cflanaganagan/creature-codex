@@ -1,3 +1,4 @@
+import { scientificLabel } from "@/data/creatures";
 import { isInExhibit, normalizeExhibitLink } from "@/data/creatures";
 import { useTaxonReference } from "@/hooks/useTaxonReference";
 import { ReconstructionLinks } from "@/components/reconstruction-links";
@@ -263,7 +264,7 @@ export default function Browse() {
                   </Badge>
                 </div>
                 <h3 className="text-2xl font-serif font-bold mb-1 text-card-foreground">{creature.name}</h3>
-                <p className="italic text-card-foreground/60 mb-4 font-serif">{creature.genus}</p>
+                <p className="italic text-card-foreground/60 mb-4 font-serif">{scientificLabel(creature)}</p>
                 <div className="flex items-center">
                   <Badge variant="outline" className={`text-xs border-0 ${categoryColors[creature.category]}`}>
                     {creature.category}
@@ -424,7 +425,7 @@ export default function Browse() {
                               </div>
 
                               <h2 className="text-4xl md:text-5xl font-serif font-bold mb-2 tracking-tight text-card-foreground">{aiResult.name}</h2>
-                              <p className="text-xl text-card-foreground/60 italic font-serif mb-6">{aiResult.genus}</p>
+                              <p className="text-xl text-card-foreground/60 italic font-serif mb-6">{scientificLabel(aiResult)}</p>
 
                               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 bg-white/5 p-4 rounded-2xl">
                                 {[

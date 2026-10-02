@@ -9,7 +9,7 @@ You MUST use web_search to check scientific evidence. Do not resolve from memory
 Determine whether the search identifies one recognized species/subspecies, and whether it is extinct. Living species and animals surviving in captivity are extant. Never infer extinction just because fossils exist.
 A genus alone can resolve ONLY when sources explicitly support it having a single recognized species. One result in a database is NOT proof. If multiple species or disputed monotypy, ask for clarification. Never choose an arbitrary species. Broad groups, fictional names, and unresolved nicknames cannot resolve.
 Use a familiar common name for display. For a supported single-species genus, use the genus as the display name; retain the full binomial internally. For multi-species genera use a species-specific display name. If a candidate is provided, verify that exact species; do not substitute a different species.
-First give a brief cited evidence statement supporting identity, extinction status, and monotypy when needed. Then a single fenced JSON block, with NO citations inside the JSON:
+First give a brief cited evidence statement supporting identity, extinction status, and monotypy when known. Set monotypic true only when cited sources explicitly establish a single recognized species; otherwise use false. Then a single fenced JSON block, with NO citations inside the JSON:
 Resolved: {"status":"resolved","name":"Scutosaurus","scientificName":"Scutosaurus karpinskii","genus":"Scutosaurus","rank":"species","lifeStatus":"extinct","confidence":"high","monotypic":true,"sourceUrls":["https://..."]}
 Use lifeStatus extant for living animals. Only use high confidence and resolved when retrieved sources support all required facts. sourceUrls must be exact URLs from your cited search results. If evidence is insufficient or conflicting, return {"status":"clarification_required","message":"Which creature did you mean?","suggestions":["specific name"]} or {"status":"unverified_name"}. Do not write a creature biography.`;
 
@@ -58,7 +58,7 @@ export async function researchCreature(query: string, reserve: () => Promise<voi
     if(!proof.length || !proof.some(e=>normalizeName(e.quote).includes(normalizeName(identity.genus))) || (genusOnly && data.monotypic!==true) || (candidate && normalizeName(candidate.scientificName)!==normalizeName(identity.scientificName))) {
       result={code:"unverified_name"};
     } else if(identity.lifeStatus!=="extinct") result={code:"living_species"};
-    else result={identity:{...identity,name:genusOnly?identity.genus:identity.name,reference:{source:"Scientific sources reviewed by AI naturalist",taxonId:identity.scientificName,url:proof[0].url,checkedAt:new Date().toISOString(),evidence:proof.slice(0,5)}}};
+    else result={identity:{...identity,monotypic:data.monotypic===true,name:genusOnly?identity.genus:identity.name,reference:{source:"Scientific sources reviewed by AI naturalist",taxonId:identity.scientificName,url:proof[0].url,checkedAt:new Date().toISOString(),evidence:proof.slice(0,5)}}};
   } else if(data.status==="clarification_required") {
     result={code:"clarification_required",suggestions:Array.isArray(data.suggestions)?data.suggestions.filter((v):v is string=>typeof v==="string"&&v.length>0&&v.length<=160).slice(0,4):[]};
   } else result={code:"unverified_name"};

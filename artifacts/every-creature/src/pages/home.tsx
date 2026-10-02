@@ -103,7 +103,7 @@ export default function Home() {
                 style={{ "--exhibit-glow": categoryGlowColors[category] || "#9874ba" } as CSSProperties}
               >
                 {category === "Mystery Creatures" && <div className="mystery-atmosphere" aria-hidden="true">
-                  <svg className="mystery-honeycomb" width="100%" height="100%"><defs><pattern id="mystery-hexagons" width="90" height="51.961524" patternUnits="userSpaceOnUse"><path d="M0 0H15L30 25.980762L15 51.961524 M30 25.980762H60L75 0H90 M60 25.980762L75 51.961524" fill="none" stroke="currentColor" strokeWidth="0.7" /></pattern></defs><rect width="100%" height="100%" fill="url(#mystery-hexagons)" /></svg>
+                  <svg className="mystery-honeycomb" width="100%" height="100%"><defs><pattern id="mystery-hexagons" width="90" height="51.961524" patternUnits="userSpaceOnUse" patternTransform="scale(0.6)"><path d="M0 0H15L30 25.980762L15 51.961524 M30 25.980762H60L75 0H90 M60 25.980762L75 51.961524" fill="none" stroke="currentColor" strokeWidth="0.7" /></pattern></defs><rect width="100%" height="100%" fill="url(#mystery-hexagons)" /></svg>
                   <span className="mystery-spark mystery-spark-one">✦</span><span className="mystery-spark mystery-spark-two">✧</span><span className="mystery-spark mystery-spark-three">✦</span>
                 </div>}
                 <div className="pointer-events-none absolute inset-[7px] rounded-[1.05rem] border border-white/15" />
