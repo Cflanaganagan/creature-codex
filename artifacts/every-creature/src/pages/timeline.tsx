@@ -1,3 +1,4 @@
+import { timelineStartMa } from "@/data/timeline-age";
 import { scientificLabel } from "@/data/creatures";
 import { useRef } from "react";
 import { Layout } from "@/components/layout";
@@ -78,46 +79,10 @@ const PERIODS = [
 
 type Period = (typeof PERIODS)[number];
 
-/* ─── Parse mya strings ───────────────────────────────────────────────────
- *  Handles:  "68-66 Ma"  |  "112 Ma"  |  "Extinct 1681"  |  "Present"
- *  Returns Ma-ago values (larger = further in the past).
- *  CE years and "Present" → mapped to ~0 Ma (Quaternary).
- * ──────────────────────────────────────────────────────────────────────── */
-function parseMya(mya: string): { start: number; end: number } {
-  const lower = mya.toLowerCase().trim();
-
-  // "Present" / "present" / "Extant" → living today
-  if (lower === "present" || lower === "extant" || lower === "ongoing") {
-    return { start: 0.005, end: 0 };
-  }
-
-  // "Extinct YYYY" → a CE year, treat as essentially 0 Ma ago
-  if (lower.startsWith("extinct")) {
-    return { start: 0.005, end: 0 };
-  }
-
-  // Extract all decimal numbers
-  const nums = (mya.match(/[\d.]+/g) ?? []).map(Number).filter((n) => !isNaN(n));
-  if (nums.length === 0) return { start: 0.005, end: 0 };
-
-  const maxNum = Math.max(...nums);
-
-  // If the largest number looks like a CE year (> 1000), it's recent
-  if (maxNum > 700) return { start: 0.005, end: 0 };
-
-  return { start: maxNum, end: Math.min(...nums) };
-}
-
 function primaryPeriod(creature: Creature): Period | undefined {
-  const { start } = parseMya(creature.mya);
-  // Find the period whose range contains the creature's oldest point
-  for (const p of PERIODS) {
-    if (start <= p.start && start >= p.end) return p;
-  }
-  // start > any period max (shouldn't happen after CE fix) → Quaternary
-  if (start < PERIODS[PERIODS.length - 1].start) return PERIODS[PERIODS.length - 1];
-  // start > Ediacaran start → oldest period
-  return PERIODS[0];
+  const start = timelineStartMa(creature);
+  if (start === undefined) return undefined;
+  return PERIODS.find(p => start <= p.start && start >= p.end);
 }
 
 /* ─── Creature chip ──────────────────────────────────────────────────────── */
