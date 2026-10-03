@@ -1,3 +1,4 @@
+import { applyCreatureNames, type NamedCreature } from "./creature-names";
 import { readFileSync } from "node:fs";
 import { knownClarification, knownIdentity, normalizeName, type ResolvedIdentity } from "./creature-identity";
 
@@ -125,4 +126,16 @@ export function getResearchCandidate(query: string): ResolvedIdentity | undefine
   if(rows?.length!==1 || !rows[0][2]) return undefined;
   const verdict=resolveReference(rows[0][1]);
   return verdict.status==="resolved"?verdict.identity:undefined;
+}
+
+/** Reference counts affect presentation only, never whether a search is admitted. */
+export function applyReferenceNames<T extends NamedCreature>(creature:T):T {
+  const normalized=applyCreatureNames(creature);
+  const rows=genera.get(normalizeName(normalized.genus)) || [];
+  // Subspecies and duplicate records must not inflate the species count.
+  const species=[...new Set(rows.map(r=>r[1].split(" ").slice(0,2).join(" ")))];
+  const scientificName=normalized.scientificName?.includes(" ") ? normalized.scientificName : (species.length===1 ? species[0] : undefined);
+  const matches=scientificName && species.includes(scientificName.split(" ").slice(0,2).join(" "));
+  return applyCreatureNames({...normalized, scientificName,
+    referenceSpeciesCount:matches ? species.length : undefined});
 }

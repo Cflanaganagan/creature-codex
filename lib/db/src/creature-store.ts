@@ -1,4 +1,4 @@
-import { applyCreatureNames } from "./creature-names";
+import { applyReferenceNames } from "./creature-reference";
 import { randomUUID } from "node:crypto";
 import { z } from "zod";
 import { pool, usagePool, databaseConfigured } from "./pool";
@@ -68,12 +68,12 @@ async function initialize() {
 }
 export async function readCollection() {
   if (!databaseConfigured) {
-    const creatures = seedCreatures.filter(c => c.lifeStatus === "extinct").map(c=>applyCreatureNames(applyExhibitClassification(c)));
+    const creatures = seedCreatures.filter(c => c.lifeStatus === "extinct").map(c=>applyReferenceNames(applyExhibitClassification(c)));
     return { mode: "preview" as const, creatures, total: creatures.length };
   }
   await initializeCollection();
   const result = await pool.query<{data:StoredCreature}>("SELECT data FROM creature_collection WHERE data->>'lifeStatus'='extinct' AND COALESCE(data->>'reviewStatus','') <> 'withdrawn' ORDER BY created_at, id");
-  return { mode: "shared" as const, creatures: result.rows.map(row=>applyCreatureNames(applyExhibitClassification(row.data))), total:result.rowCount || 0 };
+  return { mode: "shared" as const, creatures: result.rows.map(row=>applyReferenceNames(applyExhibitClassification(row.data))), total:result.rowCount || 0 };
 }
 
 /** Lock per search across processes; unique taxon keys protect concurrent aliases. */

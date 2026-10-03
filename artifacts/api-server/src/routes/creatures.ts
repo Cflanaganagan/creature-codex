@@ -1,5 +1,5 @@
 import { researchCreature } from "../research-creature";
-import { applyCreatureNames, readCollection, discoverCreature, classifyExhibit, applyExhibitClassification, type Classification, CollectionError, knownClarification, knownIdentity, checkReferenceStatus, resolveReference, getResearchCandidate, suggestReference, referenceMetadata, type ResolvedIdentity } from "@workspace/db";
+import { applyReferenceNames, readCollection, discoverCreature, classifyExhibit, applyExhibitClassification, type Classification, CollectionError, knownClarification, knownIdentity, checkReferenceStatus, resolveReference, getResearchCandidate, suggestReference, referenceMetadata, type ResolvedIdentity } from "@workspace/db";
 import { Router, type IRouter } from "express";
 import { anthropic, anthropicConfigured } from "@workspace/integrations-anthropic-ai";
 import { AiCreatureLookupBody } from "@workspace/api-zod";
@@ -127,7 +127,7 @@ router.post("/creatures/ai-lookup", async (req, res) => {
     const clarification = knownClarification(name);
     if (clarification) throw new CollectionError(422,clarification.message,"clarification_required",clarification.suggestions);
     const creature = await discoverCreature(name, resolveCreature, generateCreature, anthropicConfigured);
-    res.json(applyCreatureNames(creature));
+    res.json(applyReferenceNames(creature));
   } catch (error) {
     if (error instanceof CollectionError) { res.status(error.status).json({error:error.message,code:error.code,suggestions:error.suggestions}); return; }
     req.log.error({err:error}, "Creature discovery failed");

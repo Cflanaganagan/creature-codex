@@ -36,6 +36,11 @@ for(const genus of ['Hallucigenia','Andrewsarchus','Helicoprion','Anomalocaris']
 }
 const {applyCreatureNames,scientificLabel}=load('creature-names');
 for(const [input,title,subtitle] of [
+ [{name:'Ornithocheirus simus',genus:'Ornithocheirus',scientificName:'Ornithocheirus simus'},'Ornithocheirus','Ornithocheirus simus'],
+ [{id:'dimorphodon',name:'Dimorphodon',genus:'Dimorphodon'},'Dimorphodon macronyx','Dimorphodon macronyx'],
+ [{name:'Example species',genus:'Example',scientificName:'Example species',referenceSpeciesCount:1},'Example','Example species'],
+ [{name:'Example species',genus:'Example',scientificName:'Example species',referenceSpeciesCount:2},'Example species','Example species'],
+ [{name:'Example species minor',genus:'Example',scientificName:'Example species minor',referenceSpeciesCount:1},'Example species minor','Example species minor'],
  [{name:'Suchomimus',genus:'Suchomimus',scientificName:'Suchomimus tenerensis'},'Suchomimus','Suchomimus tenerensis'],
  [{name:'Koolasuchus cleelandi',genus:'Koolasuchus',scientificName:'Koolasuchus cleelandi'},'Koolasuchus','Koolasuchus cleelandi'],
  [{name:'Beipiaosaurus inexpectus',genus:'Beipiaosaurus',scientificName:'Beipiaosaurus inexpectus'},'Beipiaosaurus','Beipiaosaurus inexpectus'],

@@ -20,6 +20,7 @@ export type Creature = {
   mya: string;
   scientificName?: string;
   monotypic?:boolean;
+  referenceSpeciesCount?:number;
   lifeStatus?: "extant" | "extinct";
   reference?: {evidence?: {url:string;title:string;quote:string}[]};
   diet: string;
@@ -44,6 +45,7 @@ export const creatureSchema: z.ZodType<Creature> = z.object({
   mya: z.string().min(1, "mya is required"),
   scientificName: z.string().optional(),
   monotypic:z.boolean().optional(),
+  referenceSpeciesCount:z.number().optional(),
   lifeStatus: z.enum(["extant", "extinct"]).optional(),
   reference: z.object({evidence:z.array(z.object({url:z.string().url(),title:z.string(),quote:z.string()})).optional()}).optional(),
   diet: z.string().min(1, "diet is required"),

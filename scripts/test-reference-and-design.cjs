@@ -13,6 +13,14 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'/tmp/codex-browser/node
  let browser;
  try {
   for(let i=0;i<120;i++){try{if((await fetch('http://127.0.0.1:5130/api/healthz')).ok)break}catch{}await new Promise(r=>setTimeout(r,100));}
+  const collection=(await (await fetch('http://127.0.0.1:5130/api/creatures')).json()).creatures;
+  const dimorphodon=collection.find(c=>c.id==='dimorphodon');
+  assert.equal(dimorphodon.scientificName,'Dimorphodon macronyx');
+  assert.equal(dimorphodon.name,'Dimorphodon macronyx');
+  const argentinosaurus=collection.find(c=>c.id==='argentinosaurus');
+  assert.equal(argentinosaurus.scientificName,'Argentinosaurus huinculensis');
+  assert.equal(argentinosaurus.name,'Argentinosaurus');
+  assert.equal(argentinosaurus.referenceSpeciesCount,1);
   const ref=async q=>(await fetch(`http://127.0.0.1:5130/api/creatures/reference?q=${encodeURIComponent(q)}`)).json();
   const mammoth=await ref('mammoth');assert.equal(mammoth.verdict.status,'clarification_required');assert.ok(mammoth.matches.some(c=>c.scientificName==='Mammuthus columbi'));
   const columbian=await ref('Columbian mammoth');assert.equal(columbian.verdict.identity.scientificName,'Mammuthus columbi');assert.ok(columbian.verdict.identity.reference.url.startsWith('https://paleobiodb.org/'));
@@ -101,10 +109,10 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'/tmp/codex-browser/node
   await page.screenshot({path:'/tmp/woolly-timeline-contrast.png'});
   await page.route('**/api/creatures',async route=>{
     const response=await route.fetch();const data=await response.json();const template=data.creatures.find(c=>c.id==='dodo');
-    for(const [id,name,genus,scientificName] of [['name-test-sucho','Suchomimus','Suchomimus','Suchomimus tenerensis'],['name-test-coty','Cotylorhynchus bransoni','Cotylorhynchus','Cotylorhynchus bransoni'],['name-test-koola','Koolasuchus cleelandi','Koolasuchus','Koolasuchus cleelandi']])data.creatures.push({...template,id,name,genus,scientificName});
+    for(const [id,name,genus,scientificName] of [['name-test-ornitho','Ornithocheirus simus','Ornithocheirus','Ornithocheirus simus'],['name-test-sucho','Suchomimus','Suchomimus','Suchomimus tenerensis'],['name-test-coty','Cotylorhynchus bransoni','Cotylorhynchus','Cotylorhynchus bransoni'],['name-test-koola','Koolasuchus cleelandi','Koolasuchus','Koolasuchus cleelandi']])data.creatures.push({...template,id,name,genus,scientificName,referenceSpeciesCount:undefined,monotypic:undefined});
     await route.fulfill({json:data});
   });
-  for(const [id,query,title,scientific] of [['name-test-sucho','Suchomimus','Suchomimus','Suchomimus tenerensis'],['name-test-coty','Cotylorhynchus','Cotylorhynchus bransoni','Cotylorhynchus bransoni'],['name-test-koola','Koolasuchus','Koolasuchus','Koolasuchus cleelandi']]){
+  for(const [id,query,title,scientific] of [['name-test-ornitho','Ornithocheirus','Ornithocheirus','Ornithocheirus simus'],['name-test-sucho','Suchomimus','Suchomimus','Suchomimus tenerensis'],['name-test-coty','Cotylorhynchus','Cotylorhynchus bransoni','Cotylorhynchus bransoni'],['name-test-koola','Koolasuchus','Koolasuchus','Koolasuchus cleelandi']]){
     await page.goto('http://127.0.0.1:5130/browse?q='+query);const card=page.getByTestId('card-creature-'+id);await card.waitFor();
     await card.getByRole('heading',{name:title,exact:true}).waitFor();assert.equal(await card.locator('p.italic').textContent(),scientific);
     await page.goto('http://127.0.0.1:5130/creature/'+id);await page.getByTestId('text-creature-name').filter({hasText:title}).waitFor();
