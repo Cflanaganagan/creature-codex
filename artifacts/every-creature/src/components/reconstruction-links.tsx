@@ -7,8 +7,12 @@ const museumPages: Record<string, string> = {
   "tyrannosaurus-rex": "https://www.nhm.ac.uk/discover/dino-directory/tyrannosaurus.html",
   "smilodon": "https://www.nhm.ac.uk/discover/news/2025/december/sabre-toothed-tiger-sense-smell-reconstructed-skull-scans.html",
 };
-export function ReconstructionLinks({creature, compact = false}: {creature: Pick<Creature, "id" | "name" | "scientificName">; compact?: boolean}) {
-  const query = `${creature.scientificName || creature.name} reconstruction`;
+export function ReconstructionLinks({creature, compact = false}: {creature: Pick<Creature, "id" | "name" | "scientificName" | "genus">; compact?: boolean}) {
+  // Some card titles are binomials; search their genus, otherwise the familiar name.
+  const name = creature.name.trim();
+  const query = name.toLowerCase() === creature.scientificName?.trim().toLowerCase()
+    ? creature.genus.trim() || name.split(/\s+/)[0]
+    : name;
   const search = `https://commons.wikimedia.org/wiki/Special:MediaSearch?type=image&search=${encodeURIComponent(query)}`;
   const museum = museumPages[creature.id];
   const linkClass = "inline-flex items-center gap-2 text-sm underline underline-offset-4 hover:opacity-80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4";

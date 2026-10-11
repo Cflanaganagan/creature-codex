@@ -28,6 +28,12 @@ CRITICAL RULES:
 - The funFacts array MUST contain EXACTLY 5 strings. No more, no fewer. This is mandatory.
 - Each fun fact must be a complete, interesting sentence of at least 10 words.
 - Do not leave any funFacts entries empty or as placeholders.
+- Evidence takes priority over entertaining facts: use the five facts to explain documented differences and evidence limitations, never to invent filler.
+- Identify the genus's formally designated type species only when known; it is not necessarily the best-preserved species. Never guess it or treat another species as a subspecies of it.
+- For other species, begin with "A species of [genus]" and focus on documented differences from the type species or better-known relatives, not a repeated generic biography. Name a comparison species only when its identity and the comparison are supported.
+- For fragmentary or track-only taxa, describe the actual evidence, locality, and diagnostic features supporting the distinction. A different location alone does not prove a separate species. If the diagnosis or comparison is unknown, say so plainly.
+- Trace-fossil species (ichnospecies) name traces, not confirmed biological species of their trackmakers. Begin "A footprint species of [ichnogenus]" for footprint taxa. Hadrosauropodus must not be described as a species of Hadrosaurus or assigned to Hadrosaurus foulkii without evidence.
+- Never borrow diet, body size, appearance, behavior, habitat or relatives from a type species or presumed trackmaker as facts about this species. Use "Unknown from available evidence" for unsupported fields and [] for unsupported relatives or regions. Label any supported inference explicitly; distinguish footprint dimensions from body size. Apply these limits to description and all five facts too.
 - For mysteryLevel: 0 = well known, 1 = some gaps in knowledge, 2 = very little known, 3 = almost unknown.
 - You receive ONLY a resolved species identity, never a raw visitor search. Write exclusively about that resolved creature.
 - Never discuss or focus on a particular domestic breed. All biography, facts, size, habitat and relatives must describe the resolved creature as a whole.
